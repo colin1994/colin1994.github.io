@@ -1,0 +1,149 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>关于我 | Colin's Nest</title>
+    
+    <meta name="description" content="I am @Colin, a iOS/Mac programmer from China." />
+    <meta name="author" content="Colin" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="http://colinnest.qiniudn.com/aboutCss.css "rel="stylesheet" />
+    
+    <link rel="shortcut icon" href="http://colinnest.qiniudn.com/colinLogo.JPG" />
+<!-- 	苹果为iOS设备配备了apple-touch-icon私有属性，添加该属性，在iPhone,iPad,iTouch的safari浏览器上可以使用添加到主屏按钮将网站添加到主屏幕上，方便用户以后访问。 -->
+    <link rel="apple-touch-icon" href="http://colinnest.qiniudn.com/colinLogo.JPG" />
+    <base target="_blank">
+</head>
+
+<body class="impress-not-supported">
+	
+<!-- 	背景音乐 -->
+	<audio autoplay="autopaly">
+					<source src="http://sc.111ttt.com/up/mp3/13578191/5675BEB58762ABC0F85C1C343628AC72/%E6%83%85%E6%AD%8C%E6%82%A0%E6%89%AC%20-%20%E6%9C%AC%E5%85%AE.mp3" type="audio/mp3">
+			</audio>
+
+<div class="fallback-message">
+    <p>您的浏览器 <b>不支持</b> impress.js的展示要求, 将为您呈现简化版的展示</p>
+    <p>为了获取最佳效果，请使用最新版的<b>Chrome</b>, <b>Safari</b> 或 <b>Firefox</b> 浏览器</p>
+    <p>珍爱生命，保护地球，远离IE。</p>
+</div>
+
+<div id="impress">
+
+    <div id="welcome" class="step" data-x="-2000" data-y="-2500">
+        <p>欢迎来到</p>
+        <p><span class="title"><b>Colin's Nest</b></span></p>
+        <p><span class="footnote"><sup>*</sup>我叫<span class="name">余龙泽</span>，这里是我的窝</span></p>
+    </div>
+
+    <div id="me" class="step" data-x="0" data-y="-2500">
+        <b class="now_me">现在的我：</b>
+        <ul>
+            <li><b class="unity">软件工程大三在读</b></li>
+            <li><b class="ios">业余iOS/Mac开发者</b></li>
+            <li><b class="photo">csdn博客专家,iOS版主</b></li>
+        </ul>
+    </div>
+
+    <div id="whereiam" class="step" data-x="850" data-y="3000" data-rotate="90" data-scale="3">
+        <p>长于<span class="kunming">玉融</span></p>
+        <p><span class="born">惯于闲看花飞花落</span></p>
+        <p>就读<span class="tsinghua">哈工大</span></p>
+        <p><span class="study">心念天际云卷云舒</span></p>
+    </div>
+
+    <div id="japan" class="step" data-x="3500" data-y="2100" data-rotate="180" data-scale="4">
+        <p>热爱<b class="trans">算法</b><p>
+        <p>在玩命刷题的同时，也在不断的自我突破, 学习<sup>**</sup></p>
+        <p><span class="footnote">* 其实就是找虐，** 其实就是成长</span></p>
+    </div>
+
+    <div id="world" class="step" data-x="-100" data-y="2900"  data-z="900" data-rotate="-90" data-scale="5">
+        <p>有时候会觉得，世界真的很小</p>
+    </div>
+
+    <div id="meet" class="step" data-x="1300" data-y="6000" data-z="2400" data-scale="6">
+        <p>也许我们就在某时某地</p>
+        <p>曾经擦肩而过</p>
+        <p>而你我，却浑然不觉</p>
+    </div>
+
+    <div id="tiny" class="step" data-x="1300" data-y="6000" data-z="-3000" data-rotate="300" data-scale="1">
+        <p>但是</p>
+    </div>
+
+    <div id="comein" class="step" data-x="0" data-y="7000" data-z="-3000" data-rotate="300">
+        <p>从此刻开始，从您踏入<a href="http://colinnest.qiniudn.com/Colin.html">Colin's Nest</a>开始</p>
+        <p>我们的生活便有了<b>交集</b></p>
+    </div>
+
+    <div id="mywords" class="step" data-x="4500" data-y="3500" data-z="3000" data-rotate="160">
+        <p>也许您在这里能看到的只是</p>
+        <p>中国千千万万工科生之中最普通的一员</p>
+        <p>所写下的最蹩足的文字</p>
+    </div>
+
+    <div id="grow" class="step" data-x="3500" data-y="-850" data-z="3000" data-rotate="270" data-scale="6">
+        <p>但我相信它们真实地记载了</p>
+        <p><b>我的生活，我的成长</b></p>
+    </div>
+
+    <div id="knowme" class="step" data-x="-6000" data-y="-800" data-z="0" data-rotate="0" data-scale="1">
+        <p>正如</p>
+        <p>伯乐得见绝世好马，子期终遇伯牙佳音</p>
+    </div>
+
+    <div id="prizeme" class="step" data-x="-6000" data-y="-500" data-z="-500" data-rotate-x="-40" data-rotate-y="10" data-scale="2">
+        <p><span class="horse">良驹美景，</span> <span class="moutain">高山流水，</span> <span class="hope">我真心希望</span> <span class="youare">您就是</span> <span class="my">我的伯乐，我的子期</span> <b></p>
+    </div>
+
+    <div id="findme" class="step" data-x="-6000" data-y="1000" data-scale="4">
+        <p>您可以在<a href="https://github.com/colin1994">Github</a>, <a href="http://weibo.com/u/3171165012">新浪微博</a>或者<a href="http://wpa.qq.com/msgrd?v=3&amp;uin=648654371&amp;site=qq&amp;menu=yes">QQ</a>上找到我</p>
+        <q>也可以逛一逛<a href="http://colinnest.qiniudn.com/Project.html/">这个网站</a>，那里陈列了我的一些做过的项目</q>
+    </div>
+
+    <div id="subcribe" class="step" data-x="-6000" data-y="3100" data-rotate="180" data-scale="4">
+        <p>如果您有兴趣持续关注我, 可以浏览我的CSDN博客<a href="http://blog.csdn.net/hitwhylz">Colin丶 </a></p>
+        <p>当然也欢迎您收藏<a href="http://colinnest.qiniudn.com/Colin.html">本站</a>。</p>
+    </div>
+
+    <div id="one-more-thing" class="step" data-x="-1500" data-y="-1100" data-z="0" data-scale="2">
+        <p>One More Thing</p>
+        <p>其实有一句话，想分享给您</p>
+    </div>
+
+    <div id="motto" class="step" data-x="0" data-y="1500" data-z= "6000" data-scale="5">
+        <p>不论您走到哪儿，在做什么</p>
+        <p>都请勿忘初心 请记住</p>
+        <p><b>事理通达, 心气和平</b></p>
+    </div>
+
+    <div id="back" class="step" data-x="-6000" data-y="5200" data-scale="2">
+        <p>谢谢您的来访</p>
+        <p>点击<a href="http://colinnest.qiniudn.com/Colin.html">这里</a>返回Colin's Nest</p>
+    </div>
+
+    <div id="overview" class="step" data-x="0" data-y="2500" data-scale="16">
+    </div>
+
+</div>
+
+<div class="hint">
+    <p>使用空格或方向键继续</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>在左侧或右侧点击继续</p>";
+}
+</script>
+
+<script src="http://colinnest.qiniudn.com/impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>
