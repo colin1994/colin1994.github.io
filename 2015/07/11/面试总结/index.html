@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>阿里, 网易, 腾讯 | Colin&#39;s Nest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一个多月来的面试总结(阿里, 网易, 腾讯)
+想必关注我的朋友都发现了, 最近我发表原创文章的数量和质量大大不如以前了, 也不怎么活跃了。主要原因是现在大三了, 7月份就能离校实习了, 所以前段时间也在为找实习忙碌着。接下去应该就能恢复正常, 继续为大家分享一些iOS开发上的小技巧, 毕竟, 也算拿到了心仪的offer。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里, 网易, 腾讯">
+<meta property="og:url" content="http://yoursite.com/2015/07/11/面试总结/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="一个多月来的面试总结(阿里, 网易, 腾讯)
+想必关注我的朋友都发现了, 最近我发表原创文章的数量和质量大大不如以前了, 也不怎么活跃了。主要原因是现在大三了, 7月份就能离校实习了, 所以前段时间也在为找实习忙碌着。接下去应该就能恢复正常, 继续为大家分享一些iOS开发上的小技巧, 毕竟, 也算拿到了心仪的offer。">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/25/1429944250_1723.jpeg">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/25/1429947172_7894.jpg">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/25/1429949156_7015.JPG">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201504/25/1429949125_2851.JPG">
+<meta property="og:updated_time" content="2015-07-13T07:27:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="阿里, 网易, 腾讯">
+<meta name="twitter:description" content="一个多月来的面试总结(阿里, 网易, 腾讯)
+想必关注我的朋友都发现了, 最近我发表原创文章的数量和质量大大不如以前了, 也不怎么活跃了。主要原因是现在大三了, 7月份就能离校实习了, 所以前段时间也在为找实习忙碌着。接下去应该就能恢复正常, 继续为大家分享一些iOS开发上的小技巧, 毕竟, 也算拿到了心仪的offer。">
+  
+  
+    <link rel="icon" href="http://7xkc7a.com1.z0.glb.clouddn.com/author.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Colin丶</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/projects">项目</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+					        
+								<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 10px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.onevcat.com/">OneV&#39;s Den</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.devtang.com/">唐巧的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.sunnyxx.com/archives/">sunnyxx的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://objccn.io/">objc中国</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://www.bignerdranch.com/blog/">Big Nerd Ranch</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://nshipster.com/">NSHipster</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是余龙泽(@Colin__丶), 就读于哈尔滨工业大学, 软件工程专业, 目前大三。在iOS学习道路上不断努力中。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Colin丶</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Colin丶</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/projects">项目</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+			        
+						<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="面试总结-面试总结" class="article article-type-面试总结" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/07/11/面试总结/" class="article-date">
+  	<time datetime="2015-07-11T02:14:52.000Z" itemprop="datePublished">Jul 11 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      阿里, 网易, 腾讯
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面试/">面试</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="一个多月来的面试总结(阿里,_网易,_腾讯)">一个多月来的面试总结(阿里, 网易, 腾讯)</h1><blockquote>
+<p>想必关注我的朋友都发现了, 最近我发表原创文章的数量和质量大大不如以前了, 也不怎么活跃了。主要原因是现在大三了, 7月份就能离校实习了, 所以前段时间也在为找实习忙碌着。接下去应该就能恢复正常, 继续为大家分享一些iOS开发上的小技巧, 毕竟, 也算拿到了心仪的offer。</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>接下去, 就围绕这一个多月来参加的几场面试, 做一个总结。 设计的公司主要包括阿里研发部分, 网易邮件, 腾讯微信。希望能给同样在为找实习努力的战友提供一些帮助。(<code>已经拿到网易和微信的offer</code>)</strong></p>
+<p>PS: 总结不是空穴来风, 每次面试完, 我都会坐着认真总结之前的面试, 记录每道题, 每个答案的关键点, 再比对下自己的回答是否完整。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/25/1429944250_1723.jpeg" width="900"></p>
+<p><strong>另外, 博客篇幅有限, 并且题目并不是适合每一位同学(我是iOS开发相关, 题目主要都是iOS相关), 所以不适合把完整的题目都描述出来, 文章主要是一些经验交流。 <code>如果需要完整面试题目的, 麻烦留下邮箱, 我看到了会一一发送</code>。</strong></p>
+<blockquote>
+<p>以下按参加的时间先后来描述, 另外我的个人主页 <a href="http://colin1994.xyz" target="_blank" rel="external">Colin’s Nest</a>, 里面有我的一些介绍, 包括简历。感兴趣的可以瞅瞅。</p>
+</blockquote>
+<h1 id="阿里_研发部门">阿里_研发部门</h1><p>阿里是最早投的一家公司, 3月初那会, 本来还在学习科二的, 然后在阿里的学长, 催着要简历, 说内推已经开始了。于是乎, 我就借机把科二给退了(被教练骂成狗的滋味真不好受, 还好及时跑了)。学长给内推的部门是和o2o相关, iOS开发。</p>
+<h2 id="阿里一面_电话">阿里一面_电话</h2><p>然后等了几天, <code>3月9号</code>, 一面开始了, 节奏很快, 总共通话时候是<code>26分钟</code>..</p>
+<p>电话来的比较突然, 那会还在看文章呢。一面过了, 但是具体表现并不是很理想。</p>
+<ol>
+<li>先是自我介绍。</li>
+<li><p>问iOS相关。 比如:</p>
+<ol>
+<li>Category支持添加属性与成员变量吗</li>
+<li>iOS7之后, 蓝牙的围栏功能</li>
+<li>说说Cell重用原理<br>…</li>
+</ol>
+</li>
+</ol>
+<ol>
+<li><p>设计模式。这里主要问了iOS常用的设计模式, 以及如何应用到实际需求中去。</p>
+<ol>
+<li>MVC是否了解?介绍下使用情况。</li>
+<li>MVC里面, View怎么通知到Model</li>
+<li>了解delegate吗?并介绍</li>
+<li>如果现在要实现一个下载功能, 你要如何设计。说说每个类具体做什么</li>
+</ol>
+</li>
+<li><p>然后就是再交流, 对o2o有什么看法, 有没有想问他的…</p>
+</li>
+</ol>
+<h2 id="阿里二面_电话">阿里二面_电话</h2><p>然后又过了两天, 二面如约来了, 36分钟, 感觉比上次好, 不过结果…</p>
+<p>二面和一面一样, 都围绕iOS, 问了objc相关, 内存管理, 设计模式等。</p>
+<p>但是更多的, 询问了我平时的一些开发习惯, 以及一些设计题。</p>
+<p>比如:</p>
+<ul>
+<li>如果让你设计KVO, 要怎么设计</li>
+<li>现在你是如何适配的</li>
+<li>比较下storyboard和全代码</li>
+<li>如果有1w张图片要在屏幕滚动显示(每张图片满屏), 至少要几个cell, 如何实现循环滚动</li>
+<li>平时是怎么进行测试的, 内存方面怎么测试</li>
+<li>平时自己有没有封装过比较复杂的控件</li>
+<li>平时如何实现网络请求, 一般返回的数据是什么格式, 如何解析..</li>
+<li>如何实现类似 “Find My iPhone” 这样功能</li>
+</ul>
+<p>二面相比一面来说, 准备的更充分了。回答问题上, 也比较积极, 考虑的也比较多。不过二面结束没多久, 内推状态就变成”待回绝”。 Over了…</p>
+<p>学长询问了面试官, 结果是: “整体还不错, 但总感觉少了点什么..”</p>
+<p>经历完阿里这一次, 总体来说, 对我打击还挺大的。毕竟, 第一次就跪了..  同时, 更多的是对自我的总结。</p>
+<p>首先应该是准备不够充分, 然后就是基础不够扎实。从面试官问的问题来看, <code>大公司还是对基础要求比较高</code>。</p>
+<h2 id="阿里校招_在线笔试">阿里校招_在线笔试</h2><p>之后, 又投了阿里校招, 参加了在线笔试。具体题目可以在这里看到:<a href="http://www.nowcoder.com/companyCenterTerminal_134" target="_blank" rel="external">阿里笔试题</a></p>
+<p>虽然笔试通过了, 不过现场面试的时间和课程冲突了, 然后就没有跑去杭州面试。</p>
+<p>于是乎, 和阿里就这样不了了之了。</p>
+<h1 id="网易_邮件部门(拿到offer)">网易_邮件部门(拿到offer)</h1><p>在结束阿里内推没多久, 偶然在网上看到网易的一个招聘。 因为方式比较新颖, 就关注了下。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/25/1429947172_7894.jpg" width="900"></p>
+<p><strong>答案就在门的背后！(至于如何解题欢迎大家交流)</strong></p>
+<p>解开这个题目后, 拿到了面试官的邮箱.. 然后抱着侥幸的心理, 就投了。</p>
+<h2 id="网易一面_电话">网易一面_电话</h2><p>没想到, 第二天就来电话了。效率很高。 <code>55分钟</code>.. 感觉被虐哭了。</p>
+<p>网易考核的主要是<code>objc, iOS, 设计模式, 算法</code>。 </p>
+<p>主要如下:</p>
+<ol>
+<li>autorelease 和 @autoreleasepool区别</li>
+<li>unsafe_unretained , weak, assign 区别</li>
+<li>在block里面, 对数组执行添加操作, 这个数组需要声明成 __block吗</li>
+<li>在block里面, 对NSInteger进行修改, 这个NSInteger是否需要声明成__blcok</li>
+<li>NSThread, NSOperation, GCD区别</li>
+<li>runtime什么时候用</li>
+<li>通知和KVO区别</li>
+<li>深度遍历和广度遍历使用场景</li>
+<li>常用的设计模式</li>
+<li>算法题 * 2</li>
+<li>自己有什么优点</li>
+</ol>
+<p>…</p>
+<p>面完之后, 感觉整个人都不好了。<code>内存管理</code>部分, 都能说出那么一些, 但是一说多了, 就不知道怎么回答了。总体来说, 还是基础不够扎实。研究不够透彻。</p>
+<p>然后面试完, 一个很大的感受就是, <code>一次面试, 学到的, 比自己闷头看书一个月, 学到的还多</code>。<code>面试很直观的反应出了自己的不足</code>。于是乎, 针对内存管理, 多线程等知识上的不足。 我重新把那本狮子头的书认真看了遍。</p>
+<p>PS: 如果觉得这方面知识也有所欠缺的话, 可以到这里下载<code>Objective-C高级编程 iOS与OS X多线程和内存管理.pdf</code>这本书, 极力推荐。</p>
+<p>下载链接: <a href="http://pan.baidu.com/s/1pJsno7p" target="_blank" rel="external">电子书分享</a></p>
+<p>本以为, 网易也就是这么结束了。 没想到过了几天, 人力资源部的妹子打电话来, 约去杭州面试。</p>
+<p>于是乎于是乎, 去杭州浪了~</p>
+<h2 id="网易二面_现场">网易二面_现场</h2><p>初到杭州, 很巧的是在机场大巴上碰到了一个去H3C培训的大叔, 更巧的是, 他也住我那个酒店。 然后就跟着他, 一路聊到酒店.. 挺好。</p>
+<p>第二天网易面试, 还是挺紧张的。9点多到了待客大厅, 填了表, 然后等面试官。然后网易给我的一个感觉就是, 很<code>内敛, 低调</code>, 感觉挺好。</p>
+<p>之后一下来了两个面试官, 领我到单独的小隔间面试.. 一次两个, 有点虚。</p>
+<p>不过没多久, 就适应了这种气氛, 然后和面试官交流也比较开心。</p>
+<p>主要问题如下:</p>
+<ol>
+<li>我是上次和你通电话的那位, 你觉得自己上次表现怎么样</li>
+<li>这段时间, 都在干嘛</li>
+<li>我们认真看了你的github, 感觉还不错</li>
+</ol>
+<p>然后给我一张纸, 问了几个算法题:</p>
+<ol>
+<li>如何实现一个数组每个元素依次向右移动k位。(后头的往前面补) 比如: [1, 2, 3, 4, 5] 挪两位变成[4, 5, 1, 2, 3]</li>
+<li>实现连连看算法</li>
+<li>T9算法如何实现, 全拼算法</li>
+</ol>
+<p>总的来说, 问的都是<code>算法</code>相关, 没有再涉及iOS部分。 然后就算法来说, 回答的还不错。虽然每道题不是一步到位, 但是在与面试官沟通过程中, 最后都逐步完善了自己的算法。</p>
+<p>然后就是和面试官聊天了, 两位面试官都很平易近人, 聊得也比较开心。 然后就约了下午HR面。</p>
+<p>…面试完后, 包括面试官已经人力管理的妹子都邀请我去网易食堂吃饭, 不过毕竟腼腆, 我给拒绝了。出来才发现.. 找个饭店真不容易.. 早知道就厚着脸皮试试”丁家猪”了。</p>
+<h2 id="网易HR面_现场">网易HR面_现场</h2><p>下午HR面, HR是个很漂亮的妹子.. 整个过程都比较欢乐， 虽然一些问题上可能有不同看法。</p>
+<p>HR问的主要是一些职业规划, 抗压能力, 学习习惯, 别人怎么看待自己等等..</p>
+<p>面试完以后, HR问我接下去准备干嘛, 我说我要一路玩到萧山机场(那天酒店在萧山机场附近)。然后她打趣到:”真潇洒阿..”</p>
+<p>杭州确实很美, 不够时间关系, 就在西湖附近逛了会。 附带两张图片。</p>
+<p><img src="http://img.my.csdn.net/uploads/201504/25/1429949156_7015.JPG" width="900"><br><img src="http://img.my.csdn.net/uploads/201504/25/1429949125_2851.JPG" width="900"></p>
+<p>3.31参加完网易杭州的现场面试. 4月23号收到网易的正式offer。 总算, 踏实了…</p>
+<h1 id="腾讯_微信事业部(拿到offer)">腾讯_微信事业部(拿到offer)</h1><p>之前腾讯校招的时候, 投了简历。 不过一直到周围同学都参加了在线笔试, 我仍然没收到通知的时候, 我基本上已经放弃了。觉得自己应该在简历环节就被刷了, 比较凄凉..</p>
+<h2 id="微信一面_电话">微信一面_电话</h2><p>不过4月20的时候, 突然来了个电话, 对方说是腾讯微信事业部的。 很突然, 完全没想到。 可以说， 幸福来的太突然了..</p>
+<p>电话用时<code>1小时10分</code>.. 中间把院长的课给翘了.. - -!</p>
+<p>主要还是围绕这几个方面: 项目, 设计模式, 算法..</p>
+<p>问题包括:</p>
+<ol>
+<li>如何保证软件质量, 怎么分析Crash日志</li>
+<li>谈谈你觉得最重要的一个项目</li>
+<li>你的个人主页是怎么写的</li>
+<li>假如我是一名初学者, 你会向我推荐哪些第三方库</li>
+<li>使用了第三方库, 有看他们是怎么实现的吗</li>
+<li>有没有看过大型项目的源码</li>
+<li>强连通量算法</li>
+<li>最短路径算法</li>
+<li>排序算法</li>
+<li>25个人, 每5人1个跑道, 最少经过几次赛跑, 得到前3名</li>
+</ol>
+<p>腾讯给我的感觉就是, 很靠谱。 <code>这几轮面试, 就腾讯当场就给出了结果, 不管是一面, 二面, 还是HR面 而不是说让你再等通知。 给我的感觉非常好</code>。</p>
+<p>一面最后, 这个面试官就说, 他这里通过了, 问我明天什么时候有时间, 给我约下另外一个面试官。</p>
+<h2 id="微信二面_collabedit+电话">微信二面_collabedit+电话</h2><p>第二天微信二面如约来了, 面试官很好。提前打电话问我有没有时间, 我表示想午睡一会, 一个小时后开始。他答应了。</p>
+<p>然后一个小时后, 另外一个面试官打电话来了, 要我登录 <a href="http://collabedit.com/xxxx" target="_blank" rel="external">http://collabedit.com/xxxx</a> 答题。</p>
+<p>collabedit可以在线共享。 就是说, 我这里敲什么, 面试官那里就能同步显示。 主要是考核编码能力。</p>
+<p>主要是两个算法题, 第一道要求写出完整代码, 第二道思路交流。</p>
+<ol>
+<li>求两个整数的最大公约数</li>
+<li>微信用户都是双向的好友，a是b的好友，那么b一定是a的。给定一个用户列表，有些用户是好友，有些不是，请判断，这些用户是否可以划分为两组，每组内的用 户，互相都不是好友。如果能，请给出这个划分。</li>
+</ol>
+<p>完了之后, 面试官问了我实习时间, 然后问我对深圳和广州的看法(因为我第一志愿填的是深圳, 微信本部在广州), 问我愿意去广州吗。 之后就表示他这里也通过了。 这一两天给我约HR。</p>
+<h2 id="微信HR面_电话">微信HR面_电话</h2><p>果然, 两天后, 微信HR来电话了。</p>
+<p>和她聊天很轻松, 从头到尾都是喊我’龙泽 .. 龙泽’, 感觉很亲切。 主要也是围绕职业规划等展开。</p>
+<p>然后最后就问我, 是否愿意来微信实习, 如果愿意, 马上就给我offer, 如果还犹豫, 考虑清楚再联系她。</p>
+<p>当然, 我表示愿意。 然后hr留了微信号, 说安排同事给我发确认函。</p>
+<p>当天晚上, 另外一个人力资源的妹子打电话, 和我讨论薪资等问题..</p>
+<p>总的来说, 微信从一面, 到最后确定下来, 就经历了4天。 非常效率。 中间也很愉快。</p>
+<p>说来也巧, 网易和微信是同时发来来的offer。网易电话刚放下没多久, 微信hr就来电话了。所以当时两边是先都允诺能去实习了，毕竟时间太紧, 还没考虑好。</p>
+<p>之后还是因为个人原因, 选择了微信, 所以当天下午就打电话给网易, 告知了他们。多少也有些遗憾, 毕竟网易也是我很向往的一家公司。</p>
+<p>好了。 到此, 这段时间的面试总结就写好了。下面就我个人来说, 提几点建议:</p>
+<ol>
+<li>基础。 不管是哪个方向, 基础很重要。就比如iOS, objc的方方面面都必须了解。</li>
+<li>全面。 有些东西, 虽然不见得能答好, 但你至少应该懂。</li>
+<li>设计模式。 主流的那些设计模式非常有必要了解。</li>
+<li>算法。 这个不是说恶补能补好的。建议大家长期积累。 另外推荐&lt;剑指offer&gt;这本书。同时, 可以在这里线上答题: <a href="http://www.nowcoder.com/books/coding-interviews" target="_blank" rel="external">牛客网-剑指offer</a></li>
+<li>简历一定要真实! 基本上面试官都是围绕简历展开交流的。 懂或不懂, 一问就知道, 没必要搬起石头砸自己的脚</li>
+<li>提前准备。 比如自我介绍, 项目介绍, 职业规划等等。基本都是必问的题目，能提前准备就提前准备好。</li>
+<li>开源, 分享, 积累。 我一直认为, 分享和开源是程序员进步的不二法门。 我建议每个程序员都应该有自己的Github, 有自己的博客。就这几次面试来说, 博客和Github帮了我多。 网易面试官直言, 他们认真看过我的Github, 微信HR问我要CSDN博客ID, 说她很感兴趣。帮助别人, 也是帮助自己。</li>
+<li>沟通。 有时候一个问题, 可能不懂, 甚至题目都不理解。不要害怕, 主动与面试官沟通。 我在网易面试的时候, 关于全拼算法的实现, 我当时连全拼都没一个完整的概念, 它要满足哪些条件更加不清楚。我跟面试官坦诚我不懂这个概念, 与他们的一步步沟通中实现了自己的算法。 所以沟通, 远比闷头写, 到头来还可能错误来的实在。</li>
+<li>自信。 能得到面试机会, 最起码证明, 你很优秀。 我觉得自信很重要。 如果一开始, 就表现的慌慌张张, 畏首畏尾, 那么不管是你自己的发挥, 还是面试官对你的看法, 我觉得都不会很好。 </li>
+</ol>
+<p>敲了一下午.. 真累。</p>
+<p><code>希望和我一样大三找实习的朋友, 都能拿到自己心仪的offer!</code></p>
+<p><strong>学习的路上, 与君共勉。</strong></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/07/12/TODO宏实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          TODO宏实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/07/11/正则表达式/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">正则表达式</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="面试总结" data-title="阿里, 网易, 腾讯" data-url="http://yoursite.com/2015/07/11/面试总结/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"colin1994"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 Colin丶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

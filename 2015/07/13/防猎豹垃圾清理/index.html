@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>防猎豹垃圾清理 | Colin&#39;s Nest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="防猎豹垃圾清理
+前几天无意打开猎豹内存大师, 发现它的垃圾清理很强大, 效果也不错, 闲着就研究了下。 不过.. 结果貌似和我想象的不太一样。怎么说呢, 听我下文一一分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="防猎豹垃圾清理">
+<meta property="og:url" content="http://yoursite.com/2015/07/13/防猎豹垃圾清理/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="防猎豹垃圾清理
+前几天无意打开猎豹内存大师, 发现它的垃圾清理很强大, 效果也不错, 闲着就研究了下。 不过.. 结果貌似和我想象的不太一样。怎么说呢, 听我下文一一分析。">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/imageliebao_0.PNG">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/imageliebao_1.PNG">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201505/28/1432801698_3530.gif">
+<meta property="og:updated_time" content="2015-07-13T07:27:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="防猎豹垃圾清理">
+<meta name="twitter:description" content="防猎豹垃圾清理
+前几天无意打开猎豹内存大师, 发现它的垃圾清理很强大, 效果也不错, 闲着就研究了下。 不过.. 结果貌似和我想象的不太一样。怎么说呢, 听我下文一一分析。">
+  
+  
+    <link rel="icon" href="http://7xkc7a.com1.z0.glb.clouddn.com/author.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Colin丶</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/projects">项目</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+					        
+								<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 10px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.onevcat.com/">OneV&#39;s Den</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.devtang.com/">唐巧的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.sunnyxx.com/archives/">sunnyxx的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://objccn.io/">objc中国</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://www.bignerdranch.com/blog/">Big Nerd Ranch</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://nshipster.com/">NSHipster</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是余龙泽(@Colin__丶), 就读于哈尔滨工业大学, 软件工程专业, 目前大三。在iOS学习道路上不断努力中。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Colin丶</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Colin丶</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/projects">项目</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+			        
+						<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="iOS开发小记-防猎豹垃圾清理" class="article article-type-iOS开发小记" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/07/13/防猎豹垃圾清理/" class="article-date">
+  	<time datetime="2015-07-13T02:14:52.000Z" itemprop="datePublished">Jul 13 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      防猎豹垃圾清理
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/教程/">教程</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="防猎豹垃圾清理">防猎豹垃圾清理</h1><blockquote>
+<p>前几天无意打开猎豹内存大师, 发现它的垃圾清理很强大, 效果也不错, 闲着就研究了下。 不过.. 结果貌似和我想象的不太一样。怎么说呢, 听我下文一一分析。</p>
+</blockquote>
+<a id="more"></a>
+<p>效果图:<br><img src="http://7xkc7a.com1.z0.glb.clouddn.com/imageliebao_0.PNG"><br><img src="http://7xkc7a.com1.z0.glb.clouddn.com/imageliebao_1.PNG"></p>
+<p>从效果图, 我们可以看出它有以下几个功能:</p>
+<ol>
+<li>获取设备上已安装的所有App</li>
+<li>获取App的信息, 包括图标和名称</li>
+<li>获取当前已用存储和可用存储</li>
+<li>扫描App动画效果</li>
+<li>清除所有App垃圾文件</li>
+</ol>
+<p>看到这里, 你是不是也觉得很强大?</p>
+<p>然后然后, 感叹的同时, 我有几点疑惑。</p>
+<ol>
+<li>获取到所有已安装的App, 这个功能能通过审核?(我是去年在App Store上下载的这个App)</li>
+<li>App的图标如何获取到的? (因为扫描到的App包括我自己没上架的demo, icon只能是本地获取, 从其他App沙盒拿？)</li>
+<li>垃圾清理过程, 为什么会出现“存储容量已满”这个提示？ 明明是清理垃圾, 中途还会出现存储满的情况?</li>
+</ol>
+<p>困惑, 不解..~ 于是乎, 折腾呗。 花了两天时间。写了个小demo。</p>
+<p>效果如下:</p>
+<p><img src="http://img.my.csdn.net/uploads/201505/28/1432801698_3530.gif" width="400"></p>
+<p>接下去, 我会介绍以下各个功能的实现过程, 包括:</p>
+<ol>
+<li>获取设备已安装App列表已经App信息</li>
+<li>扫描动画的实现</li>
+<li>获取已用存储和可用存储</li>
+<li>垃圾清理</li>
+</ol>
+<p>不过, 分析之前, 说明以下, 该功能不能够上传到App Store上! 也就是说, 它通不过审核的。原因有二:</p>
+<ol>
+<li>使用了私有API</li>
+<li>苹果不允许App有处理内存相关功能</li>
+</ol>
+<p>至于猎豹内存大师这个App、它也早已经被下架了。我怀疑它利用混淆代码通过的审核。至于功能的实现, 我觉得和猎豹的实现思路应该是一样的。</p>
+<p>至此, 如果你还对这篇文章感兴趣, 欢迎继续往下阅读。</p>
+<p>本文参考源码: <a href="http://download.csdn.net/detail/hitwhylz/8748739" target="_blank" rel="external">CSDN下载_防猎豹垃圾清理</a></p>
+<hr>
+<h2 id="获取设备已安装App列表已经App信息">获取设备已安装App列表已经App信息</h2><h3 id="不越狱,_非私有API">不越狱, 非私有API</h3><p>没有越狱的设备，官方没有提供api，所以只能用一些技巧，但是获取内容不全。</p>
+<p>这里主要有两种办法:</p>
+<blockquote>
+<p>方法一：利用URL scheme，看对于某一应用特有的url scheme，有没有响应。如果有响应，就说明安装了这个特定的app。</p>
+</blockquote>
+<p>说实在.. 这个办法比较傻。 App Store几百万的App, 如何枚举的过来? 并且, 也无法扫描到自己的demo。 不过, 还真有人这么干..<br>这是对应的demo, 感兴趣可以看看。 <a href="https://github.com/danielamitay/iHasApp" target="_blank" rel="external">iHasApp</a></p>
+<p><a href="http://developer.apple.com/library/ios/#featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html" target="_blank" rel="external">官方教程: iPhoneURLScheme_Reference</a></p>
+<blockquote>
+<p>方法二：利用一些方法获得当前正在运行的进程信息，从进程信息中获得安装的app信息。</p>
+</blockquote>
+<p><a href="http://forrst.com/posts/UIDevice_Category_For_Processes-h1H" target="_blank" rel="external">参考: UIDevice_Category_For_Processes</a></p>
+<p>总的来说, 不越狱, 非私有API, 想获得完整列表, 基本没什么可能。</p>
+<h3 id="不越狱,_私有API。">不越狱, 私有API。</h3><p>这里就是我demo所采用的办法, 比较简单。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#include <span class="title">&lt;objc/runtime.h&gt;</span></span></span><br><span class="line">  </span><br><span class="line">Class LSApplicationWorkspace_class = objc_getClass(<span class="string">"LSApplicationWorkspace"</span>);  </span><br><span class="line"><span class="built_in">NSObject</span>* workspace = [LSApplicationWorkspace_class performSelector:<span class="keyword">@selector</span>(defaultWorkspace)];  </span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"apps: %@"</span>, [workspace performSelector:<span class="keyword">@selector</span>(allApplications)]);</span><br></pre></td></tr></table></figure>
+<p><strong>返回结果</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="string">"LSApplicationProxy: com.qunar.iphoneclient8"</span>,</span><br><span class="line">   <span class="string">"LSApplicationProxy: com.apple.mobilemail"</span>,</span><br><span class="line">   <span class="string">"LSApplicationProxy: com.apple.mobilenotes"</span>,</span><br><span class="line">   <span class="string">"LSApplicationProxy: com.apple.compass"</span>,</span><br><span class="line">   <span class="string">"LSApplicationProxy: com.tencent.happymj"</span>,</span><br><span class="line">   <span class="string">"LSApplicationProxy: com.apple.mobilesafari"</span>,</span><br><span class="line">   <span class="string">"LSApplicationProxy: com.apple.reminders"</span></span><br></pre></td></tr></table></figure>
+<p>返回的是个数据, 每个元素都是<code>LSApplicationProxy</code>.它的description只返回了 它的bundle id。然而这并不是我们想要的。</p>
+<p>接下去我们看<br><a href="https://searchcode.com/codesearch/view/15673930/" target="_blank" rel="external">LSApplicationProxy.h</a></p>
+<p>形如:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@class</span> <span class="title">LSApplicationProxy</span>, <span class="title">NSArray</span>, <span class="title">NSDictionary</span>, <span class="title">NSProgress</span>, <span class="title">NSString</span>, <span class="title">NSURL</span>, <span class="title">NSUUID</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">LSApplicationProxy</span> : <span class="title">LSResourceProxy</span> &lt;<span class="title">NSSecureCoding</span>&gt; </span>&#123;</span><br><span class="line">    <span class="built_in">NSArray</span> *_<span class="built_in">UIBackgroundModes</span>;</span><br><span class="line">    <span class="built_in">NSString</span> *_applicationType;</span><br><span class="line">    <span class="built_in">NSArray</span> *_audioComponents;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> _bundleFlags;</span><br><span class="line">    <span class="built_in">NSURL</span> *_bundleURL;</span><br><span class="line">    <span class="built_in">NSString</span> *_bundleVersion;</span><br><span class="line">    <span class="built_in">NSArray</span> *_directionsModes;</span><br><span class="line">    <span class="built_in">NSDictionary</span> *_entitlements;</span><br><span class="line">    <span class="built_in">NSDictionary</span> *_envi</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+<p>这里列举了<code>LSApplicationProxy</code>对应的属性和方法。</p>
+<p>我们可以用如下代码, 打印下每个属性的值, 找出我们想要的。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>、<span class="comment">/* 获取对象的所有属性 以及属性值 */</span></span><br><span class="line">- (<span class="built_in">NSDictionary</span> *)properties_aps</span><br><span class="line">&#123;</span><br><span class="line">   <span class="built_in">NSMutableDictionary</span> *props = [<span class="built_in">NSMutableDictionary</span> dictionary];   </span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> outCount, i;   </span><br><span class="line">   objc_property_t *properties = class_copyPropertyList([<span class="keyword">self</span> class], &amp;outCount);   </span><br><span class="line">   <span class="keyword">for</span> (i = <span class="number">0</span>; i&lt;outCount; i++)</span><br><span class="line">    &#123;</span><br><span class="line">       objc_property_t property = properties[i];</span><br><span class="line">       <span class="keyword">const</span> <span class="keyword">char</span>* char_f =property_getName(property);</span><br><span class="line">       <span class="built_in">NSString</span> *propertyName = [<span class="built_in">NSString</span> stringWithUTF8String:char_f];</span><br><span class="line">       <span class="keyword">id</span> propertyValue = [<span class="keyword">self</span> valueForKey:(<span class="built_in">NSString</span> *)propertyName];   </span><br><span class="line">       <span class="keyword">if</span> (propertyValue) [props setObject:propertyValue forKey:propertyName];   </span><br><span class="line">    &#125;   </span><br><span class="line">   free(properties);   </span><br><span class="line">   <span class="keyword">return</span> props;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考: <a href="http://blog.csdn.net/crazychickone/article/details/36413671" target="_blank" rel="external">IOS 遍历未知对象的属性和方法</a></p>
+<p>然后我们提取出我们需要的, 图标和应用名。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[appsInfoArr enumerateObjectsUsingBlock:^(<span class="keyword">id</span> obj, <span class="built_in">NSUInteger</span> idx, <span class="built_in">BOOL</span> *stop)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">NSDictionary</span> *boundIconsDictionary = [obj performSelector:<span class="keyword">@selector</span>(boundIconsDictionary)];</span><br><span class="line">            </span><br><span class="line">            <span class="built_in">NSString</span> *iconPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/%@.png"</span>, [[obj performSelector:<span class="keyword">@selector</span>(resourcesDirectoryURL)] path], [[[boundIconsDictionary objectForKey:<span class="string">@"CFBundlePrimaryIcon"</span>] objectForKey:<span class="string">@"CFBundleIconFiles"</span>]lastObject]];</span><br><span class="line">            </span><br><span class="line">             <span class="built_in">UIImage</span> *image = [[[<span class="built_in">UIImage</span> alloc]initWithContentsOfFile:iconPath] TransformtoSize:<span class="built_in">CGSizeMake</span>(<span class="number">65</span>, <span class="number">65</span>)];</span><br><span class="line">            <span class="keyword">if</span> (image)</span><br><span class="line">            &#123;</span><br><span class="line">                [<span class="keyword">self</span><span class="variable">.appsIconArr</span> addObject:image];</span><br><span class="line">                [<span class="keyword">self</span><span class="variable">.appsNameArr</span> addObject:[obj performSelector:<span class="keyword">@selector</span>(localizedName)]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;];</span><br></pre></td></tr></table></figure>
+<p>如此, <code>_self.appsIconArr</code> 和 <code>_appsNameArr</code>中存储的就是我们需要的App数据了。</p>
+<h3 id="越狱">越狱</h3><p>.. 这里我也不懂, 也没去研究。 感兴趣的可以看看 <code>MobileInstallation.framework</code></p>
+<hr>
+<h2 id="扫描动画的实现">扫描动画的实现</h2><p>这里主要有两个动画。</p>
+<ol>
+<li>利用UIScrollView, 实现每个App自动滚动。</li>
+<li>Animation动画, 中间扫描线的往返运动。</li>
+</ol>
+<p>至于动画, 这里我不想介绍太多。 源码里面都写清楚了。(当然, 写的比较粗糙…)</p>
+<p>简单带一下扫描线的动画实现:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 向左移动 */</span></span><br><span class="line">    <span class="built_in">CABasicAnimation</span> *animationLeft = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@"transform.translation.x"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 动画选项的设定</span></span><br><span class="line">    animationLeft<span class="variable">.duration</span> = <span class="number">0.5</span>f; <span class="comment">// 持续时间</span></span><br><span class="line">    animationLeft<span class="variable">.beginTime</span> = <span class="number">0.0</span>f;</span><br><span class="line">    animationLeft<span class="variable">.autoreverses</span> = <span class="literal">YES</span>; <span class="comment">// 结束后执行逆动画</span></span><br><span class="line">    <span class="comment">// 动画先加速后减速</span></span><br><span class="line">    animationLeft<span class="variable">.timingFunction</span> =</span><br><span class="line">    [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseInEaseOut</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终了帧</span></span><br><span class="line">    animationLeft<span class="variable">.toValue</span> = [<span class="built_in">NSNumber</span> numberWithFloat:-<span class="number">40</span>];;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 向右移动 */</span></span><br><span class="line">    <span class="built_in">CABasicAnimation</span> *animationRight = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@"transform.translation.x"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 动画选项的设定</span></span><br><span class="line">    animationRight<span class="variable">.duration</span> = <span class="number">0.5</span>f; <span class="comment">// 持续时间</span></span><br><span class="line">    animationRight<span class="variable">.beginTime</span> = <span class="number">1.0</span>f;</span><br><span class="line">    animationRight<span class="variable">.autoreverses</span> = <span class="literal">YES</span>; <span class="comment">// 结束后执行逆动画</span></span><br><span class="line">    <span class="comment">// 动画先加速后减速</span></span><br><span class="line">    animationRight<span class="variable">.timingFunction</span> =</span><br><span class="line">    [<span class="built_in">CAMediaTimingFunction</span> functionWithName: k<span class="built_in">CAMediaTimingFunctionEaseInEaseOut</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 终了帧</span></span><br><span class="line">    animationRight<span class="variable">.toValue</span> = [<span class="built_in">NSNumber</span> numberWithFloat:<span class="number">40</span>];;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">/* 动画组 */</span></span><br><span class="line">    <span class="built_in">CAAnimationGroup</span> *group = [<span class="built_in">CAAnimationGroup</span> animation];</span><br><span class="line">    group<span class="variable">.delegate</span> = <span class="keyword">self</span>;</span><br><span class="line">    group<span class="variable">.duration</span> = <span class="number">2.0</span>;</span><br><span class="line">    group<span class="variable">.repeatCount</span> = <span class="number">15</span>;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 动画结束后不变回初始状态</span></span><br><span class="line">    group<span class="variable">.removedOnCompletion</span> = <span class="literal">NO</span>;</span><br><span class="line">    group<span class="variable">.fillMode</span> = k<span class="built_in">CAFillModeForwards</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加动画</span></span><br><span class="line">    group<span class="variable">.animations</span> = [<span class="built_in">NSArray</span> arrayWithObjects:animationLeft, animationRight, <span class="literal">nil</span>];</span><br><span class="line">    [mySL<span class="variable">.layer</span> addAnimation:group forKey:<span class="string">@"moveLeft-moveRight-layer"</span>];</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="获取已用存储和可用存储">获取已用存储和可用存储</h2><p>这个没什么好说的了.. Apple提供了API, 直接用就是了。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取占用内存</span></span><br><span class="line">-(<span class="keyword">void</span>)usedSpaceAndfreeSpace</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSString</span>* path = [<span class="built_in">NSSearchPathForDirectoriesInDomains</span>(<span class="built_in">NSDocumentDirectory</span>, <span class="built_in">NSUserDomainMask</span>, <span class="literal">YES</span>) objectAtIndex:<span class="number">0</span>] ;</span><br><span class="line">    <span class="built_in">NSFileManager</span>* fileManager = [[<span class="built_in">NSFileManager</span> alloc ]init];</span><br><span class="line">    <span class="built_in">NSDictionary</span> *fileSysAttributes = [fileManager attributesOfFileSystemForPath:path error:<span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSNumber</span> *freeSpace = [fileSysAttributes objectForKey:<span class="built_in">NSFileSystemFreeSize</span>];</span><br><span class="line">    <span class="built_in">NSNumber</span> *totalSpace = [fileSysAttributes objectForKey:<span class="built_in">NSFileSystemSize</span>];</span><br><span class="line">    <span class="built_in">NSString</span>  * str= [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"已占用%0.1f G / 剩余%0.1f MB"</span>,([totalSpace longLongValue] - [freeSpace longLongValue])/<span class="number">1024.0</span>/<span class="number">1024.0</span>/<span class="number">1024.0</span>,[freeSpace longLongValue]/<span class="number">1024.0</span>/<span class="number">1024.0</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"--------%@"</span>,str);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="垃圾清理">垃圾清理</h2><p>这里我本来是不想提的，毕竟这个功能，苹果是不能接受的。</p>
+<p>之前提到了, 猎豹在清理过程中, 会出现“存储已满的提示”。然后我开始考虑了。</p>
+<ol>
+<li>为什么要弹出提示？</li>
+<li>存储真的在某一刻满了吗？</li>
+<li>它清理的时候, QQ直接被杀死, 应用名变成”正在清理…”（和安装中一个状态）。 真有这么厉害? !!!!!!</li>
+<li>这个好像在哪里见过…</li>
+</ol>
+<p>最后, 我确定了猎豹的实现方式。它只不过是触发了Apple自己的垃圾回收机制而已。</p>
+<p>当存储满的时候, 系统会自动帮我们进行垃圾清理, 并弹出提示说明存储已满。</p>
+<p>所以, 猎豹只不过是计算了剩余多少存储, 然后制造了一个与之差不多大小的垃圾文件。 然后触发苹果的清理机制。清理完后, 删除之前生成的垃圾文件。再次统计当前可用存储, 差值即为本次清理的垃圾大小。 </p>
+<p>是吧, 其实也没那么神~</p>
+<p>至于如何快速制造几百M, 甚至几G的垃圾文件? </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将文件的长度设定为offset </span></span><br><span class="line"> -(<span class="keyword">void</span>)truncateFileAtOffset:offset</span><br></pre></td></tr></table></figure>
+<p><code>truncateFileAtOffset:offset</code>就能搞定了。 感兴趣的可以自己研究下。</p>
+<hr>
+<p>至此, 猎豹垃圾清理分析完毕。</p>
+<p>当然, 这只是我个人的看法。如果有更好的方式, 或者文章中存在任何错误。 欢迎交流指正。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/07/12/TODO宏实现/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">TODO宏实现</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="防猎豹垃圾清理" data-title="防猎豹垃圾清理" data-url="http://yoursite.com/2015/07/13/防猎豹垃圾清理/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"colin1994"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 Colin丶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

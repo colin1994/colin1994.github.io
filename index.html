@@ -112,7 +112,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/iOS开发/" style="font-size: 10px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a>
+						<a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 10px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
 					</div>
 				</section>
 				
@@ -194,10 +194,10 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="代码备忘,-TODO宏实现" class="article article-type-代码备忘," itemscope itemprop="blogPost">
+    <article id="iOS开发小记-防猎豹垃圾清理" class="article article-type-iOS开发小记" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/07/13/TODO宏实现/" class="article-date">
+      <a href="/2015/07/13/防猎豹垃圾清理/" class="article-date">
   	<time datetime="2015-07-13T02:14:52.000Z" itemprop="datePublished">Jul 13 2015</time>
 </a>
     </div>
@@ -211,7 +211,67 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2015/07/13/TODO宏实现/">TODO宏实现</a>
+      <a class="article-title" href="/2015/07/13/防猎豹垃圾清理/">防猎豹垃圾清理</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="防猎豹垃圾清理">防猎豹垃圾清理</h1><blockquote>
+<p>前几天无意打开猎豹内存大师, 发现它的垃圾清理很强大, 效果也不错, 闲着就研究了下。 不过.. 结果貌似和我想象的不太一样。怎么说呢, 听我下文一一分析。</p>
+</blockquote>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/教程/">教程</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/07/13/防猎豹垃圾清理/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="代码备忘-TODO宏实现" class="article article-type-代码备忘" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/07/12/TODO宏实现/" class="article-date">
+  	<time datetime="2015-07-12T02:14:52.000Z" itemprop="datePublished">Jul 12 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/07/12/TODO宏实现/">TODO宏实现</a>
     </h1>
   
 
@@ -224,50 +284,7 @@
 <p>我们平时在开发过程中, 往往并不是憋足气一股脑敲完全部代码。每个模块, 每个函数的实现总有个先后顺序。又或者哪个部分需要做调整, 修改… 所以, 我们需要有一个东西, 来提醒我们, 起到代码备忘功能, 避免某个功能忘记实现, 也能让我们快速定位。 所以这篇文章, 就是要实现一个TODO宏, 来达到代码备忘功能。</p>
 </blockquote>
 <p><strong>效果如下:</strong></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387345_9339.jpeg" width="500"><br><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_3643.jpeg" width="500"></p>
-<h2 id="下面来分析下如何实现这个宏"><strong>下面来分析下如何实现这个宏</strong></h2><hr>
-<p>在实现TODO之前, 已经自带了几个预处理指令来实现报警/报错:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#warning Colin</span></span><br><span class="line"><span class="preprocessor">#error Colin</span></span><br><span class="line"><span class="preprocessor">#pragma message <span class="title">"Colin"</span></span></span><br><span class="line"><span class="preprocessor">#pragma GCC warning <span class="title">"Colin"</span></span></span><br><span class="line"><span class="preprocessor">#pragma GCC error <span class="title">"Colin"</span></span></span><br></pre></td></tr></table></figure>
-<p><strong>效果如下:</strong></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_8391.jpeg" width="500"></p>
-<p>既然有了, 那为什么还需要自己实现这个TODO宏呢?</p>
-<ol>
-<li>error 和 warning所代表的意义已经深入猿心, 我们没有理由使用它来做备忘。</li>
-<li>如果也使用warning, 在警告导航栏中, 我们很难区分哪个才是我们手动打的标记, 哪个是程序本身的warning</li>
-<li>带#的预处理指令是无法被#define的, 也就是没办法直接利用这个来定义我们的TODO</li>
-</ol>
-<p>好在C99提供了一个 <strong>_Pragma</strong> 运算符可以把部分#pragma指令字符串化, 如下:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#pragma message <span class="title">"Colin"</span></span></span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line">_Pragma(<span class="string">"message \"Colin\""</span>) <span class="comment">// 需要注意双引号的转义</span></span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">_Pragma(<span class="string">"message(\"Colin\")"</span>) <span class="comment">// 需要注意双引号的转义</span></span><br></pre></td></tr></table></figure>
-<p>利用这个特性，我们就可以将warning定义成宏:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define MY_WARNING _Pragma(&#34;message (\&#34;&#35686;&#23519;&#20020;&#26816;, &#30007;&#24038;&#22899;&#21491;!\&#34;)&#34;)&#10;&#10;&#10;- (void)viewDidLoad &#123;&#10;    [super viewDidLoad];&#10;    // Do any additional setup after loading the view, typically from a nib.&#10;    &#10;    MY_WARNING&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>效果如下:</strong></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_6563.jpeg" width="500"></p>
-<p>到这里, 大体有那么一个感觉。 不过我们提示的内容, 是define的, 也就是写死固定的, 不太合适。</p>
-<p>所以我们希望这个宏能接受入参, 让它正常显示到warning中。</p>
-<p>这就涉及了一些宏的基本用法。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define STRINGIFY(S) #S&#10;#define PRAGMA_MESSAGE(MSG) _Pragma(STRINGIFY(message(MSG)))</span><br></pre></td></tr></table></figure>
-<p>STRINGIFY(S) 将入参转化成字符串，省去了_Pragma中全串加转义字符的困扰。</p>
-<p><strong>效果如下:</strong></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387347_2653.jpeg" width="500"></p>
-<p>这时，一个基本功能的TODO宏就完成了，下面向其中加入额外的信息：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#20004;&#20010;&#24050;&#26377;&#30340;&#23439;&#10;#define STRINGIFY(S) #S&#10;#define PRAGMA_MESSAGE(MSG) _Pragma(STRINGIFY(message(MSG)))&#10;// &#24310;&#36831;1&#27425;&#23637;&#24320;&#30340;&#23439;&#10;#define DEFER_STRINGIFY(S) STRINGIFY(S)&#10;// &#19979;&#38754;&#30340;&#23439;&#22312;&#31532;&#19968;&#34892;&#29992;`\`&#25240;&#34892;&#10;#define FORMATTED_MESSAGE(MSG) &#34;[TODO-&#34; DEFER_STRINGIFY(__COUNTER__) &#34;] &#34; MSG &#34; \n&#34;  \&#10;    DEFER_STRINGIFY(__FILE__) &#34; line &#34; DEFER_STRINGIFY(__LINE__)</span><br></pre></td></tr></table></figure>
-<p>其中涉及到的知识：</p>
-<ul>
-<li>两个常量字符串可以拼接成一个整串 “123””456” =&gt; “123456”</li>
-<li>使用到3个预定义宏，<strong>COUNTER</strong>宏展开次数的计数器，全局唯一；<strong>FILE</strong>当前文件完整目录字符串；<strong>LINE</strong>在当前文件第几行</li>
-<li>在字符串中预定义宏应延时展开，如果将上面的DEFER<em>STRINGIFY换成STRINGIFY的话，如<strong>LINE</strong>不能被正确展开成行数，而是成了一个常量字符串”<em>_LINE</em></em>“</li>
-<li>为了美化，warning message中可以使用\n换行</li>
-</ul>
-<p>于是，使用FORMATTED_MESSAGE(MSG)宏就可以将带文件路径、序号、行数等信息加入到最终的warning中。</p>
-<hr>
-<p>其实到这步已经OK了，为了让这个宏更加抢眼，还可以借鉴RAC，把宏定义成前面加@的形式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#define KEYWORDIFY try &#123;&#125; @catch (...) &#123;&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="最终版本"><strong>最终版本</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;// &#36716;&#25104;&#23383;&#31526;&#20018;&#10;#define STRINGIFY(S) #S&#10;// &#38656;&#35201;&#35299;&#20004;&#27425;&#25165;&#35299;&#24320;&#30340;&#23439;&#10;#define DEFER_STRINGIFY(S) STRINGIFY(S)&#10;&#10;#define PRAGMA_MESSAGE(MSG) _Pragma(STRINGIFY(message(MSG)))&#10;&#10;// &#20026;warning&#22686;&#21152;&#26356;&#22810;&#20449;&#24687;&#10;#define FORMATTED_MESSAGE(MSG) &#34;[TODO-&#34; DEFER_STRINGIFY(__COUNTER__) &#34;] &#34; MSG &#34; \n&#34; DEFER_STRINGIFY(__FILE__) &#34; line &#34; DEFER_STRINGIFY(__LINE__)&#10;&#10;// &#20351;&#23439;&#21069;&#38754;&#21487;&#20197;&#21152;@&#10;#define KEYWORDIFY try &#123;&#125; @catch (...) &#123;&#125;&#10;&#10;// &#26368;&#32456;&#20351;&#29992;&#30340;&#23439;&#10;#define TODO(MSG) KEYWORDIFY PRAGMA_MESSAGE(FORMATTED_MESSAGE(MSG))</span><br></pre></td></tr></table></figure>
-<h1 id="References">References</h1><p><a href="http://blog.sunnyxx.com/2015/03/01/todo-macro/" target="_blank" rel="external">http://blog.sunnyxx.com/2015/03/01/todo-macro/</a></p>
-<p><a href="http://clang.llvm.org/docs/UsersManual.html" target="_blank" rel="external">http://clang.llvm.org/docs/UsersManual.html</a></p>
-<p><a href="https://gcc.gnu.org/onlinedocs/cpp/Pragmas.html" target="_blank" rel="external">https://gcc.gnu.org/onlinedocs/cpp/Pragmas.html</a></p>
-
+<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387345_9339.jpeg" width="500"/><br><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_3643.jpeg" width="500"/></p>
       
     </div>
     
@@ -280,6 +297,145 @@
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2015/07/12/TODO宏实现/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="面试总结-面试总结" class="article article-type-面试总结" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/07/11/面试总结/" class="article-date">
+  	<time datetime="2015-07-11T02:14:52.000Z" itemprop="datePublished">Jul 11 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/07/11/面试总结/">阿里, 网易, 腾讯</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="一个多月来的面试总结(阿里,_网易,_腾讯)">一个多月来的面试总结(阿里, 网易, 腾讯)</h1><blockquote>
+<p>想必关注我的朋友都发现了, 最近我发表原创文章的数量和质量大大不如以前了, 也不怎么活跃了。主要原因是现在大三了, 7月份就能离校实习了, 所以前段时间也在为找实习忙碌着。接下去应该就能恢复正常, 继续为大家分享一些iOS开发上的小技巧, 毕竟, 也算拿到了心仪的offer。</p>
+</blockquote>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面试/">面试</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/07/11/面试总结/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="iOS开发小记-正则表达式" class="article article-type-iOS开发小记" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/07/11/正则表达式/" class="article-date">
+  	<time datetime="2015-07-11T02:14:52.000Z" itemprop="datePublished">Jul 11 2015</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/07/11/正则表达式/">正则表达式</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="iOS_正则表达式">iOS 正则表达式</h1><blockquote>
+<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
+</blockquote>
+<ol>
+<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
+<li><a href="http://regexkit.sourceforge.net/RegexKitLite/">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
+</ol>
+<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
+<blockquote>
+<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
+</blockquote>
+<p>正则表达式学习链接：</p>
+<ol>
+<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html">55分钟学会正则表达式</a></li>
+<li><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></li>
+<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5">RegExLib.com(正则表达式库查询)</a></li>
+</ol>
+<hr>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/正则/">正则</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/07/11/正则表达式/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
