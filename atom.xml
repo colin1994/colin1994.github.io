@@ -202,6 +202,166 @@
   </entry>
   
   <entry>
+    <title><![CDATA[正则表达式]]></title>
+    <link href="http://yoursite.com/2015/07/11/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    <id>http://yoursite.com/2015/07/11/正则表达式/</id>
+    <published>2015-07-11T02:14:52.000Z</published>
+    <updated>2015-07-13T07:27:35.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="iOS_正则表达式">iOS 正则表达式</h1><blockquote>
+<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
+</blockquote>
+<ol>
+<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
+<li><a href="http://regexkit.sourceforge.net/RegexKitLite/" target="_blank" rel="external">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
+</ol>
+<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
+<blockquote>
+<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
+</blockquote>
+<p>正则表达式学习链接：</p>
+<ol>
+<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html" target="_blank" rel="external">55分钟学会正则表达式</a></li>
+<li><a href="http://www.regexlab.com/zh/regref.htm" target="_blank" rel="external">揭开正则表达式的神秘面纱</a></li>
+<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5" target="_blank" rel="external">RegExLib.com(正则表达式库查询)</a></li>
+</ol>
+<hr>
+<a id="more"></a>
+<h2 id="1-_NSPredicate">1. NSPredicate</h2><blockquote>
+<p>简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:(<span class="built_in">NSString</span> *), ...];</span><br></pre></td></tr></table></figure>
+<p>其中, 常见的<code>Format</code>有:</p>
+<p>(1) 比较运算符: &gt;, &lt;, ==, &gt;=, &lt;=, !=</p>
+<pre><code>例：@<span class="string">"number &gt; 100"</span>
+</code></pre><p>(2) 范围运算符: IN, BETWEEN</p>
+<pre><code>例：@<span class="string">"number BETWEEN {1,5}"</span>
+   @<span class="string">"address IN {'</span><span class="transposed_variable">shanghai'</span>,<span class="string">'beijing'</span>}<span class="string">"</span>
+</code></pre><p>(3) 字符串本身: SELF </p>
+<pre><code>例：@“SELF == ‘APPLE’<span class="string">"</span>
+</code></pre><p>(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS</p>
+<pre><code>例：@<span class="string">"name CONTAINS[cd] 'ang'"</span>  <span class="comment">//包含某个字符串</span>
+   @<span class="string">"name BEGINSWITH[c] 'sh'"</span>  <span class="comment">//以某个字符串开头</span>
+   @<span class="string">"name ENDSWITH[d] 'ang'"</span>   <span class="comment">//以某个字符串结束</span>
+
+注:[c]不区分大小写
+   [<span class="keyword">d</span>]不区分发音符号即没有重音符号
+   [<span class="keyword">cd</span>]既不区分大小写，也不区分发音符号。
+</code></pre><p>(5) 通配符: LIKE</p>
+<pre><code>例：@<span class="string">"name LIKE[cd] '</span>*er*<span class="string">'"</span>    <span class="comment">//*代表通配符,Like也接受[cd].</span>
+   @<span class="string">"name LIKE[cd] '</span>???er*<span class="string">'"</span>
+</code></pre><p>(6) 正则表达式: MATCHES</p>
+<pre><code>例：NSString <span class="variable">*regex</span> = <span class="variable">@"</span>^A.+e<span class="variable">$"</span>;   <span class="comment">//以A开头，e结尾</span>
+  <span class="variable">@"</span>name MATCHES <span class="variable">%@</span><span class="string">",regex</span>
+</code></pre><p>至于如何使用呢? 下面举几个例子:</p>
+<p>(a) 对NSArray进行过滤, 帅选出包含”ang”的项</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSArray</span> *array = [[<span class="built_in">NSArray</span> alloc]initWithObjects:<span class="string">@"beijing"</span>, <span class="string">@"shanghai"</span>, <span class="string">@"guangzou"</span>, <span class="string">@"wuhan"</span>, <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *string = <span class="string">@"ang"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *pred = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF CONTAINS %@"</span>, string];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [array filteredArrayUsingPredicate:pred]);</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//    (</span></span><br><span class="line"><span class="comment">//     shanghai,</span></span><br><span class="line"><span class="comment">//     guangzou</span></span><br><span class="line"><span class="comment">//    )</span></span><br></pre></td></tr></table></figure>
+<p>(b) 对NSDate进行筛选</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//日期在十天之内:</span></span><br><span class="line"><span class="built_in">NSDate</span> *endDate = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="built_in">NSTimeInterval</span> timeInterval= [endDate timeIntervalSinceReferenceDate];</span><br><span class="line">timeInterval -=<span class="number">3600</span>*<span class="number">24</span>*<span class="number">10</span>;</span><br><span class="line"><span class="built_in">NSDate</span> *beginDate = [<span class="built_in">NSDate</span> dateWithTimeIntervalSinceReferenceDate:timeInterval];</span><br><span class="line"><span class="comment">//对coredata进行筛选(假设有fetchRequest)</span></span><br><span class="line"><span class="built_in">NSPredicate</span> *predicate_date = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"date &gt;= %@ AND date &lt;= %@"</span>, beginDate,endDate];</span><br><span class="line">[fetchRequest setPredicate:predicate_date];</span><br></pre></td></tr></table></figure>
+<p>OK, <code>NSPredicate</code>的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否是有效邮箱</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isValidateEmail:(<span class="built_in">NSString</span> *)email&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&#123;2,4&#125;"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:email];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断字符串首字母是否为字母</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isStartedWithWord:(<span class="built_in">NSString</span> *)aString&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Za-z]+"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:aString];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="2-_利用rangeOfString：option：直接查找">2. 利用rangeOfString：option：直接查找</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;</span><br><span class="line">    <span class="built_in">NSRange</span> range = [searchText rangeOfString:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br><span class="line">    <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [searchText substringWithRange:range]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。</p>
+</blockquote>
+<hr>
+<h1 id="3-_使用正则表达式类">3. 使用正则表达式类</h1><p>详细了解:  <a href="http://blog.csdn.net/crayondeng/article/details/16991579" target="_blank" rel="external">iOS 正则表达式 NSRegularExpression</a></p>
+<p>上面那篇文章总结的很不错. 这里简单再举个例子:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error];</span><br><span class="line">    <span class="built_in">NSTextCheckingResult</span> *result = [regex firstMatchInString:searchText options:<span class="number">0</span> range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [searchText length])];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@\n"</span>, [searchText substringWithRange:result.range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。</p>
+</blockquote>
+<hr>
+<p>针对以上3种方式, 做一个小小总结</p>
+<blockquote>
+<p>第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；</p>
+<p>如果只关心第一个匹配的结果，第二种匹配较为简洁；</p>
+<p>如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。</p>
+</blockquote>
+<h2 id="常用正则表达式">常用正则表达式</h2><p>参考:  <a href="http://blog.csdn.net/chaoyuan899/article/details/38583759" target="_blank" rel="external">IOS常用正则表达式</a></p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[\u4e00-\u9fa5]</td>
+<td>匹配中文字符</td>
+</tr>
+<tr>
+<td>[^\x00-\xff]</td>
+<td>匹配双字节字符(包括汉字在内)</td>
+</tr>
+<tr>
+<td>\n\s*\r</td>
+<td>匹配空白行</td>
+</tr>
+<tr>
+<td>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;\</td>
+<td>&lt;.*? /&gt;</td>
+<td>匹配HTML标记</td>
+</tr>
+<tr>
+<td>^\s*\</td>
+<td>\s*$</td>
+<td>匹配首尾空白字符</td>
+</tr>
+<tr>
+<td>\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*</td>
+<td>匹配Email地</td>
+</tr>
+<tr>
+<td>[a-zA-z]+://[^\s]*</td>
+<td>匹配网址URL</td>
+</tr>
+<tr>
+<td>\d{3}-\d{8}\</td>
+<td>\d{4}-\d{7}</td>
+<td>匹配国内电话号码,匹配形式如 0511-4405222 或 021-87888822</td>
+</tr>
+<tr>
+<td>[1-9]\d{5}(?!\d)</td>
+<td>匹配中国邮政编码</td>
+</tr>
+<tr>
+<td>\d+.\d+.\d+.\d+</td>
+<td>匹配ip地址</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="iOS_正则表达式">iOS 正则表达式</h1><blockquote>
+<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
+</blockquote>
+<ol>
+<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
+<li><a href="http://regexkit.sourceforge.net/RegexKitLite/">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
+</ol>
+<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
+<blockquote>
+<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
+</blockquote>
+<p>正则表达式学习链接：</p>
+<ol>
+<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html">55分钟学会正则表达式</a></li>
+<li><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></li>
+<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5">RegExLib.com(正则表达式库查询)</a></li>
+</ol>
+<hr>]]>
+    
+    </summary>
+    
+      <category term="iOS开发" scheme="http://yoursite.com/tags/iOS%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="正则" scheme="http://yoursite.com/tags/%E6%AD%A3%E5%88%99/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[阿里, 网易, 腾讯]]></title>
     <link href="http://yoursite.com/2015/07/11/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/"/>
     <id>http://yoursite.com/2015/07/11/面试总结/</id>
@@ -378,166 +538,6 @@
       <category term="面试" scheme="http://yoursite.com/tags/%E9%9D%A2%E8%AF%95/"/>
     
       <category term="随笔" scheme="http://yoursite.com/tags/%E9%9A%8F%E7%AC%94/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[正则表达式]]></title>
-    <link href="http://yoursite.com/2015/07/11/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
-    <id>http://yoursite.com/2015/07/11/正则表达式/</id>
-    <published>2015-07-11T02:14:52.000Z</published>
-    <updated>2015-07-13T07:27:35.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="iOS_正则表达式">iOS 正则表达式</h1><blockquote>
-<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
-</blockquote>
-<ol>
-<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
-<li><a href="http://regexkit.sourceforge.net/RegexKitLite/" target="_blank" rel="external">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
-</ol>
-<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
-<blockquote>
-<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
-</blockquote>
-<p>正则表达式学习链接：</p>
-<ol>
-<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html" target="_blank" rel="external">55分钟学会正则表达式</a></li>
-<li><a href="http://www.regexlab.com/zh/regref.htm" target="_blank" rel="external">揭开正则表达式的神秘面纱</a></li>
-<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5" target="_blank" rel="external">RegExLib.com(正则表达式库查询)</a></li>
-</ol>
-<hr>
-<a id="more"></a>
-<h2 id="1-_NSPredicate">1. NSPredicate</h2><blockquote>
-<p>简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。</p>
-</blockquote>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:(<span class="built_in">NSString</span> *), ...];</span><br></pre></td></tr></table></figure>
-<p>其中, 常见的<code>Format</code>有:</p>
-<p>(1) 比较运算符: &gt;, &lt;, ==, &gt;=, &lt;=, !=</p>
-<pre><code>例：@<span class="string">"number &gt; 100"</span>
-</code></pre><p>(2) 范围运算符: IN, BETWEEN</p>
-<pre><code>例：@<span class="string">"number BETWEEN {1,5}"</span>
-   @<span class="string">"address IN {'</span><span class="transposed_variable">shanghai'</span>,<span class="string">'beijing'</span>}<span class="string">"</span>
-</code></pre><p>(3) 字符串本身: SELF </p>
-<pre><code>例：@“SELF == ‘APPLE’<span class="string">"</span>
-</code></pre><p>(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS</p>
-<pre><code>例：@<span class="string">"name CONTAINS[cd] 'ang'"</span>  <span class="comment">//包含某个字符串</span>
-   @<span class="string">"name BEGINSWITH[c] 'sh'"</span>  <span class="comment">//以某个字符串开头</span>
-   @<span class="string">"name ENDSWITH[d] 'ang'"</span>   <span class="comment">//以某个字符串结束</span>
-
-注:[c]不区分大小写
-   [<span class="keyword">d</span>]不区分发音符号即没有重音符号
-   [<span class="keyword">cd</span>]既不区分大小写，也不区分发音符号。
-</code></pre><p>(5) 通配符: LIKE</p>
-<pre><code>例：@<span class="string">"name LIKE[cd] '</span>*er*<span class="string">'"</span>    <span class="comment">//*代表通配符,Like也接受[cd].</span>
-   @<span class="string">"name LIKE[cd] '</span>???er*<span class="string">'"</span>
-</code></pre><p>(6) 正则表达式: MATCHES</p>
-<pre><code>例：NSString <span class="variable">*regex</span> = <span class="variable">@"</span>^A.+e<span class="variable">$"</span>;   <span class="comment">//以A开头，e结尾</span>
-  <span class="variable">@"</span>name MATCHES <span class="variable">%@</span><span class="string">",regex</span>
-</code></pre><p>至于如何使用呢? 下面举几个例子:</p>
-<p>(a) 对NSArray进行过滤, 帅选出包含”ang”的项</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSArray</span> *array = [[<span class="built_in">NSArray</span> alloc]initWithObjects:<span class="string">@"beijing"</span>, <span class="string">@"shanghai"</span>, <span class="string">@"guangzou"</span>, <span class="string">@"wuhan"</span>, <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *string = <span class="string">@"ang"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *pred = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF CONTAINS %@"</span>, string];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [array filteredArrayUsingPredicate:pred]);</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//    (</span></span><br><span class="line"><span class="comment">//     shanghai,</span></span><br><span class="line"><span class="comment">//     guangzou</span></span><br><span class="line"><span class="comment">//    )</span></span><br></pre></td></tr></table></figure>
-<p>(b) 对NSDate进行筛选</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//日期在十天之内:</span></span><br><span class="line"><span class="built_in">NSDate</span> *endDate = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="built_in">NSTimeInterval</span> timeInterval= [endDate timeIntervalSinceReferenceDate];</span><br><span class="line">timeInterval -=<span class="number">3600</span>*<span class="number">24</span>*<span class="number">10</span>;</span><br><span class="line"><span class="built_in">NSDate</span> *beginDate = [<span class="built_in">NSDate</span> dateWithTimeIntervalSinceReferenceDate:timeInterval];</span><br><span class="line"><span class="comment">//对coredata进行筛选(假设有fetchRequest)</span></span><br><span class="line"><span class="built_in">NSPredicate</span> *predicate_date = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"date &gt;= %@ AND date &lt;= %@"</span>, beginDate,endDate];</span><br><span class="line">[fetchRequest setPredicate:predicate_date];</span><br></pre></td></tr></table></figure>
-<p>OK, <code>NSPredicate</code>的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否是有效邮箱</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isValidateEmail:(<span class="built_in">NSString</span> *)email&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&#123;2,4&#125;"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:email];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断字符串首字母是否为字母</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isStartedWithWord:(<span class="built_in">NSString</span> *)aString&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Za-z]+"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:aString];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="2-_利用rangeOfString：option：直接查找">2. 利用rangeOfString：option：直接查找</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;</span><br><span class="line">    <span class="built_in">NSRange</span> range = [searchText rangeOfString:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br><span class="line">    <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [searchText substringWithRange:range]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。</p>
-</blockquote>
-<hr>
-<h1 id="3-_使用正则表达式类">3. 使用正则表达式类</h1><p>详细了解:  <a href="http://blog.csdn.net/crayondeng/article/details/16991579" target="_blank" rel="external">iOS 正则表达式 NSRegularExpression</a></p>
-<p>上面那篇文章总结的很不错. 这里简单再举个例子:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error];</span><br><span class="line">    <span class="built_in">NSTextCheckingResult</span> *result = [regex firstMatchInString:searchText options:<span class="number">0</span> range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [searchText length])];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@\n"</span>, [searchText substringWithRange:result.range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。</p>
-</blockquote>
-<hr>
-<p>针对以上3种方式, 做一个小小总结</p>
-<blockquote>
-<p>第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；</p>
-<p>如果只关心第一个匹配的结果，第二种匹配较为简洁；</p>
-<p>如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。</p>
-</blockquote>
-<h2 id="常用正则表达式">常用正则表达式</h2><p>参考:  <a href="http://blog.csdn.net/chaoyuan899/article/details/38583759" target="_blank" rel="external">IOS常用正则表达式</a></p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>[\u4e00-\u9fa5]</td>
-<td>匹配中文字符</td>
-</tr>
-<tr>
-<td>[^\x00-\xff]</td>
-<td>匹配双字节字符(包括汉字在内)</td>
-</tr>
-<tr>
-<td>\n\s*\r</td>
-<td>匹配空白行</td>
-</tr>
-<tr>
-<td>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;\</td>
-<td>&lt;.*? /&gt;</td>
-<td>匹配HTML标记</td>
-</tr>
-<tr>
-<td>^\s*\</td>
-<td>\s*$</td>
-<td>匹配首尾空白字符</td>
-</tr>
-<tr>
-<td>\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*</td>
-<td>匹配Email地</td>
-</tr>
-<tr>
-<td>[a-zA-z]+://[^\s]*</td>
-<td>匹配网址URL</td>
-</tr>
-<tr>
-<td>\d{3}-\d{8}\</td>
-<td>\d{4}-\d{7}</td>
-<td>匹配国内电话号码,匹配形式如 0511-4405222 或 021-87888822</td>
-</tr>
-<tr>
-<td>[1-9]\d{5}(?!\d)</td>
-<td>匹配中国邮政编码</td>
-</tr>
-<tr>
-<td>\d+.\d+.\d+.\d+</td>
-<td>匹配ip地址</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-    <summary type="html">
-    <![CDATA[<h1 id="iOS_正则表达式">iOS 正则表达式</h1><blockquote>
-<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
-</blockquote>
-<ol>
-<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
-<li><a href="http://regexkit.sourceforge.net/RegexKitLite/">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
-</ol>
-<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
-<blockquote>
-<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
-</blockquote>
-<p>正则表达式学习链接：</p>
-<ol>
-<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html">55分钟学会正则表达式</a></li>
-<li><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></li>
-<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5">RegExLib.com(正则表达式库查询)</a></li>
-</ol>
-<hr>]]>
-    
-    </summary>
-    
-      <category term="iOS开发" scheme="http://yoursite.com/tags/iOS%E5%BC%80%E5%8F%91/"/>
-    
-      <category term="正则" scheme="http://yoursite.com/tags/%E6%AD%A3%E5%88%99/"/>
     
   </entry>
   
