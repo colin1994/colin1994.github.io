@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://img.my.csdn.net/uploads/201503/15/1426387346_8391.jpeg">
 <meta property="og:image" content="http://img.my.csdn.net/uploads/201503/15/1426387346_6563.jpeg">
 <meta property="og:image" content="http://img.my.csdn.net/uploads/201503/15/1426387347_2653.jpeg">
-<meta property="og:updated_time" content="2015-07-13T07:27:52.000Z">
+<meta property="og:updated_time" content="2016-03-12T09:13:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TODO宏实现">
 <meta name="twitter:description" content="代码备忘, TODO宏实现
@@ -126,7 +126,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 10px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+						<a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 15px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
 					</div>
 				</section>
 				
@@ -245,7 +245,8 @@
 <p>我们平时在开发过程中, 往往并不是憋足气一股脑敲完全部代码。每个模块, 每个函数的实现总有个先后顺序。又或者哪个部分需要做调整, 修改… 所以, 我们需要有一个东西, 来提醒我们, 起到代码备忘功能, 避免某个功能忘记实现, 也能让我们快速定位。 所以这篇文章, 就是要实现一个TODO宏, 来达到代码备忘功能。</p>
 </blockquote>
 <p><strong>效果如下:</strong></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387345_9339.jpeg" width="500"><br><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_3643.jpeg" width="500"></p>
+<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387345_9339.jpeg" width="500"></p>
+<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_3643.jpeg" width="500"></p>
 <a id="more"></a>
 <h2 id="下面来分析下如何实现这个宏"><strong>下面来分析下如何实现这个宏</strong></h2><hr>
 <p>在实现TODO之前, 已经自带了几个预处理指令来实现报警/报错:</p>
@@ -261,7 +262,7 @@
 <p>好在C99提供了一个 <strong>_Pragma</strong> 运算符可以把部分#pragma指令字符串化, 如下:</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma message <span class="meta-string">"Colin"</span></span></span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line">_Pragma(<span class="string">"message \"Colin\""</span>) <span class="comment">// 需要注意双引号的转义</span></span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">_Pragma(<span class="string">"message(\"Colin\")"</span>) <span class="comment">// 需要注意双引号的转义</span></span><br></pre></td></tr></table></figure>
 <p>利用这个特性，我们就可以将warning定义成宏:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#define MY_WARNING _Pragma(<span class="meta-string">"message (\"</span>警察临检, 男左女右!\<span class="meta-string">")"</span>)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">    </span><br><span class="line">    MY_WARNING</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#define MY_WARNING _Pragma(<span class="meta-string">"message (\"</span>警察临检, 男左女右!\<span class="meta-string">")"</span>)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line"></span><br><span class="line">    MY_WARNING</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>效果如下:</strong></p>
 <p><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_6563.jpeg" width="500"></p>
 <p>到这里, 大体有那么一个感觉。 不过我们提示的内容, 是define的, 也就是写死固定的, 不太合适。</p>
