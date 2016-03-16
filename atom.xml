@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-03-12T13:36:05.000Z</updated>
+  <updated>2016-03-16T09:17:13.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,11 +15,107 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[Jazzhands, 交互动画就是这么简单]]></title>
+    <link href="http://yoursite.com/2016/03/16/%E4%BA%A4%E4%BA%92%E5%8A%A8%E7%94%BB%E5%B0%B1%E6%98%AF%E8%BF%99%E4%B9%88%E7%AE%80%E5%8D%95/"/>
+    <id>http://yoursite.com/2016/03/16/交互动画就是这么简单/</id>
+    <published>2016-03-16T09:11:00.000Z</published>
+    <updated>2016-03-16T09:17:13.000Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p> <a href="https://github.com/IFTTT/JazzHands" target="_blank" rel="external">Jazz Hands</a>是IFTTT发布的一个基于关键帧的动画框架, 可以用于手势，滚动视图，KVO或者ReactiveCocoa, 十分方便。</p>
+</blockquote>
+<p>but, 到底有多方便呢 ?</p>
+<p>看看官方给出的一个demo效果:</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/Jazzhandsjazzhands-demo.gif" alt="Jazzhandsjazzhands-demo"></p>
+<a id="more"></a>
+<p>如果 <code>设计</code> 要你做出这样一个效果的引导页, 有没有觉得头大 ?</p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/54/original/8.png" alt="emoji"></p>
+<p>然而, 在 <code>Jazzhands</code> 里, 我们需要做的, 就是规划好各个组件需要展示的时机以及对应的位置。中间的衔接动画, 完全交给 <code>Jazzhands</code> 去处理。 这样的感觉很爽有没有~ </p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/789/original/%E9%87%91%E5%A4%A7%E7%88%B79.jpg" alt=""></p>
+<p>然而, <code>Jazzhands</code> 具体为我们做了什么, 它是怎么做的 ?  它适用于哪些场景 ? 下文我们一一分析~</p>
+<h2 id="Jazzhands原理分析">Jazzhands原理分析</h2><p>先看一下源工程目录: </p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/Jazzhands4F254DBC-408A-4073-A73C-8CBABBC6D580.png" alt=""></p>
+<p>这一大串看下来, 貌似很复杂, 实则不然。</p>
+<p>我们可以简单的归为 三大类 文件来看。</p>
+<ol>
+<li><code>IFTTTAnimation, IFTTTAnimatable, IFTTTBackgroundColorAnimation, IFTTTAlphaAnimation …</code>  之类的动画类型。</li>
+<li><code>IFTTTAnimator</code> 动画执行者</li>
+<li><code>IFTTTAnimatedPagingScrollViewController, IFTTTAnimatedScrollViewController</code> 封装好的控制器类型。</li>
+</ol>
+<h3 id="动画类型">动画类型</h3><p>动画类型, 我们拿最简单的  <code>alpha</code> 变化动画来分析。 </p>
+<p><code>IFTTTAlphaAnimation.m</code></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  IFTTTAlphaAnimation.m</span></span><br><span class="line"><span class="comment">//  JazzHands</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Created by Devin Foley on 9/27/13.</span></span><br><span class="line"><span class="comment">//  Copyright (c) 2013 IFTTT Inc. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#import <span class="meta-string">"IFTTTAlphaAnimation.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">IFTTTAlphaAnimation</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)addKeyframeForTime:(<span class="built_in">CGFloat</span>)time alpha:(<span class="built_in">CGFloat</span>)alpha</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (![<span class="keyword">self</span> validAlpha:alpha]) <span class="keyword">return</span>;</span><br><span class="line">    [<span class="keyword">self</span> addKeyframeForTime:time value:@(alpha)];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)addKeyframeForTime:(<span class="built_in">CGFloat</span>)time alpha:(<span class="built_in">CGFloat</span>)alpha withEasingFunction:(IFTTTEasingFunction)easingFunction</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (![<span class="keyword">self</span> validAlpha:alpha]) <span class="keyword">return</span>;</span><br><span class="line">    [<span class="keyword">self</span> addKeyframeForTime:time value:@(alpha) withEasingFunction:easingFunction];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">BOOL</span>)validAlpha:(<span class="built_in">CGFloat</span>)alpha</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSAssert</span>((alpha &gt;= <span class="number">0.</span>f) &amp;&amp; (alpha &lt;= <span class="number">1.</span>f), <span class="string">@"Alpha values must be between zero and one."</span>);</span><br><span class="line">    <span class="keyword">if</span> ((alpha &lt; <span class="number">0.</span>f) || (alpha &gt; <span class="number">1.</span>f)) <span class="keyword">return</span> <span class="literal">NO</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)animate:(<span class="built_in">CGFloat</span>)time</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">self</span>.hasKeyframes) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">self</span>.view.alpha = (<span class="built_in">CGFloat</span>)[(<span class="built_in">NSNumber</span> *)[<span class="keyword">self</span> valueAtTime:time] floatValue];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p><code>IFTTTAlphaAnimation</code> 基础自基类 <code>IFTTTAnimation</code> , 重写了对应的 </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addKeyframeForTime:(<span class="built_in">CGFloat</span>)time value:(<span class="keyword">id</span>&lt;IFTTTInterpolatable&gt;)value;</span><br><span class="line">- (<span class="keyword">void</span>)addKeyframeForTime:(<span class="built_in">CGFloat</span>)time value:(<span class="keyword">id</span>&lt;IFTTTInterpolatable&gt;)value withEasingFunction:(IFTTTEasingFunction)easingFunction;</span><br><span class="line">- (<span class="keyword">id</span>&lt;IFTTTInterpolatable&gt;)valueAtTime:(<span class="built_in">CGFloat</span>)time;</span><br></pre></td></tr></table></figure>
+<p>这里所有的动画, 强调一个 <code>time - value</code> 键值对。 这也是关键帧动画的重点。</p>
+<p>我们需要做的, 就是维护这样一个 <code>keyframes (NSMutableArray)</code> , 里面的元素代表一个个存储了位置的时刻。</p>
+<p>以 <code>alpha</code> 动画为例, 这里的 <code>time</code> 就是对应的关键帧, <code>value</code> 就是对应的alpha值。</p>
+<p>比如: </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   IFTTTAlphaAnimation *alphaAnimation = [IFTTTAlphaAnimation animationWithView:aView];</span><br><span class="line">   [alphaAnimation addKeyframeForTime:<span class="number">100</span> alpha:<span class="number">0.5</span>];</span><br><span class="line">.....</span><br></pre></td></tr></table></figure>
+<p>这里表示了在 100 帧处, 他对应的 alpha 值是 0.5。</p>
+<p>所以, 对于动画的设定, 我们需要做的就是:</p>
+<ol>
+<li>选择动画类型。 <code>IFTTTBackgroundColorAnimation, IFTTTAlphaAnimation …</code></li>
+<li>添加关键帧。 <code>[alphaAnimation addKeyframeForTime:100 alpha:0.5];</code></li>
+<li>把动画添加到执行者上面。 <code>[self.animator addAnimation:alphaAnimation];  (这个后面再介绍, 放心, so eazy~)</code></li>
+<li>抱歉, 没有了~</li>
+</ol>
+<p>没错, 就是这么简单。 但是这里有个疑惑, 所谓的关键帧动画, 就是我们提供足够多的关键帧, 然后去逐帧执行。 这是否意味着, 我们需要提供足够多的帧数, 来保证动画的流畅性 ?</p>
+<p>如果是这样, 那我们写出来的代码岂不是:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">    [alphaAnimation addKeyframeForTime:<span class="number">1</span> alpha:<span class="number">0.1</span>];</span><br><span class="line">    [alphaAnimation addKeyframeForTime:<span class="number">2</span> alpha:<span class="number">0.15</span>];</span><br><span class="line">    [alphaAnimation addKeyframeForTime:<span class="number">3</span> alpha:<span class="number">0.2</span>];</span><br><span class="line">    [alphaAnimation addKeyframeForTime:<span class="number">4</span> alpha:<span class="number">0.25</span>];</span><br><span class="line">........</span><br></pre></td></tr></table></figure>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/599/original/%E6%82%B2%E5%82%AC8.png" alt="EMOJI"></p>
+<p><strong>NO, NO, NO</strong>, 前面我们已经说过了, 这很简单~ 简单意味着, 你只需要提供几个关键点的位置 (起始点, 转折点, 终点), 再设置下它们之间的过渡类型 (Linear, EaseInQuad, EaseInOutQuad…) ，然后, 动画就做完了~ 至于中间各个关键帧的值, 是怎么确定的呢 ？ 放心, <code>Jazzhands</code> 已经帮我们做好咯~</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span>&lt;IFTTTInterpolatable&gt;)valueAtTime:(<span class="built_in">CGFloat</span>)time</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSAssert</span>(!<span class="keyword">self</span>.isEmpty, <span class="string">@"At least one KeyFrame must be set before animation begins."</span>);</span><br><span class="line">    <span class="keyword">id</span> value;</span><br><span class="line">    <span class="built_in">NSUInteger</span> indexAfter = [<span class="keyword">self</span> indexOfKeyframeAfterTime:time];</span><br><span class="line">    <span class="keyword">if</span> (indexAfter == <span class="number">0</span>) &#123;</span><br><span class="line">        value = ((IFTTTKeyframe *)<span class="keyword">self</span>.keyframes[<span class="number">0</span>]).value;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (indexAfter &lt; <span class="keyword">self</span>.keyframes.count) &#123;</span><br><span class="line">        IFTTTKeyframe *keyframeBefore = (IFTTTKeyframe *)<span class="keyword">self</span>.keyframes[indexAfter - <span class="number">1</span>];</span><br><span class="line">        IFTTTKeyframe *keyframeAfter = (IFTTTKeyframe *)<span class="keyword">self</span>.keyframes[indexAfter];</span><br><span class="line">        <span class="built_in">CGFloat</span> progress = [<span class="keyword">self</span> progressFromTime:keyframeBefore.time toTime:keyframeAfter.time atTime:time withEasingFunction:keyframeBefore.easingFunction];</span><br><span class="line">        value = [keyframeBefore.value interpolateTo:keyframeAfter.value withProgress:progress];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        value = ((IFTTTKeyframe *)<span class="keyword">self</span>.keyframes.lastObject).value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="动画执行者">动画执行者</h3><p>动画执行者, 看着就很牛x, 然而它的实现实际上非常简单， 就几行代码。 它负责 <code>管理动画对象</code> 和 <code>在对应位置执行动画</code> 。</p>
+<p>简单来说, 就这两个方法:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addAnimation:(<span class="keyword">id</span>&lt;IFTTTAnimatable&gt;)animation</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span>.animations addObject:animation];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)animate:(<span class="built_in">CGFloat</span>)time</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">id</span>&lt;IFTTTAnimatable&gt; animation <span class="keyword">in</span> <span class="keyword">self</span>.animations) &#123;</span><br><span class="line">        [animation animate:time];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很简洁有没有。</p>
+<p>上文提到了 把动画添加到执行者上面。 <code>[self.animator addAnimation:alphaAnimation];</code></p>
+<p>这也就是 <code>IFTTTAnimator</code> 的第一个作用, 管理动画对象。animations(NSMutableArray) 里面存储着所有设定的动画。</p>
+<p>然后 <code>[self.animator animate:0];</code> 就是执行对应的动画了。 这个方法就是在交互的时候, 调用。比如:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 滚动视图</span></span><br><span class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView</span><br><span class="line">&#123;</span><br><span class="line">  [<span class="keyword">super</span> scrollViewDidScroll:scrollView];</span><br><span class="line">  [<span class="keyword">self</span>.animator animate:scrollView.contentOffset.x];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 手势</span></span><br><span class="line">- (<span class="keyword">IBAction</span>)handlePan:(<span class="built_in">UIPanGestureRecognizer</span> *)recognizer</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span>.animator animate:[recognizer locationOfTouch:<span class="number">0</span> inView:<span class="keyword">self</span>.view].x];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="控制器类型">控制器类型</h3><p><code>Jazzhands</code> 帮我们封装好了两种控制器类型 (IFTTTAnimatedPagingScrollViewController, IFTTTAnimatedScrollViewController)。 我们可以直接基于此, 做相应的动画。 这是十分方便的。比如官方的demo就是基于 <code>IFTTTAnimatedPagingScrollViewController</code> 来实现的。</p>
+<p>它实现了 <code>scrollViewDidScroll</code> 等方法。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)scrollViewDidScroll:(<span class="built_in">UIScrollView</span> *)scrollView</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> updatePageOffset];</span><br><span class="line">    [<span class="keyword">self</span> animateCurrentFrame];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 并且把 <code>time</code> 关键帧的概念, 进一步转化为 <code>page</code> 的概念。 也就是说, 你只要指定某个动画, 它在第几个page, 第几个page存在, 各自存在什么位置即可。十分方便~</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)keepView:(<span class="built_in">UIView</span> *)view onPage:(<span class="built_in">CGFloat</span>)page withAttribute:(IFTTTHorizontalPositionAttribute)attribute</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">self</span> keepView:view onPage:page withAttribute:attribute offset:<span class="number">0.</span>f];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用场景_(Demo)">使用场景 (Demo)</h2><p>说了这么多, 想必大家对 <code>Jazzhands</code> 的实现原理都有一定了解。 那什么时候该用到它呢 ?</p>
+<p>我觉得 <code>引导页</code> 是不二选择 ~ 毕竟类似的视差动画, 在引导页的应用是最广的。</p>
+<p>至于是否需要基于封装好的控制器来实现, 这就要根据具体的需求来定了。</p>
+<p>比如官方Demo这样, 所有动画, 在相同的关键帧位置, 有重叠部分。(两个page 可以同时存在), 那基于 <code>IFTTTAnimatedPagingScrollViewController</code> 再合适不过了。</p>
+<p>不过如果动画有阻尼效果, 也就是当前界面只能存在一个page, 那就建议直接用 <code>UIViewController</code> 撸, 然后借助 <code>手势</code> , 来实现对应的效果。</p>
+<p>比如可以仿照下美图秀秀的引导页, 写个简单demo, 效果如下:</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/JazzhandsunityResult2.gif" alt="MTXX_DEMO"></p>
+<p>具体 源码 就不上传了。 相信大家利用 Jazzhands 不然做出类似的效果。(有需要的可以私下交流~)</p>
+<h2 id="总结">总结</h2><p>总体来说, 这个开源库还是非常精简，而且思路非常清晰，依然基于Core Animation之上，因为它只是针对于UIKit上去做帧的配置，对帧的封装上更加灵活，但是缺点是实现复杂的动画时，代码量比较大。另外布局约束呢, 都得手撸,,</p>
+<p>还是很赞的~ </p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/801/original/%E9%87%91%E5%A4%A7%E7%88%B721.jpg" alt=""></p>
+<blockquote>
+<p>个人网站: <a href="http://colin1994.github.io/" target="_blank" rel="external">Colin’s Nest</a> 转载请注明出处。 </p>
+<p>iOS开发交流群: 184226705. 欢迎加入~</p>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p> <a href="https://github.com/IFTTT/JazzHands">Jazz Hands</a>是IFTTT发布的一个基于关键帧的动画框架, 可以用于手势，滚动视图，KVO或者ReactiveCocoa, 十分方便。</p>
+</blockquote>
+<p>but, 到底有多方便呢 ?</p>
+<p>看看官方给出的一个demo效果:</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/Jazzhandsjazzhands-demo.gif" alt="Jazzhandsjazzhands-demo"></p>]]>
+    
+    </summary>
+    
+      <category term="iOS开发" scheme="http://yoursite.com/tags/iOS%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="教程" scheme="http://yoursite.com/tags/%E6%95%99%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[Photo Editing Extension 详解 (附带应用滤镜Demo)]]></title>
     <link href="http://yoursite.com/2016/03/12/Photo_Editing_Extension%20%E8%AF%A6%E8%A7%A3/"/>
     <id>http://yoursite.com/2016/03/12/Photo_Editing_Extension 详解/</id>
     <published>2016-03-12T13:34:35.000Z</published>
-    <updated>2016-03-12T13:36:05.000Z</updated>
+    <updated>2016-03-16T09:19:19.000Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p>extension是iOS8新开放的一种对几个固定系统区域的扩展机制，它可以在一定程度上弥补iOS的沙盒机制对应用间通信的限制。允许应用帮助系统扩展自定义功能，去实现一个特定作用域的任务，如照片编辑、自定义键盘、通知中心、Action动作、Share分享等。 这对于一向封闭的iOS来说, 无疑是一大福音。</p>
 </blockquote>
@@ -59,7 +155,7 @@
 <li>Photo Editing 的 Host App 就是 Photos</li>
 </ul>
 <h1 id="2-_Extension和Containing_App、Host_App通信">2. Extension和Containing App、Host App通信</h1><h2 id="2-1_Extension和Host_App">2.1 Extension和Host App</h2><p>Extension和Host App之间可以通过extensionContext属性直接通信，该属性是新增加的UIViewController类别：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@interface UIViewController(NSExtensionAdditions) &lt;NSExtensionRequestHandling&gt; </span><br><span class="line"></span><br><span class="line">// Returns the extension context. Also acts as a convenience method for a view controller to check if it participating in an extension request. </span><br><span class="line">@property (nonatomic,readonly,retain) NSExtensionContext *extensionContext NS_AVAILABLE_IOS(8_0); </span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">UIViewController</span>(<span class="title">NSExtensionAdditions</span>) &lt;<span class="title">NSExtensionRequestHandling</span>&gt; </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Returns the extension context. Also acts as a convenience method for a view controller to check if it participating in an extension request. </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">readonly</span>,retain) <span class="built_in">NSExtensionContext</span> *extensionContext <span class="built_in">NS_AVAILABLE_IOS</span>(<span class="number">8</span>_0); </span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 <p>实际上extension和Host App之间是通过IPC（interprocess communication）实现的，只是苹果把调用接口高度抽象了，我们并不需要关注那么底层的东西。</p>
 <h2 id="2-2_Containing_App和Host_App">2.2 Containing App和Host App</h2><p>他们之间没有任何直接关系，也从来不需要通信。</p>
 <h2 id="2-3_Extension和Containing_App">2.3 Extension和Containing App</h2><p>这二者之间的关系最复杂，纠纠缠缠扯不清关系。</p>
@@ -77,7 +173,7 @@
 <p>正如Ars Technica的Andrew Cunningham总结的那样，这些规则的最终结果主要是一个应用程序不能进入另一个应用程序的沙箱。这与Android相反，在Android上，<a href="http://developer.android.com/guide/topics/providers/content-providers.html" target="_blank" rel="external">内容提供程序</a>和<a href="http://developer.android.com/reference/android/content/ContentResolver.html" target="_blank" rel="external">解析程序</a>仍然可以一起工作来为应用程序提供对其它应用程序中数据的访问。</p>
 <p><strong>不能直接通信:</strong></p>
 <p>首先，尽管Extension的bundle是放在Containing App的bundle中，但是他们是两个完全独立的进程，之间不能直接通信。不过Extension可以通过openURL的方式启动Containing App（当然也能启动其它App），不过必须通过extensionContext借助host app来实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//通过openURL的方式启动Containing APP </span><br><span class="line">- (void)openURLContainingAPP </span><br><span class="line">&#123; </span><br><span class="line">    [self.extensionContext openURL:[NSURL URLWithString:@&quot;appextension://123&quot;] </span><br><span class="line">                 completionHandler:^(BOOL success) &#123; </span><br><span class="line">                     NSLog(@&quot;open url result:%d&quot;,success); </span><br><span class="line">                 &#125;]; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过openURL的方式启动Containing APP </span></span><br><span class="line">- (<span class="keyword">void</span>)openURLContainingAPP </span><br><span class="line">&#123; </span><br><span class="line">    [<span class="keyword">self</span>.extensionContext openURL:[<span class="built_in">NSURL</span> URLWithString:<span class="string">@"appextension://123"</span>] </span><br><span class="line">                 completionHandler:^(<span class="built_in">BOOL</span> success) &#123; </span><br><span class="line">                     <span class="built_in">NSLog</span>(<span class="string">@"open url result:%d"</span>,success); </span><br><span class="line">                 &#125;]; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>Extension中是无法直接使用openURL的。</strong></p>
 <p><strong>可以共享Shared Resources:</strong></p>
 <p>Extension和Containing App可以共同读写一个被称为Shared Resources的存储区域，这是通过App Groups实现的，后文将会详述。</p>
@@ -95,7 +191,7 @@
 <h2 id="3-2_extension和containing_app数据共享">3.2 extension和containing app数据共享</h2><p>App Groups给我们提供了同一Group内App可以共同读写的区域，可以通过以下方式实现数据共享：</p>
 <h3 id="3-2-1_通过NSUserDefaults共享数据">3.2.1 通过NSUserDefaults共享数据</h3><p><strong>存数据</strong></p>
 <p>通过以下方式向NSUserDefaults中保存数据：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (void)saveTextByNSUserDefaults</span><br><span class="line">&#123;</span><br><span class="line">    NSUserDefaults *shared = [[NSUserDefaults alloc] initWithSuiteName:@&quot;group.com.xx.test&quot;];</span><br><span class="line">    [shared setObject:_textField.text forKey:@&quot;test&quot;];</span><br><span class="line">    [shared synchronize];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)saveTextBy<span class="built_in">NSUserDefaults</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSUserDefaults</span> *shared = [[<span class="built_in">NSUserDefaults</span> alloc] initWithSuiteName:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    [shared setObject:_textField.text forKey:<span class="string">@"test"</span>];</span><br><span class="line">    [shared synchronize];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>需要注意的是：</p>
 <ol>
 <li>保存数据的时候必须指明group id；</li>
@@ -104,12 +200,12 @@
 </ol>
 <p><strong>读数据</strong></p>
 <p>对应的读取数据方式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (NSString *)readDataFromNSUserDefaults</span><br><span class="line">&#123;</span><br><span class="line">    NSUserDefaults *shared = [[NSUserDefaults alloc] initWithSuiteName:@&quot;group.com.xx.test&quot;];</span><br><span class="line">    NSString *value = [shared valueForKey:@&quot;test&quot;];</span><br><span class="line"></span><br><span class="line">    return value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSString</span> *)readDataFrom<span class="built_in">NSUserDefaults</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSUserDefaults</span> *shared = [[<span class="built_in">NSUserDefaults</span> alloc] initWithSuiteName:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *value = [shared valueForKey:<span class="string">@"test"</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="3-2-1_通过NSFileManager共享数据">3.2.1 通过NSFileManager共享数据</h3><p>NSFileManager在iOS7提供了containerURLForSecurityApplicationGroupIdentifier方法，可以用来实现app group共享数据。</p>
 <p><strong>存数据</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)saveTextByNSFileManager</span><br><span class="line">&#123;</span><br><span class="line">    NSError *err = nil;</span><br><span class="line">    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@&quot;group.com.xx.test&quot;];</span><br><span class="line">    containerURL = [containerURL URLByAppendingPathComponent:@&quot;Library/Caches/good&quot;];</span><br><span class="line"></span><br><span class="line">    NSString *value = _textField.text;</span><br><span class="line">    BOOL result = [value writeToURL:containerURL atomically:YES encoding:NSUTF8StringEncoding error:&amp;err];</span><br><span class="line">    if (!result) &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;,err);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        NSLog(@&quot;save value:%@ success.&quot;,value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)saveTextBy<span class="built_in">NSFileManager</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    containerURL = [containerURL URLByAppendingPathComponent:<span class="string">@"Library/Caches/good"</span>];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *value = _textField.text;</span><br><span class="line">    <span class="built_in">BOOL</span> result = [value writeToURL:containerURL atomically:<span class="literal">YES</span> encoding:<span class="built_in">NSUTF8StringEncoding</span> error:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (!result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"save value:%@ success."</span>,value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>读数据</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (NSString *)readTextByNSFileManager</span><br><span class="line">&#123;</span><br><span class="line">    NSError *err = nil;</span><br><span class="line">    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@&quot;group.com.xx.test&quot;];</span><br><span class="line">    containerURL = [containerURL URLByAppendingPathComponent:@&quot;Library/Caches/good&quot;];</span><br><span class="line">    NSString *value = [NSString stringWithContentsOfURL:containerURL encoding:NSUTF8StringEncoding error:&amp;err];</span><br><span class="line"></span><br><span class="line">    return value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSString</span> *)readTextBy<span class="built_in">NSFileManager</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    containerURL = [containerURL URLByAppendingPathComponent:<span class="string">@"Library/Caches/good"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *value = [<span class="built_in">NSString</span> stringWithContentsOfURL:containerURL encoding:<span class="built_in">NSUTF8StringEncoding</span> error:&amp;err];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>PS:</p>
 <p>两个应用共同读取同一份数据，就会引发数据同步问题。WWDC2014的视频中建议使用NSFileCoordination实现普通文件的读写同步，而数据库可以使用CoreData,Sqlite也支持同步。</p>
 <h2 id="3-3_动态加载,_资源共享">3.3 动态加载, 资源共享</h2><p>这个感兴趣的可以看下, 无关紧要~</p>
@@ -120,8 +216,8 @@
 <p>即将framework分别嵌入到extension和containing app的target中实现代码共享。但这样岂不是需要分别要将framework分别copy到extension和containing app的main bundle中？</p>
 <p>参考extension和containing app数据共享，我试想能不能将framework只保存一份放在App Groups区域？</p>
 <h3 id="3-3-1_copy_framework到App_Groups">3.3.1 copy framework到App Groups</h3><p>在app首次启动的时候将framework放到App Groups区域：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)copyFrameworkFromMainBundleToAppGroup</span><br><span class="line">&#123;</span><br><span class="line">    NSFileManager *manager = [NSFileManager defaultManager];</span><br><span class="line">    NSError *err = nil;</span><br><span class="line">    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@&quot;group.com.xx.test&quot;];</span><br><span class="line">    NSString *sorPath = [NSString stringWithFormat:@&quot;%@/Dylib.framework&quot;,[[NSBundle mainBundle] bundlePath]];</span><br><span class="line">    NSString *desPath = [NSString stringWithFormat:@&quot;%@/Library/Caches/Dylib.framework&quot;,containerURL.path];</span><br><span class="line"></span><br><span class="line">    BOOL removeResult = [manager removeItemAtPath:desPath error:&amp;err];</span><br><span class="line">    if (!removeResult) &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;,err);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        NSLog(@&quot;remove success.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BOOL copyResult = [[NSFileManager defaultManager] copyItemAtPath:sorPath toPath:desPath error:&amp;err];</span><br><span class="line">    if (!copyResult) &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;,err);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        NSLog(@&quot;copy success.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return copyResult;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-3-2_使用framework">3.3.2 使用framework</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)loadFrameworkInAppGroup</span><br><span class="line">&#123;</span><br><span class="line">    NSError *err = nil;</span><br><span class="line">    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@&quot;group.com.xx.test&quot;];</span><br><span class="line">    NSString *desPath = [NSString stringWithFormat:@&quot;%@/Library/Caches/Dylib.framework&quot;,containerURL.path];</span><br><span class="line">    NSBundle *bundle = [NSBundle bundleWithPath:desPath];</span><br><span class="line">    BOOL result = [bundle loadAndReturnError:&amp;err];</span><br><span class="line">    if (result) &#123;</span><br><span class="line">        Class root = NSClassFromString(@&quot;Person&quot;);</span><br><span class="line">        if (root) &#123;</span><br><span class="line">            Person *person = [[root alloc] init];</span><br><span class="line">            if (person) &#123;</span><br><span class="line">                [person run];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;,err);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)copyFrameworkFromMainBundleToAppGroup</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSFileManager</span> *manager = [<span class="built_in">NSFileManager</span> defaultManager];</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *sorPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/Dylib.framework"</span>,[[<span class="built_in">NSBundle</span> mainBundle] bundlePath]];</span><br><span class="line">    <span class="built_in">NSString</span> *desPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/Library/Caches/Dylib.framework"</span>,containerURL.path];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">BOOL</span> removeResult = [manager removeItemAtPath:desPath error:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (!removeResult) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"remove success."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">BOOL</span> copyResult = [[<span class="built_in">NSFileManager</span> defaultManager] copyItemAtPath:sorPath toPath:desPath error:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (!copyResult) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"copy success."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> copyResult;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-3-2_使用framework">3.3.2 使用framework</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)loadFrameworkInAppGroup</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *desPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/Library/Caches/Dylib.framework"</span>,containerURL.path];</span><br><span class="line">    <span class="built_in">NSBundle</span> *bundle = [<span class="built_in">NSBundle</span> bundleWithPath:desPath];</span><br><span class="line">    <span class="built_in">BOOL</span> result = [bundle loadAndReturnError:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        Class root = <span class="built_in">NSClassFromString</span>(<span class="string">@"Person"</span>);</span><br><span class="line">        <span class="keyword">if</span> (root) &#123;</span><br><span class="line">            Person *person = [[root alloc] init];</span><br><span class="line">            <span class="keyword">if</span> (person) &#123;</span><br><span class="line">                [person run];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>经过测试，竟然能够加载成功。</p>
 <p>对比一下, 有如下总结: </p>
 <p>主要验证了两种方式:</p>
@@ -136,11 +232,11 @@
 <li><p>方式一需要<strong>containing app</strong>先启动把, 把数据copy到App Groups中, <strong>entension</strong>才能加载到。 方式二不需要。</p>
 </li>
 <li><p>方式一不能直接初始化类, 比如:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;TestFrameWork/FilterImage.h&gt;</span><br><span class="line"></span><br><span class="line">FilterImage *filter = [[FilterImage alloc] init];</span><br><span class="line"></span><br><span class="line">将会报错:</span><br><span class="line"></span><br><span class="line">Undefined symbols for architecture x86_64:</span><br><span class="line">  &quot;_OBJC_CLASS_$_FilterImage&quot;, referenced from:</span><br><span class="line">      objc-class-ref in PhotoEditingViewController.o</span><br><span class="line">ld: symbol(s) not found for architecture x86_64</span><br><span class="line">clang: error: linker command failed with exit code 1 (use -v to see invocation)</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;TestFrameWork/FilterImage.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">FilterImage *filter = [[FilterImage alloc] init];</span><br><span class="line"></span><br><span class="line">将会报错:</span><br><span class="line"></span><br><span class="line">Undefined symbols <span class="keyword">for</span> architecture x86_64:</span><br><span class="line">  <span class="string">"_OBJC_CLASS_$_FilterImage"</span>, referenced from:</span><br><span class="line">      objc-class-ref <span class="keyword">in</span> PhotoEditingViewController.o</span><br><span class="line">ld: symbol(s) not found <span class="keyword">for</span> architecture x86_64</span><br><span class="line">clang: error: linker command failed with exit code <span class="number">1</span> (use -v to see invocation)</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>   需要用这样的方式:</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Class root = NSClassFromString(@&quot;FilterImage&quot;);</span><br><span class="line">if (root) &#123;</span><br><span class="line">    FilterImage *filter = [[root alloc] init];</span><br><span class="line">    NSString *nameLUT = [NSString stringWithFormat:@&quot;%@/TestFrameWork.bundle/images/filter_lut_%d&quot;, desPath, 2];</span><br><span class="line">   </span><br><span class="line">    self.imageView.image = [filter filterImage:self.input.displaySizeImage imageName:nameLUT];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Class root = <span class="built_in">NSClassFromString</span>(<span class="string">@"FilterImage"</span>);</span><br><span class="line"><span class="keyword">if</span> (root) &#123;</span><br><span class="line">    FilterImage *filter = [[root alloc] init];</span><br><span class="line">    <span class="built_in">NSString</span> *nameLUT = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/TestFrameWork.bundle/images/filter_lut_%d"</span>, desPath, <span class="number">2</span>];</span><br><span class="line">   </span><br><span class="line">    <span class="keyword">self</span>.imageView.image = [filter filterImage:<span class="keyword">self</span>.input.displaySizeImage imageName:nameLUT];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>   方式二可以直接使用。 (#import “FilterImage.h”)</p>
 <p>   ​</p>
 <p>   对比了一下导出包的大小。</p>
@@ -164,12 +260,12 @@
 <ol>
 <li><p>因为Host App是Photos, 所以我们的Extension必须适配横竖屏, 因为它的状态是跟着Host App变的, 而不是Containing App。 至于横竖屏的适配, 建议采用Size Class, 然后监听缩放模式, 来适配屏幕</p>
 <p>​</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#pragma mark - UIContentContainer</span><br><span class="line">- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection</span><br><span class="line">              withTransitionCoordinator:(id &lt;UIViewControllerTransitionCoordinator&gt;)coordinator</span><br><span class="line">&#123;</span><br><span class="line">    [super willTransitionToTraitCollection:newCollection</span><br><span class="line">                 withTransitionCoordinator:coordinator];</span><br><span class="line">    [coordinator animateAlongsideTransition:^(id &lt;UIViewControllerTransitionCoordinatorContext&gt; context) &#123;</span><br><span class="line">       // 横屏处理</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">         // 竖屏处理</span><br><span class="line">        &#125;</span><br><span class="line">        [self.view setNeedsLayout];</span><br><span class="line">    &#125; completion:nil];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - UIContentContainer</span></span><br><span class="line">- (<span class="keyword">void</span>)willTransitionToTraitCollection:(<span class="built_in">UITraitCollection</span> *)newCollection</span><br><span class="line">              withTransitionCoordinator:(<span class="keyword">id</span> &lt;<span class="built_in">UIViewControllerTransitionCoordinator</span>&gt;)coordinator</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> willTransitionToTraitCollection:newCollection</span><br><span class="line">                 withTransitionCoordinator:coordinator];</span><br><span class="line">    [coordinator animateAlongsideTransition:^(<span class="keyword">id</span> &lt;<span class="built_in">UIViewControllerTransitionCoordinatorContext</span>&gt; context) &#123;</span><br><span class="line">       <span class="comment">// 横屏处理</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">         <span class="comment">// 竖屏处理</span></span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="keyword">self</span>.view setNeedsLayout];</span><br><span class="line">    &#125; completion:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>   同样, 需要获取初始状态来处理。</p>
 <p>   ​</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if (self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact) &#123;</span><br><span class="line">    //To Do: modify something for compact vertical size</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">    //To Do: modify something for other vertical size</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">self</span>.traitCollection.verticalSizeClass == <span class="built_in">UIUserInterfaceSizeClassCompact</span>) &#123;</span><br><span class="line">    <span class="comment">//To Do: modify something for compact vertical size</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//To Do: modify something for other vertical size</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ol>
 <li><p>如果第三方库用Pod来管理的话, 需要修改pod的target, 以及添加链接。</p>
 <p><code>Build Settings — &gt; Other Linker Flags    **-l&quot;Pods-MBProgressHUD&quot;**</code></p>
@@ -198,7 +294,7 @@
     <link href="http://yoursite.com/2016/03/12/iOS%E5%90%AF%E5%8A%A8%E9%A1%B5%E5%A4%9A%E8%AF%AD%E8%A8%80/"/>
     <id>http://yoursite.com/2016/03/12/iOS启动页多语言/</id>
     <published>2016-03-12T09:06:29.000Z</published>
-    <updated>2016-03-12T09:13:15.000Z</updated>
+    <updated>2016-03-16T09:17:48.000Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p> 启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 <code>UILaunchImages</code> ~ 下文将详细描述如何实现启动页多语言。</p>
 </blockquote>
@@ -212,7 +308,7 @@
 <p>图片:<img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_2.png" alt="LaunchImages_2"></p>
 </li>
 <li><p>使用对应资源, 比如:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label.text = NSLocalizedString(@&quot;多语言&quot;, nil);</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label.text = <span class="built_in">NSLocalizedString</span>(<span class="string">@"多语言"</span>, <span class="literal">nil</span>);</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>再麻烦一点, 就是xib, storyboard的多语言的。 但是原理一样, 这样的方式都能实现多语言支持。So, 就是这么简单~</p>
@@ -481,6 +577,162 @@
   </entry>
   
   <entry>
+    <title><![CDATA[正则表达式]]></title>
+    <link href="http://yoursite.com/2015/07/11/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    <id>http://yoursite.com/2015/07/11/正则表达式/</id>
+    <published>2015-07-11T02:14:52.000Z</published>
+    <updated>2016-03-12T09:13:20.000Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
+</blockquote>
+<ol>
+<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
+<li><a href="http://regexkit.sourceforge.net/RegexKitLite/" target="_blank" rel="external">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
+</ol>
+<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
+<blockquote>
+<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
+</blockquote>
+<p>正则表达式学习链接：</p>
+<ol>
+<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html" target="_blank" rel="external">55分钟学会正则表达式</a></li>
+<li><a href="http://www.regexlab.com/zh/regref.htm" target="_blank" rel="external">揭开正则表达式的神秘面纱</a></li>
+<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5" target="_blank" rel="external">RegExLib.com(正则表达式库查询)</a></li>
+</ol>
+<hr>
+<a id="more"></a>
+<h2 id="1-_NSPredicate">1. NSPredicate</h2><blockquote>
+<p>简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:(<span class="built_in">NSString</span> *), ...];</span><br></pre></td></tr></table></figure>
+<p>其中, 常见的<code>Format</code>有:</p>
+<p>(1) 比较运算符: &gt;, &lt;, ==, &gt;=, &lt;=, !=</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number &gt; 100&quot;</span><br></pre></td></tr></table></figure>
+<p>(2) 范围运算符: IN, BETWEEN</p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number BETWEEN &#123;1,5&#125;&quot;</span><br><span class="line">   @&quot;address IN &#123;&apos;shanghai&apos;,&apos;beijing&apos;&#125;&quot;</span><br></pre></td></tr></table></figure>
+<p>(3) 字符串本身: SELF </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@“SELF == ‘APPLE’&quot;</span><br></pre></td></tr></table></figure>
+<p>(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name CONTAINS[cd] &apos;ang&apos;&quot;  //包含某个字符串</span><br><span class="line">   @&quot;name BEGINSWITH[c] &apos;sh&apos;&quot;  //以某个字符串开头</span><br><span class="line">   @&quot;name ENDSWITH[d] &apos;ang&apos;&quot;   //以某个字符串结束</span><br><span class="line"></span><br><span class="line">注:[c]不区分大小写</span><br><span class="line">   [d]不区分发音符号即没有重音符号</span><br><span class="line">   [cd]既不区分大小写，也不区分发音符号。</span><br></pre></td></tr></table></figure>
+<p>(5) 通配符: LIKE</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name LIKE[cd] &apos;*er*&apos;&quot;    //*代表通配符,Like也接受[cd].</span><br><span class="line">   @&quot;name LIKE[cd] &apos;???er*&apos;&quot;</span><br></pre></td></tr></table></figure>
+<p>(6) 正则表达式: MATCHES</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：NSString *regex = @&quot;^A.+e$&quot;;   //以A开头，e结尾</span><br><span class="line">  @&quot;name MATCHES %@&quot;,regex</span><br></pre></td></tr></table></figure>
+<p>至于如何使用呢? 下面举几个例子:</p>
+<p>(a) 对NSArray进行过滤, 帅选出包含”ang”的项</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSArray</span> *array = [[<span class="built_in">NSArray</span> alloc]initWithObjects:<span class="string">@"beijing"</span>, <span class="string">@"shanghai"</span>, <span class="string">@"guangzou"</span>, <span class="string">@"wuhan"</span>, <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *string = <span class="string">@"ang"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *pred = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF CONTAINS %@"</span>, string];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [array filteredArrayUsingPredicate:pred]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//    (</span></span><br><span class="line"><span class="comment">//     shanghai,</span></span><br><span class="line"><span class="comment">//     guangzou</span></span><br><span class="line"><span class="comment">//    )</span></span><br></pre></td></tr></table></figure>
+<p>(b) 对NSDate进行筛选</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//日期在十天之内:</span></span><br><span class="line"><span class="built_in">NSDate</span> *endDate = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="built_in">NSTimeInterval</span> timeInterval= [endDate timeIntervalSinceReferenceDate];</span><br><span class="line">timeInterval -=<span class="number">3600</span>*<span class="number">24</span>*<span class="number">10</span>;</span><br><span class="line"><span class="built_in">NSDate</span> *beginDate = [<span class="built_in">NSDate</span> dateWithTimeIntervalSinceReferenceDate:timeInterval];</span><br><span class="line"><span class="comment">//对coredata进行筛选(假设有fetchRequest)</span></span><br><span class="line"><span class="built_in">NSPredicate</span> *predicate_date = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"date &gt;= %@ AND date &lt;= %@"</span>, beginDate,endDate];</span><br><span class="line">[fetchRequest setPredicate:predicate_date];</span><br></pre></td></tr></table></figure>
+<p>OK, <code>NSPredicate</code>的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否是有效邮箱</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isValidateEmail:(<span class="built_in">NSString</span> *)email&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&#123;2,4&#125;"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:email];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断字符串首字母是否为字母</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isStartedWithWord:(<span class="built_in">NSString</span> *)aString&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Za-z]+"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:aString];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="2-_利用rangeOfString：option：直接查找">2. 利用rangeOfString：option：直接查找</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;</span><br><span class="line">    <span class="built_in">NSRange</span> range = [searchText rangeOfString:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br><span class="line">    <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [searchText substringWithRange:range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。</p>
+</blockquote>
+<hr>
+<h1 id="3-_使用正则表达式类">3. 使用正则表达式类</h1><p>详细了解:  <a href="http://blog.csdn.net/crayondeng/article/details/16991579" target="_blank" rel="external">iOS 正则表达式 NSRegularExpression</a></p>
+<p>上面那篇文章总结的很不错. 这里简单再举个例子:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error];</span><br><span class="line">    <span class="built_in">NSTextCheckingResult</span> *result = [regex firstMatchInString:searchText options:<span class="number">0</span> range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [searchText length])];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@\n"</span>, [searchText substringWithRange:result.range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。</p>
+</blockquote>
+<hr>
+<p>针对以上3种方式, 做一个小小总结</p>
+<blockquote>
+<p>第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；</p>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>如果只关心第一个匹配的结果，第二种匹配较为简洁；</p>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。</p>
+</blockquote>
+<p>&gt;</p>
+<h2 id="常用正则表达式">常用正则表达式</h2><p>参考:  <a href="http://blog.csdn.net/chaoyuan899/article/details/38583759" target="_blank" rel="external">IOS常用正则表达式</a></p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[\u4e00-\u9fa5]</td>
+<td>匹配中文字符</td>
+</tr>
+<tr>
+<td>[^\x00-\xff]</td>
+<td>匹配双字节字符(包括汉字在内)</td>
+</tr>
+<tr>
+<td>\n\s*\r</td>
+<td>匹配空白行</td>
+</tr>
+<tr>
+<td>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;\</td>
+<td>&lt;.*? /&gt;</td>
+</tr>
+<tr>
+<td>^\s*\</td>
+<td>\s*$</td>
+</tr>
+<tr>
+<td>\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*</td>
+<td>匹配Email地</td>
+</tr>
+<tr>
+<td>[a-zA-z]+://[^\s]*</td>
+<td>匹配网址URL</td>
+</tr>
+<tr>
+<td>\d{3}-\d{8}\</td>
+<td>\d{4}-\d{7}</td>
+</tr>
+<tr>
+<td>[1-9]\d{5}(?!\d)</td>
+<td>匹配中国邮政编码</td>
+</tr>
+<tr>
+<td>\d+.\d+.\d+.\d+</td>
+<td>匹配ip地址</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
+</blockquote>
+<ol>
+<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
+<li><a href="http://regexkit.sourceforge.net/RegexKitLite/">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
+</ol>
+<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
+<blockquote>
+<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
+</blockquote>
+<p>正则表达式学习链接：</p>
+<ol>
+<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html">55分钟学会正则表达式</a></li>
+<li><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></li>
+<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5">RegExLib.com(正则表达式库查询)</a></li>
+</ol>
+<hr>]]>
+    
+    </summary>
+    
+      <category term="iOS开发" scheme="http://yoursite.com/tags/iOS%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="正则" scheme="http://yoursite.com/tags/%E6%AD%A3%E5%88%99/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[阿里, 网易, 腾讯]]></title>
     <link href="http://yoursite.com/2015/07/11/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/"/>
     <id>http://yoursite.com/2015/07/11/面试总结/</id>
@@ -657,162 +909,6 @@
       <category term="面试" scheme="http://yoursite.com/tags/%E9%9D%A2%E8%AF%95/"/>
     
       <category term="随笔" scheme="http://yoursite.com/tags/%E9%9A%8F%E7%AC%94/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[正则表达式]]></title>
-    <link href="http://yoursite.com/2015/07/11/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
-    <id>http://yoursite.com/2015/07/11/正则表达式/</id>
-    <published>2015-07-11T02:14:52.000Z</published>
-    <updated>2016-03-12T09:13:20.000Z</updated>
-    <content type="html"><![CDATA[<blockquote>
-<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
-</blockquote>
-<ol>
-<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
-<li><a href="http://regexkit.sourceforge.net/RegexKitLite/" target="_blank" rel="external">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
-</ol>
-<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
-<blockquote>
-<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
-</blockquote>
-<p>正则表达式学习链接：</p>
-<ol>
-<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html" target="_blank" rel="external">55分钟学会正则表达式</a></li>
-<li><a href="http://www.regexlab.com/zh/regref.htm" target="_blank" rel="external">揭开正则表达式的神秘面纱</a></li>
-<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5" target="_blank" rel="external">RegExLib.com(正则表达式库查询)</a></li>
-</ol>
-<hr>
-<a id="more"></a>
-<h2 id="1-_NSPredicate">1. NSPredicate</h2><blockquote>
-<p>简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。</p>
-</blockquote>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:(<span class="built_in">NSString</span> *), ...];</span><br></pre></td></tr></table></figure>
-<p>其中, 常见的<code>Format</code>有:</p>
-<p>(1) 比较运算符: &gt;, &lt;, ==, &gt;=, &lt;=, !=</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number &gt; 100&quot;</span><br></pre></td></tr></table></figure>
-<p>(2) 范围运算符: IN, BETWEEN</p>
-<p>​    </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number BETWEEN &#123;1,5&#125;&quot;</span><br><span class="line">   @&quot;address IN &#123;&apos;shanghai&apos;,&apos;beijing&apos;&#125;&quot;</span><br></pre></td></tr></table></figure>
-<p>(3) 字符串本身: SELF </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@“SELF == ‘APPLE’&quot;</span><br></pre></td></tr></table></figure>
-<p>(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name CONTAINS[cd] &apos;ang&apos;&quot;  //包含某个字符串</span><br><span class="line">   @&quot;name BEGINSWITH[c] &apos;sh&apos;&quot;  //以某个字符串开头</span><br><span class="line">   @&quot;name ENDSWITH[d] &apos;ang&apos;&quot;   //以某个字符串结束</span><br><span class="line"></span><br><span class="line">注:[c]不区分大小写</span><br><span class="line">   [d]不区分发音符号即没有重音符号</span><br><span class="line">   [cd]既不区分大小写，也不区分发音符号。</span><br></pre></td></tr></table></figure>
-<p>(5) 通配符: LIKE</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name LIKE[cd] &apos;*er*&apos;&quot;    //*代表通配符,Like也接受[cd].</span><br><span class="line">   @&quot;name LIKE[cd] &apos;???er*&apos;&quot;</span><br></pre></td></tr></table></figure>
-<p>(6) 正则表达式: MATCHES</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：NSString *regex = @&quot;^A.+e$&quot;;   //以A开头，e结尾</span><br><span class="line">  @&quot;name MATCHES %@&quot;,regex</span><br></pre></td></tr></table></figure>
-<p>至于如何使用呢? 下面举几个例子:</p>
-<p>(a) 对NSArray进行过滤, 帅选出包含”ang”的项</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSArray</span> *array = [[<span class="built_in">NSArray</span> alloc]initWithObjects:<span class="string">@"beijing"</span>, <span class="string">@"shanghai"</span>, <span class="string">@"guangzou"</span>, <span class="string">@"wuhan"</span>, <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *string = <span class="string">@"ang"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *pred = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF CONTAINS %@"</span>, string];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [array filteredArrayUsingPredicate:pred]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//    (</span></span><br><span class="line"><span class="comment">//     shanghai,</span></span><br><span class="line"><span class="comment">//     guangzou</span></span><br><span class="line"><span class="comment">//    )</span></span><br></pre></td></tr></table></figure>
-<p>(b) 对NSDate进行筛选</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//日期在十天之内:</span></span><br><span class="line"><span class="built_in">NSDate</span> *endDate = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="built_in">NSTimeInterval</span> timeInterval= [endDate timeIntervalSinceReferenceDate];</span><br><span class="line">timeInterval -=<span class="number">3600</span>*<span class="number">24</span>*<span class="number">10</span>;</span><br><span class="line"><span class="built_in">NSDate</span> *beginDate = [<span class="built_in">NSDate</span> dateWithTimeIntervalSinceReferenceDate:timeInterval];</span><br><span class="line"><span class="comment">//对coredata进行筛选(假设有fetchRequest)</span></span><br><span class="line"><span class="built_in">NSPredicate</span> *predicate_date = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"date &gt;= %@ AND date &lt;= %@"</span>, beginDate,endDate];</span><br><span class="line">[fetchRequest setPredicate:predicate_date];</span><br></pre></td></tr></table></figure>
-<p>OK, <code>NSPredicate</code>的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否是有效邮箱</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isValidateEmail:(<span class="built_in">NSString</span> *)email&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&#123;2,4&#125;"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:email];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断字符串首字母是否为字母</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isStartedWithWord:(<span class="built_in">NSString</span> *)aString&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Za-z]+"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:aString];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="2-_利用rangeOfString：option：直接查找">2. 利用rangeOfString：option：直接查找</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;</span><br><span class="line">    <span class="built_in">NSRange</span> range = [searchText rangeOfString:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br><span class="line">    <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [searchText substringWithRange:range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。</p>
-</blockquote>
-<hr>
-<h1 id="3-_使用正则表达式类">3. 使用正则表达式类</h1><p>详细了解:  <a href="http://blog.csdn.net/crayondeng/article/details/16991579" target="_blank" rel="external">iOS 正则表达式 NSRegularExpression</a></p>
-<p>上面那篇文章总结的很不错. 这里简单再举个例子:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error];</span><br><span class="line">    <span class="built_in">NSTextCheckingResult</span> *result = [regex firstMatchInString:searchText options:<span class="number">0</span> range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [searchText length])];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@\n"</span>, [searchText substringWithRange:result.range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。</p>
-</blockquote>
-<hr>
-<p>针对以上3种方式, 做一个小小总结</p>
-<blockquote>
-<p>第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；</p>
-</blockquote>
-<p>&gt;</p>
-<blockquote>
-<p>如果只关心第一个匹配的结果，第二种匹配较为简洁；</p>
-</blockquote>
-<p>&gt;</p>
-<blockquote>
-<p>如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。</p>
-</blockquote>
-<p>&gt;</p>
-<h2 id="常用正则表达式">常用正则表达式</h2><p>参考:  <a href="http://blog.csdn.net/chaoyuan899/article/details/38583759" target="_blank" rel="external">IOS常用正则表达式</a></p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>[\u4e00-\u9fa5]</td>
-<td>匹配中文字符</td>
-</tr>
-<tr>
-<td>[^\x00-\xff]</td>
-<td>匹配双字节字符(包括汉字在内)</td>
-</tr>
-<tr>
-<td>\n\s*\r</td>
-<td>匹配空白行</td>
-</tr>
-<tr>
-<td>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;\</td>
-<td>&lt;.*? /&gt;</td>
-</tr>
-<tr>
-<td>^\s*\</td>
-<td>\s*$</td>
-</tr>
-<tr>
-<td>\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*</td>
-<td>匹配Email地</td>
-</tr>
-<tr>
-<td>[a-zA-z]+://[^\s]*</td>
-<td>匹配网址URL</td>
-</tr>
-<tr>
-<td>\d{3}-\d{8}\</td>
-<td>\d{4}-\d{7}</td>
-</tr>
-<tr>
-<td>[1-9]\d{5}(?!\d)</td>
-<td>匹配中国邮政编码</td>
-</tr>
-<tr>
-<td>\d+.\d+.\d+.\d+</td>
-<td>匹配ip地址</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-    <summary type="html">
-    <![CDATA[<blockquote>
-<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
-</blockquote>
-<ol>
-<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
-<li><a href="http://regexkit.sourceforge.net/RegexKitLite/">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
-</ol>
-<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
-<blockquote>
-<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
-</blockquote>
-<p>正则表达式学习链接：</p>
-<ol>
-<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html">55分钟学会正则表达式</a></li>
-<li><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></li>
-<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5">RegExLib.com(正则表达式库查询)</a></li>
-</ol>
-<hr>]]>
-    
-    </summary>
-    
-      <category term="iOS开发" scheme="http://yoursite.com/tags/iOS%E5%BC%80%E5%8F%91/"/>
-    
-      <category term="正则" scheme="http://yoursite.com/tags/%E6%AD%A3%E5%88%99/"/>
     
   </entry>
   

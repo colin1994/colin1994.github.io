@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesF9E4E70D-B3D3-46E6-ADCE-E789F50491B3.png">
 <meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages863C1341-C42D-47C3-9FC7-B0F85EE78DA7.png">
 <meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/270/original/%E5%BE%97%E7%91%9F10.png">
-<meta property="og:updated_time" content="2016-03-12T09:13:15.000Z">
+<meta property="og:updated_time" content="2016-03-16T09:17:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS启动页多语言">
 <meta name="twitter:description" content="启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 UILaunchImages ~ 下文将详细描述如何实现启动页多语言。">
@@ -250,7 +250,7 @@
 <p>图片:<img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_2.png" alt="LaunchImages_2"></p>
 </li>
 <li><p>使用对应资源, 比如:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label.text = NSLocalizedString(@&quot;多语言&quot;, nil);</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label.text = <span class="built_in">NSLocalizedString</span>(<span class="string">@"多语言"</span>, <span class="literal">nil</span>);</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <p>再麻烦一点, 就是xib, storyboard的多语言的。 但是原理一样, 这样的方式都能实现多语言支持。So, 就是这么简单~</p>
