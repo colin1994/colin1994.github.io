@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2016-03-16T09:17:13.000Z</updated>
+  <updated>2016-03-16T09:35:40.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://yoursite.com/2016/03/16/%E4%BA%A4%E4%BA%92%E5%8A%A8%E7%94%BB%E5%B0%B1%E6%98%AF%E8%BF%99%E4%B9%88%E7%AE%80%E5%8D%95/"/>
     <id>http://yoursite.com/2016/03/16/交互动画就是这么简单/</id>
     <published>2016-03-16T09:11:00.000Z</published>
-    <updated>2016-03-16T09:17:13.000Z</updated>
+    <updated>2016-03-16T09:35:40.000Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p> <a href="https://github.com/IFTTT/JazzHands" target="_blank" rel="external">Jazz Hands</a>是IFTTT发布的一个基于关键帧的动画框架, 可以用于手势，滚动视图，KVO或者ReactiveCocoa, 十分方便。</p>
 </blockquote>
@@ -85,7 +85,7 @@
 <p>不过如果动画有阻尼效果, 也就是当前界面只能存在一个page, 那就建议直接用 <code>UIViewController</code> 撸, 然后借助 <code>手势</code> , 来实现对应的效果。</p>
 <p>比如可以仿照下美图秀秀的引导页, 写个简单demo, 效果如下:</p>
 <p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/JazzhandsunityResult2.gif" alt="MTXX_DEMO"></p>
-<p>具体 源码 就不上传了。 相信大家利用 Jazzhands 不然做出类似的效果。(有需要的可以私下交流~)</p>
+<p>具体 源码 就不上传了。 相信大家利用 Jazzhands 不难做出类似的效果。(有需要的可以私下交流~)</p>
 <h2 id="总结">总结</h2><p>总体来说, 这个开源库还是非常精简，而且思路非常清晰，依然基于Core Animation之上，因为它只是针对于UIKit上去做帧的配置，对帧的封装上更加灵活，但是缺点是实现复杂的动画时，代码量比较大。另外布局约束呢, 都得手撸,,</p>
 <p>还是很赞的~ </p>
 <p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/801/original/%E9%87%91%E5%A4%A7%E7%88%B721.jpg" alt=""></p>
