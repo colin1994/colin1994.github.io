@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Call Directory Extension 初探 | Colin&#39;s Nest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Call Directory Extension 初探">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/06/17/Call-Directory-Extension-Study/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/16/original/15.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png">
+<meta property="og:image" content="http://i.creativecommons.org/l/by/2.5/cn/88x31.png">
+<meta property="og:updated_time" content="2016-06-17T14:34:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Call Directory Extension 初探">
+<meta name="twitter:description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
+<meta name="twitter:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png">
+  
+  
+    <link rel="icon" href="http://7xkc7a.com1.z0.glb.clouddn.com/author.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Colin丶</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+					        
+								<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/CallKit/" style="font-size: 10px;">CallKit</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/TDD/" style="font-size: 10px;">TDD</a> <a href="/tags/iOS-10/" style="font-size: 13.33px;">iOS 10</a> <a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 16.67px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/翻译/" style="font-size: 10px;">翻译</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.onevcat.com/">OneV&#39;s Den</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.devtang.com/">唐巧的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.sunnyxx.com/archives/">sunnyxx的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://objccn.io/">objc中国</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://www.bignerdranch.com/blog/">Big Nerd Ranch</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://nshipster.com/">NSHipster</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是余龙泽(@Colin__丶), 就读于哈尔滨工业大学, 软件工程专业, 目前大四。在iOS学习道路上不断努力中。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Colin丶</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Colin丶</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+			        
+						<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-Call-Directory-Extension-Study" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/17/Call-Directory-Extension-Study/" class="article-date">
+  	<time datetime="2016-06-17T14:33:15.000Z" itemprop="datePublished">Jun 17 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Call Directory Extension 初探
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CallKit/">CallKit</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS-10/">iOS 10</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，<strong>”that enable call blocking and caller identification. You can create an app extension that can associate a phone number with a name or tell the system when a number should be blocked.”</strong> 这意味着现在可以通过 Call Directory Extension 来实现电话黑名单功能了。Cool~ 本文简单阐述了如果实现简单的来电黑名单功能。</p>
+</blockquote>
+<p><strong>阅读须知：目前学习的资料也仅限相关 API，另外 API也没有详细的注释，所以本文主要是个人探索所得，如果有什么错误，还望见谅并予以指正。现在，让我们开始吧~</strong></p>
+<a id="more"></a>
+<h2 id="API介绍">API介绍</h2><p><strong>Extension</strong> 一直给我的印象就是很轻量，单一的，就如之前接触的  <a href="http://colin1994.github.io/2016/03/12/Photo-Editing-Extension/" target="_blank" rel="external">Photo Editing Extension</a> 一样，使用起来十分简单。这次的 <strong>Call Directory Extension</strong> 也不出例外，出奇的简单。只涉及了两个类，四个方法。下面我们逐一介绍：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  CXCallDirectoryProvider.h</span></span><br><span class="line"><span class="comment">//  CallKit</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Copyright © 2016 Apple. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@available</span>(iOS <span class="number">10.0</span>, *)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CXCallDirectoryProvider</span> : <span class="title">NSObject</span>, <span class="title">NSExtensionRequestHandling</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">beginRequest</span><span class="params">(with context: CXCallDirectoryExtensionContext)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先是第一个类 <strong>CXCallDirectoryProvider</strong>，它是来电的响应者，为我们提供了 <strong>beginRequest</strong> 方法，该方法在来电的时候，会自动被调用，所以我们之后将要重写它，来实现黑名单相关逻辑。怎么样，简单吧~ <img src="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png" alt="emoji_1"></p>
+<p>Now, Go on~</p>
+<p>接下来是另外一个类 <strong>CXCallDirectoryExtensionContext</strong>，它提供了另外三个方法，如下所示：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  CXCallDirectoryExtensionContext.h</span></span><br><span class="line"><span class="comment">//  CallKit</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Copyright © 2016 Apple. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@available</span>(iOS <span class="number">10.0</span>, *)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CXCallDirectoryExtensionContext</span> : <span class="title">NSExtensionContext</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">addBlockingEntry</span><span class="params">(withNextSequentialPhoneNumber phoneNumber: String)</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">addIdentificationEntry</span><span class="params">(withNextSequentialPhoneNumber phoneNumber: String, label: String)</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">completeRequest</span><span class="params">(completionHandler completion: <span class="params">(<span class="params">(Bool)</span></span></span></span> -&gt; <span class="type">Swift</span>.<span class="type">Void</span>)? = <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不难看出，<strong>CXCallDirectoryExtensionContext</strong> 主要负责提交我们处理好的请求。说白点，我们利用它来让系统知道，我们对某个来电所做出的判断。 <strong>addBlockingEntry</strong> 方法，接受一个电话号码字符串，形如 <strong>“+8618…69”</strong> (PS：不要问我为什么要加区号.. 这都是血与泪的经验)，来直接加入黑名单，也就是不接听该来电。<strong>addIdentificationEntry</strong> 方法，接受一个电话号码字符串以及对该号码的描述，也就是来电的时候需要显示的内容。 <strong>completeRequest</strong> 也就是提交之前的处理结果。至此，我们所要做的工作就完成了。<img src="http://wanzao2.b0.upaiyun.com/system/pictures/16/original/15.png" alt="emoji_2"></p>
+<h2 id="实战演示">实战演示</h2><p>虽然自认为上面的描述已经够详细了，不过这里还是有必要详细走一遍流程，以免遗漏。</p>
+<p>开发环境：Xcode8.0 Beta + 64位 iOS10设备（至于为什么64位，之后再解释，说多了都是泪..）</p>
+<h3 id="1-_创建工程">1. 创建工程</h3><p>没什么特别。 <strong>Xcode —&gt; File —&gt; New —&gt; Project</strong>。随便选个 iOS Application，创建即可。这里我选择开发语言为 Swift，你随意~。</p>
+<p>这里我们的目标是来电黑名单，也就是 Extension部分，所以创建好的 Containing App，不用做什么改动。</p>
+<h3 id="2-添加_Extension">2.添加 Extension</h3><p><strong>Xcode —&gt; File —&gt; New —&gt; Target</strong>。创建一个 <strong>Call Directory Extension</strong>，如下图所示：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg" alt="Extension_1"></p>
+<p>这里注意下底部的说明， （This extension and the app it is bundled with must be <strong>64-bit only</strong>）也就是，这个 extension只支持 64位的设备，坑爹有没有！！之前创建太急，没认真看，用那台 5C倒腾了半天，就是出问题。只好狠心把主力机也升级了。</p>
+<p>创建好 Extension，会弹出这样的提示框：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg" alt="Extension_2"></p>
+<p>询问我们是否激活这个 scheme，当然选择激活咯，继续~</p>
+<p>之后只要关注 <strong>xxxHandler.swift</strong> 即可，xxx是你之前创建的 extension命名。</p>
+<p>这里的相关代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> CallKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallDirectoryHandler</span>: <span class="title">CXCallDirectoryProvider</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">beginRequest</span><span class="params">(with context: CXCallDirectoryExtensionContext)</span></span> &#123;</span><br><span class="line">    	<span class="comment">// --- 1</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> phoneNumbersToBlock = retrievePhoneNumbersToBlock() <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">NSLog</span>(<span class="string">"Unable to retrieve phone numbers to block"</span>)</span><br><span class="line">            <span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"CallDirectoryHandler"</span>, code: <span class="number">1</span>, userInfo: <span class="literal">nil</span>)</span><br><span class="line">            context.cancelRequest(withError: error)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 2</span></span><br><span class="line">        <span class="keyword">for</span> phoneNumber <span class="keyword">in</span> phoneNumbersToBlock &#123;</span><br><span class="line">            context.addBlockingEntry(withNextSequentialPhoneNumber: phoneNumber)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 3</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> (phoneNumbersToIdentify, phoneNumberIdentificationLabels) = retrievePhoneNumbersToIdentifyAndLabels() <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">NSLog</span>(<span class="string">"Unable to retrieve phone numbers to identify and their labels"</span>)</span><br><span class="line">            <span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"CallDirectoryHandler"</span>, code: <span class="number">2</span>, userInfo: <span class="literal">nil</span>)</span><br><span class="line">            context.cancelRequest(withError: error)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 4</span></span><br><span class="line">        <span class="keyword">for</span> (phoneNumber, label) <span class="keyword">in</span> <span class="built_in">zip</span>(phoneNumbersToIdentify, phoneNumberIdentificationLabels) &#123;</span><br><span class="line">            context.addIdentificationEntry(withNextSequentialPhoneNumber: phoneNumber, label: label)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 5</span></span><br><span class="line">        context.completeRequest()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">retrievePhoneNumbersToBlock</span><span class="params">()</span></span> -&gt; [<span class="type">String</span>]? &#123;</span><br><span class="line">        <span class="comment">// retrieve list of phone numbers to block</span></span><br><span class="line">        <span class="keyword">return</span> [<span class="string">"+8618xxxx157"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">retrievePhoneNumbersToIdentifyAndLabels</span><span class="params">()</span></span> -&gt; (phoneNumbers: [<span class="type">String</span>], labels: [<span class="type">String</span>])? &#123;</span><br><span class="line">        <span class="comment">// retrieve list of phone numbers to identify, and their labels</span></span><br><span class="line">        <span class="keyword">return</span> ([<span class="string">"+8618xxxx569"</span>], [<span class="string">"测试"</span>])</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个简单的来电黑名单，我们只要补全 <code>retrievePhoneNumbersToBlock</code> 和 <code>retrievePhoneNumbersToIdentifyAndLabels</code> 中的相关数据即可，它们分别表示直接加入黑名单的号码以及识别出来，需要判断的号码。</p>
+<p>现在我们具体看一下这个类到底做了什么。</p>
+<p><code>beginRequest</code> 重写之前的这个类，它监听到了来电，自动调用。</p>
+<p>在 <strong>// —- 1</strong> 中，先判断是否成功调用了 <code>retrievePhoneNumbersToBlock</code> 方法，如果没有，则打印 Log： <strong>Unable to retrieve phone numbers to block</strong>，然后直接终止这次请求并返回。</p>
+<p>在 <strong>// —- 2</strong> 中，遍历添加黑名单中的号码，这里的号码将直接拦截。</p>
+<p>在 <strong>// —- 3</strong> 中，先判断是否成功调用了 <code>retrievePhoneNumbersToIdentifyAndLabels</code> 方法，如果没有，则打印 Log： <strong>Unable to retrieve phone numbers to identify and their labels</strong>，然后直接终止这次请求并返回。</p>
+<p>在 <strong>// —- 4</strong> 中，遍历添加识别后的号码及其描述，这里的号码将连带描述一起显示。</p>
+<p>在 <strong>// —- 5</strong> 中，完成提交请求。 </p>
+<p>到这里，代码已经全部完成了。</p>
+<h3 id="3-_开启权限">3. 开启权限</h3><p>之后我们运行该 App到设备中，然后进入设备的设置 —&gt; 电话 —&gt; Call Blocking &amp; Identification，开启我们的 App即可。如下图所示：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png" alt="Extension_3"></p>
+<p>至此，相关的工作就都完成了，我们的来电黑名单也已经实现了，可以用添加到列表中的号码来测试啦，如下所示：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png" alt="Extension_4"></p>
+<h2 id="相关思考及后续">相关思考及后续</h2><p>虽然实现黑名单功能很简单，但是这里我认为主要的问题应该是集中在，如何编辑这个黑名单列表。列表数据项可能很多，并且数据可能是实时更新添加的，那应该怎么做才更好呢？这里我的第一反应就是利用 App Group实现数据共享，在 Containing App完成相关的数据操作，在 Extension App中去获取即可。至于可行性，倒是没有验证过，如果不行，就当我瞎比比咯~。 当然，可能还有其他的办法，以及可能还会遇到其他的问题，这里在之后的学习过程中，我会逐步完善。</p>
+<p>当然，对于 CallKit的学习，我也仅限于这一两天，还是没有资料的情况下。所以文中难免存在各种错误以及遗漏，欢迎指正。</p>
+<p>这之后，继续 CallKit的学习，实现它的另外一个功能：VoIP App。 wait…</p>
+<p>Enjoy it~</p>
+<h2 id="参考链接">参考链接</h2><p><a href="https://developer.apple.com/videos/play/wwdc2016/230/" target="_blank" rel="external">Enhancing VoIP Apps with CallKit</a></p>
+<p><a href="https://developer.apple.com/reference/callkit" target="_blank" rel="external">CallKit</a></p>
+<hr>
+<p><a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external"><img src="http://i.creativecommons.org/l/by/2.5/cn/88x31.png" alt="知识共享许可协议"></a>本作品采用<a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external">知识共享署名 2.5 中国大陆许可协议</a>进行许可，欢迎转载，但转载请注明来自<a href="http://colin1994.github.io/" target="_blank" rel="external">Colin’s Nest</a>，并保持转载后文章内容的完整。本人保留所有版权相关权利。</p>
+
+      
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- css -->
+  <style type="text/css">
+      .center {
+          text-align: center;
+      }
+      .hidden {
+          display: none;
+      }
+    .donate_bar a.btn_donate{
+      display: inline-block;
+      width: 82px;
+      height: 82px;
+      background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+      _background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+
+      <!-- http://img.t.sinajs.cn/t5/style/images/apps_PRF/e_media/btn_reward.gif
+           因为本 hexo 生成的博客所用的 theme 的 a:hover 带动画效果，
+         为了在让打赏按钮显示效果正常 而 添加了以下几行 css，
+         嵌入其它博客时不一定要它们。 -->
+      -webkit-transition: background 0s;
+      -moz-transition: background 0s;
+      -o-transition: background 0s;
+      -ms-transition: background 0s;
+      transition: background 0s;
+      <!-- /让打赏按钮的效果显示正常 而 添加的几行 css 到此结束 -->
+    }
+
+    .donate_bar a.btn_donate:hover{ background-position: 0px -82px;}
+    .donate_bar .donate_txt {
+      display: block;
+      color: #9d9d9d;
+      font: 14px/2 "Microsoft Yahei";
+    }
+    .bold{ font-weight: bold; }
+  </style>
+  <!-- /css -->
+
+    <!-- Donate Module -->
+    <div id="donate_module">
+
+  <!-- btn_donate & tips -->
+  <div id="donate_board" class="donate_bar center">
+      <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+    <a id="btn_donate" class="btn_donate" target="_self" href="javascript:;" title="Donate 打赏"></a>
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+      
+    
+  </div>
+  <!-- /btn_donate & tips -->
+
+  <!-- donate guide -->
+    
+  <div id="donate_guide" class="donate_bar center hidden">
+        <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+      
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="用微信扫一扫哦~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="微信打赏 Colin" height="190px" width="auto"/>
+    </a>
+        
+        &nbsp;&nbsp;
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="用支付宝扫一扫即可~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="支付宝打赏 Colin" height="190px" width="auto"/>
+    </a>
+
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+
+  </div>
+  <!-- /donate guide -->
+
+  <!-- donate script -->
+  <script type="text/javascript">
+    document.getElementById('btn_donate').onclick = function() {
+      $('#donate_board').addClass('hidden');
+      $('#donate_guide').removeClass('hidden');
+    }
+
+    function donate_on_web(){
+      $('#donate').submit();
+        }
+
+    var original_window_onload = window.onload;
+        window.onload = function () {
+            if (original_window_onload) {
+                original_window_onload();
+            }
+            document.getElementById('donate_board_wdg').className = 'hidden';
+    }
+  </script>
+  <!-- /donate script -->
+</div>
+<!-- /Donate Module -->
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/06/14/What's_New_in_iOS_10.0_zh_0/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">What&#39;s New in iOS 10.0 中文版(上)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Call-Directory-Extension-Study" data-title="Call Directory Extension 初探" data-url="http://http://colin1994.github.io/2016/06/17/Call-Directory-Extension-Study/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"colin1994"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Colin丶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
