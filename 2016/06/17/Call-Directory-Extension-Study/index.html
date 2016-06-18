@@ -13,12 +13,12 @@
 <meta property="og:description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
 <meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png">
 <meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/16/original/15.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg?imageView2/2/w/600">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg?imageView2/2/w/500">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png?imageView2/2/h/500">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png?imageView2/2/h/500">
 <meta property="og:image" content="http://i.creativecommons.org/l/by/2.5/cn/88x31.png">
-<meta property="og:updated_time" content="2016-06-17T14:34:55.000Z">
+<meta property="og:updated_time" content="2016-06-18T04:21:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Call Directory Extension 初探">
 <meta name="twitter:description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
@@ -251,10 +251,10 @@
 <h3 id="1-_创建工程">1. 创建工程</h3><p>没什么特别。 <strong>Xcode —&gt; File —&gt; New —&gt; Project</strong>。随便选个 iOS Application，创建即可。这里我选择开发语言为 Swift，你随意~。</p>
 <p>这里我们的目标是来电黑名单，也就是 Extension部分，所以创建好的 Containing App，不用做什么改动。</p>
 <h3 id="2-添加_Extension">2.添加 Extension</h3><p><strong>Xcode —&gt; File —&gt; New —&gt; Target</strong>。创建一个 <strong>Call Directory Extension</strong>，如下图所示：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg" alt="Extension_1"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg?imageView2/2/w/600" alt="Extension_1"></p>
 <p>这里注意下底部的说明， （This extension and the app it is bundled with must be <strong>64-bit only</strong>）也就是，这个 extension只支持 64位的设备，坑爹有没有！！之前创建太急，没认真看，用那台 5C倒腾了半天，就是出问题。只好狠心把主力机也升级了。</p>
 <p>创建好 Extension，会弹出这样的提示框：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg" alt="Extension_2"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg?imageView2/2/w/500" alt="Extension_2"></p>
 <p>询问我们是否激活这个 scheme，当然选择激活咯，继续~</p>
 <p>之后只要关注 <strong>xxxHandler.swift</strong> 即可，xxx是你之前创建的 extension命名。</p>
 <p>这里的相关代码如下：</p>
@@ -269,9 +269,9 @@
 <p>在 <strong>// —- 5</strong> 中，完成提交请求。 </p>
 <p>到这里，代码已经全部完成了。</p>
 <h3 id="3-_开启权限">3. 开启权限</h3><p>之后我们运行该 App到设备中，然后进入设备的设置 —&gt; 电话 —&gt; Call Blocking &amp; Identification，开启我们的 App即可。如下图所示：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png" alt="Extension_3"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png?imageView2/2/h/500" alt="Extension_3"></p>
 <p>至此，相关的工作就都完成了，我们的来电黑名单也已经实现了，可以用添加到列表中的号码来测试啦，如下所示：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png" alt="Extension_4"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png?imageView2/2/h/500" alt="Extension_4"></p>
 <h2 id="相关思考及后续">相关思考及后续</h2><p>虽然实现黑名单功能很简单，但是这里我认为主要的问题应该是集中在，如何编辑这个黑名单列表。列表数据项可能很多，并且数据可能是实时更新添加的，那应该怎么做才更好呢？这里我的第一反应就是利用 App Group实现数据共享，在 Containing App完成相关的数据操作，在 Extension App中去获取即可。至于可行性，倒是没有验证过，如果不行，就当我瞎比比咯~。 当然，可能还有其他的办法，以及可能还会遇到其他的问题，这里在之后的学习过程中，我会逐步完善。</p>
 <p>当然，对于 CallKit的学习，我也仅限于这一两天，还是没有资料的情况下。所以文中难免存在各种错误以及遗漏，欢迎指正。</p>
 <p>这之后，继续 CallKit的学习，实现它的另外一个功能：VoIP App。 wait…</p>
