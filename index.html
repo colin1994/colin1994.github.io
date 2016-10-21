@@ -110,7 +110,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/CallKit/" style="font-size: 10px;">CallKit</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/TDD/" style="font-size: 10px;">TDD</a> <a href="/tags/iOS-10/" style="font-size: 13.33px;">iOS 10</a> <a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 16.67px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/翻译/" style="font-size: 10px;">翻译</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+						<a href="/tags/CallKit/" style="font-size: 10px;">CallKit</a> <a href="/tags/Core-Image/" style="font-size: 13.33px;">Core Image</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/TDD/" style="font-size: 10px;">TDD</a> <a href="/tags/iOS-10/" style="font-size: 13.33px;">iOS 10</a> <a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 16.67px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/翻译/" style="font-size: 10px;">翻译</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
 					</div>
 				</section>
 				
@@ -189,6 +189,215 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Core-Image-Custom-Filter" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/10/21/Core-Image-Custom-Filter/" class="article-date">
+  	<time datetime="2016-10-21T14:37:08.000Z" itemprop="datePublished">Oct 21 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/10/21/Core-Image-Custom-Filter/">Core Image 之自定义 Filter~</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言">前言</h2><p>最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了解。故此记录，与君交流~</p>
+<p>本文主要讲解 Core Image 自定义滤镜部分的内容，包括如何使用自定义 Filter，如何编写 kernel，QC 工具介绍，注意点以及一些开发技巧。</p>
+<p>在这之前，我默认你了解 Core Image 的基本原理以及使用方式。如果没有，我建议你花点时间看看我的上一篇文章：<a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/">Core Image 你需要了解的那些事~</a>，它介绍 Core Image 相关基础概念、使用方式、注意点以及和其他图像处理方案的对比，想必会有所收获。</p>
+<p>现在，开始吧～<img src="http://wanzao2.b0.upaiyun.com/system/pictures/1/original/27.png" alt=""></p>
+      
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Core-Image/">Core Image</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/10/21/Core-Image-Custom-Filter/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-Core-Image-OverView" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/10/21/Core-Image-OverView/" class="article-date">
+  	<time datetime="2016-10-21T14:31:29.000Z" itemprop="datePublished">Oct 21 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/10/21/Core-Image-OverView/">Core Image 你需要了解的那些事~</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前言">前言</h2><p>最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了解。故此记录，与君交流~</p>
+<p>本文将会介绍逐一介绍 Core Image 相关基础概念、使用方式、注意点以及和其他图像处理方案的对比。也算是下一篇文章： <a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/">Core Image 自定义 Filter~</a> 的预备知识，毕竟只有了解了 Core Image 的作用以及它的优势，才有学习自定义 Filter 的动力。</p>
+<p>现在，开始吧～<img src="http://wanzao2.b0.upaiyun.com/system/pictures/24/original/6.png" alt=""></p>
+      
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Core-Image/">Core Image</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/10/21/Core-Image-OverView/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-Call-Directory-Extension-Study" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -1019,232 +1228,6 @@
       
         <p class="article-more-link">
           <a  href="/2015/07/13/Imitation-Clean-Master/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="代码备忘-TODO-Macro" class="article article-type-代码备忘" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/07/12/TODO-Macro/" class="article-date">
-  	<time datetime="2015-07-12T02:14:52.000Z" itemprop="datePublished">Jul 12 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/07/12/TODO-Macro/">TODO宏实现</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="代码备忘,_TODO宏实现">代码备忘, TODO宏实现</h1><blockquote>
-<p>我们平时在开发过程中, 往往并不是憋足气一股脑敲完全部代码。每个模块, 每个函数的实现总有个先后顺序。又或者哪个部分需要做调整, 修改… 所以, 我们需要有一个东西, 来提醒我们, 起到代码备忘功能, 避免某个功能忘记实现, 也能让我们快速定位。 所以这篇文章, 就是要实现一个TODO宏, 来达到代码备忘功能。</p>
-</blockquote>
-<p><strong>效果如下:</strong></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387345_9339.jpeg" width="500"/></p>
-<p><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_3643.jpeg" width="500"/></p>
-      
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/宏/">宏</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/07/12/TODO-Macro/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="iOS开发小记-Regular-Expressions" class="article article-type-iOS开发小记" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/07/11/Regular-Expressions/" class="article-date">
-  	<time datetime="2015-07-11T02:14:52.000Z" itemprop="datePublished">Jul 11 2015</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/07/11/Regular-Expressions/">正则表达式</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
-</blockquote>
-<ol>
-<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
-<li><a href="http://regexkit.sourceforge.net/RegexKitLite/">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
-</ol>
-<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
-<blockquote>
-<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
-</blockquote>
-<p>正则表达式学习链接：</p>
-<ol>
-<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html">55分钟学会正则表达式</a></li>
-<li><a href="http://www.regexlab.com/zh/regref.htm">揭开正则表达式的神秘面纱</a></li>
-<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5">RegExLib.com(正则表达式库查询)</a></li>
-</ol>
-<hr>
-      
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/正则/">正则</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/07/11/Regular-Expressions/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>
