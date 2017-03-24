@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>TDD 学习总结（Swift 实践） | Colin&#39;s Nest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="花了几天时间，看完了 《Test-Driven iOS Development with Swift》 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 ToDo 应用展开，讲解了 Test-Driven Development （TDD，即测试驱动开发） 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TDD 学习总结（Swift 实践）">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/06/03/TDD-With-Swift/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="花了几天时间，看完了 《Test-Driven iOS Development with Swift》 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 ToDo 应用展开，讲解了 Test-Driven Development （TDD，即测试驱动开发） 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_0.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_3.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_1.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_4.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_5.jpeg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_6.jpeg">
+<meta property="og:image" content="http://i.creativecommons.org/l/by/2.5/cn/88x31.png">
+<meta property="og:updated_time" content="2016-06-03T11:54:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TDD 学习总结（Swift 实践）">
+<meta name="twitter:description" content="花了几天时间，看完了 《Test-Driven iOS Development with Swift》 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 ToDo 应用展开，讲解了 Test-Driven Development （TDD，即测试驱动开发） 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~">
+<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png">
+  
+  
+    <link rel="icon" href="http://7xkc7a.com1.z0.glb.clouddn.com/author.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Colin丶</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/rss2.xml" title="rss">rss</a>
+					        
+								<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/CallKit/" style="font-size: 10px;">CallKit</a> <a href="/tags/Core-Image/" style="font-size: 13.33px;">Core Image</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/TDD/" style="font-size: 10px;">TDD</a> <a href="/tags/iOS-10/" style="font-size: 13.33px;">iOS 10</a> <a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 16.67px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/翻译/" style="font-size: 10px;">翻译</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.onevcat.com/">OneV&#39;s Den</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.devtang.com/">唐巧的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.sunnyxx.com/archives/">sunnyxx的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://objccn.io/">objc中国</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://www.bignerdranch.com/blog/">Big Nerd Ranch</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://nshipster.com/">NSHipster</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是余龙泽(@Colin__丶), 就读于哈尔滨工业大学, 软件工程专业, 目前大四。在iOS学习道路上不断努力中。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Colin丶</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Colin丶</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/rss2.xml" title="rss">rss</a>
+			        
+						<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-TDD-With-Swift" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/03/TDD-With-Swift/" class="article-date">
+  	<time datetime="2016-06-03T11:33:40.000Z" itemprop="datePublished">Jun 3 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      TDD 学习总结（Swift 实践）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Swift/">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TDD/">TDD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>花了几天时间，看完了 <a href="https://www.packtpub.com/application-development/test-driven-ios-development-swift" target="_blank" rel="external">《Test-Driven iOS Development with Swift》</a> 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 <code>ToDo</code> 应用展开，讲解了 <code>Test-Driven Development （TDD，即测试驱动开发）</code> 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~</p>
+</blockquote>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png" alt="TDD"></p>
+<a id="more"></a>
+<h2 id="什么是_TDD">什么是 TDD</h2><p>测试驱动开发(TDD)是极限编程的重要特点，它以不断的测试推动代码的开发，既简化了代码，又保证了软件质量。</p>
+<p>测试驱动开发的基本思想就是在开发功能代码之前，先编写测试代码。也就是说在明确要开发某个功能后，首先思考如何对这个功能进行测试，并完成测试代码的编写，然后编写相关的代码满足这些测试用例。然后循环进行添加其他功能，直到完全部功能的开发。</p>
+<p>OK，概括来说，TDD 的开发过程可以用上图来描述：Red，Green，Refactor。</p>
+<p>翻译过来就是：</p>
+<ol>
+<li>编写测试用例，测试不通过。（红色 Error）</li>
+<li>编写代码实现功能，测试通过。（绿色 Success）</li>
+<li>重构优化代码。（Refactor）</li>
+</ol>
+<p>再详细点，测试驱动开发的基本过程如下：</p>
+<ol>
+<li>明确当前要完成的功能。记录成一个 TODO 列表。</li>
+<li>快速完成针对此功能的测试用例编写。</li>
+<li>测试代码编译不通过。</li>
+<li>编写对应的功能代码。</li>
+<li>测试通过。</li>
+<li>对代码进行重构，并保证测试通过。</li>
+<li>循环完成所有功能的开发。</li>
+</ol>
+<p>怎么样，简单吧~</p>
+<h2 id="是否该用_TDD">是否该用 TDD</h2><p>简单是简单，但是很明显的，开发前期，工作量绝对不是 1+1 那么简单，那么是否该用 TDD 呢？对此，我不做过多的阐述。世上并没有放之四海皆准的法则，TDD 好坏在于你的判断，方法论的主体在于使用的人，本文并不会给你一个完美的答案，这需要你自己在实践中取舍。接下去，我将列举 TDD 目前公认的一些优缺点，以及使用原则，加深大家对 TDD 的理解。</p>
+<p><strong>TDD 开发的优点：</strong></p>
+<ul>
+<li>可以保证代码的质量。可以对自己的所需要的业务功能的每一步设计进行验证，并得到正确的结果，减少bug的出现的，特别对于复杂业务逻辑的项目，以小步慢走的方式，避免后期繁重的测试和维护工作。</li>
+<li>找到了重构的信心，必要时候你还可以痛痛快快的并且满怀信心的对代码做一场大的变革。这样我们的代码变得干净了，扩展性、可以维护性以及易理解性纷至沓来。</li>
+<li>在团队建设中能够进行分工，以可执行的形式文档化你的需求，迫使你分清职责隔离依赖以驱动你的设计，编织安全网以便将Bug扼杀在在摇篮状态，防止其逃逸。不同于传统开发（传统的开发人员开发的软件的测试是为了找出已经逃逸得bug，可能这个bug已经长成了毒瘤）。注：这两种活动都是必要的，而且毫不冲突，互为补充。</li>
+<li>帮助你养成一个新的思维习惯，不光在你编程的道路上，在你的工作和生活中，你慢慢的会把自己的需求进行分析设计并不断地验证，最终更好去实现自己的人生目标。</li>
+</ul>
+<p><strong>TDD 开发的缺点：</strong></p>
+<ul>
+<li>对于测试驱动不熟练或者喜欢偷懒的的人员，加大了代码的编写量，测试代码是系统代码的两倍或更多。</li>
+<li>可能不适合时间很紧的软件开发，更适合于产品和平台的开发。</li>
+</ul>
+<p><strong>TDD 原则：</strong></p>
+<ul>
+<li><p><strong>独立测试：</strong>不同代码的测试应该相互独立，一个类对应一个测试类，一个函数对应一个测试函数。用例也应各自独立，每个用例不能使用其他用例的结果数据，结果也不能依赖于用例执行顺序。 一个角色：开发过程包含多种工作，如：编写测试代码、编写产品代码、代码重构等。做不同的工作时，应专注于当前的角色，不要过多考虑其他方面的细节。</p>
+</li>
+<li><p><strong>测试列表：</strong>代码的功能点可能很多，并且需求可能是陆续出现的，任何阶段想添加功能时，应把相关功能点加到测试列表中，然后才能继续手头工作，避免疏漏。</p>
+</li>
+<li><p><strong>测试驱动：</strong>即利用测试来驱动开发，是TDD的核心。要实现某个功能，要编写某个类或某个函数，应首先编写测试代码，明确这个类、这个函数如何使用，如何测试，然后在对其进行设计、编码。</p>
+</li>
+<li><p><strong>先写断言：</strong>编写测试代码时，应该首先编写判断代码功能的断言语句，然后编写必要的辅助语句。</p>
+</li>
+<li><p><strong>可测试性：</strong>产品代码设计、开发时的应尽可能提高可测试性。每个代码单元的功能应该比较单纯，“各家自扫门前雪”，每个类、每个函数应该只做它该做的事，不要弄成大杂烩。尤其是增加新功能时，不要为了图一时之便，随便在原有代码中添加功能。</p>
+</li>
+<li><p><strong>及时重构：</strong>对结构不合理，重复等“味道”不好的代码，在测试通过后，应及时进行重构。</p>
+</li>
+<li><p><strong>小步前进：</strong>软件开发是复杂性非常高的工作，小步前进是降低复杂性的好办法。</p>
+<p>​</p>
+</li>
+</ul>
+<p>看到这里，如果你还觉得，有必要体验一把 TDD，那么接着往下看，我将通过一个简单的例子，走一遍 TDD 开发的流程，加深大家对 TDD 的了解，也为 iOS 中应用 TDD 做个入门介绍。</p>
+<h2 id="iOS_中如何使用_TDD">iOS 中如何使用 TDD</h2><blockquote>
+<p>Apple一直致力于在iOS开发中集成更加方便和可用的测试，在Xcode 5中，新的IDE和SDK引入了XCTest来替代原来的SenTestingKit，并且取消了新建工程时的“包括单元测试”的可选项（同样待遇的还有使用ARC的可选项）。新工程将自动包含测试的target，并且相关框架也搭建完毕，可以说测试终于摆脱了iOS开发中“二等公民”的地位，现在已经变得和产品代码一样重要了。  —————— 喵神</p>
+</blockquote>
+<p>简单 Mark 下 TDD 在 Xcode 中的历程：</p>
+<ul>
+<li>In 1998, the Swiss company Sen:te developed OCUnit, a testing framework for Objective-C (hence, the OC prefix). OCUnit was a port of SUnit, a testing framework that Kent Beck had written for Smalltalk in 1994.</li>
+<li>With Xcode 2.1, Apple added OCUnit to Xcode.</li>
+<li>In 2008, OCUnit was integrated into the iPhone SDK 2.2 to allow unit testing of iPhone apps.</li>
+<li>Four years later, OCUnit was renamed XCUnit (XC stands for Xcode).</li>
+</ul>
+<p>既然 Xcode 为我们内置了这么方便的 XCTest，我们没理由不好好使用阿~</p>
+<p>接下去通过实现一个简单的功能：把句子中每个单词的首字母转成大写字母，来走一遍 TDD 的流程。话不多说，开车了~</p>
+<h3 id="1-_创建工程">1. 创建工程</h3><p>这里创建一个常规的 iOS 工程，记得 <code>“ Include Unit Tests”</code> 即可，语言我们选择 <code>Swift</code>。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_0.jpeg" alt="demo_0"></p>
+<p>创建完毕后的工程目录如下：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_3.jpeg" alt="demo_1"></p>
+<p>默认为我们创建了 <code>TDDDemoTests.swift</code> 文件，这里就是我们编写测试用例的地方。打开该文件，如下所示：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  TDDDemoTests.swift</span></span><br><span class="line"><span class="comment">//  TDDDemoTests</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Created by Colin on 16/6/3.</span></span><br><span class="line"><span class="comment">//  Copyright © 2016年 Colin. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"><span class="meta">@testable</span> <span class="keyword">import</span> TDDDemo</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TDDDemoTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.setUp()</span><br><span class="line">        <span class="comment">// Put setup code here. This method is called before the invocation of each test method in the class.</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">tearDown</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// Put teardown code here. This method is called after the invocation of each test method in the class.</span></span><br><span class="line">        <span class="keyword">super</span>.tearDown()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testExample</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// This is an example of a functional test case.</span></span><br><span class="line">        <span class="comment">// Use XCTAssert and related functions to verify your tests produce the correct results.</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testPerformanceExample</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// This is an example of a performance test case.</span></span><br><span class="line">        <span class="keyword">self</span>.measureBlock &#123;</span><br><span class="line">            <span class="comment">// Put the code you want to measure the time of here.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，有几个地方需要说明一下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"><span class="meta">@testable</span> <span class="keyword">import</span> TDDDemo</span><br></pre></td></tr></table></figure>
+<p>每一个测试用例都需要引入 <code>XCTest</code> 框架，它定义了我们需要的 <code>XCTestCase</code> 类，以及之后会用到的一些断言，比如 <code>XCTAssertEqual</code> 等。另外，还需要手动导入 <code>TDDDemo</code> 模块，我们之后的相关代码都会在 <code>TDDDemo</code> 中编写，但是默认情况下，类，结构体，枚举以及它们的方法，都是内联的（<code>internal</code>），这意味着它们所处模块外无法直接访问到它们。所以在此之外的测试代码无法访问到它们，故而需要使用 <code>@testable</code> 关键字来让测试代码能访问它们。</p>
+<p>再看 <code>setUp</code> 方法和 <code>tearDown</code> 。在每个测试用例调用前，都会先调用 <code>setUp</code> 方法，在每个测试用例执行结束后，都会调用 <code>tearDown</code> 方法，大体流程就是：setUp — test case — tearDown — setUp — test case — tearDown …. 所以我们一般在 <code>setUp</code> 中做一些初始化操作，在 <code>tearDown</code>  做一些清除释放操作。</p>
+<p>另外，每一个测试方法都需要以 <code>test</code> 开头，这样 Xcode 才能自动识别出它。比如默认提供的 <code>testExample</code> 和 <code>testPerformanceExample</code> 。</p>
+<p>再有，这里建议在 Bulid 开始的时候，新建一个导航栏，并且打印 Build Log，这样我们能更直观知道发生了什么，哪里出错了。具体设置如下： <strong>Xcode | Preference | Behaviors</strong> </p>
+<p>如图所示：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_1.jpeg" alt="demo_2"></p>
+<p>现在 <strong>Command + U</strong>，执行测试。毋庸置疑，测试通过（毕竟啥都还没开始写…）。你会看到如下界面：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_4.jpeg" alt="demo_3"></p>
+<p>左边的  <strong>Test Navigation</strong> 列举了所有的测试用例以及对应的测试结果。中间的编辑区展示了 <strong>Bulid</strong> 过程中具体做了什么，以及 <strong>Build</strong> 结果。</p>
+<p>哦，对了。还有一处设置也很有用。</p>
+<p><strong>Edit Scheme | Test</strong> ，可以看到右边列举了所有参与测试的用例。当然我们知道，每个用例的测试都是需要时间的，如果想对某个用例单独测试，或者不想测试某个用例，相应的勾选和去选就可以了。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_5.jpeg" alt="demo_4"></p>
+<h3 id="2-_编写测试用例">2. 编写测试用例</h3><p>好了，万事俱备，是时候展示真正的技术了！</p>
+<p>删除默认的 <code>TDDDemoTests.swift</code> 文件，重新创建一个 <code>CapitalTest.swift</code> 文件。在 <code>TDDDemoTests</code> 分组中，<strong>File | New | File | iOS | Source | Unit Test Case Class</strong> ，创建一个名为 <strong>CapitalTest</strong> 并 继承自 <strong>XCTestCase</strong> 的类。如图所示：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_6.jpeg" alt="demo_5"></p>
+<p>删掉无用的 <strong>testExample，testPerformanceExample</strong> 方法。</p>
+<p>引用 <strong>TDDDemo</strong> 类。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@testable</span> <span class="keyword">import</span> TDDDemo</span><br></pre></td></tr></table></figure>
+<p>编写测试用例：</p>
+<p>这里我们要做的是实现句子中单词首字母的大写转换，所以只要写个测试用例验证首字母是否都是大写即可。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital</span><span class="params">()</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> viewController = <span class="type">ViewController</span>()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> string = <span class="string">"this is A test headline"</span></span><br><span class="line">    <span class="keyword">let</span> headline = viewController.makeHeadline(string)</span><br><span class="line">    </span><br><span class="line">    <span class="type">XCTAssertEqual</span>(headline, <span class="string">"This Is A Test Headline"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很简单，我们希望有这样一个函数 <code>makeHeadline</code>，它接受一个 <strong>String</strong> 类型的参数，并返回转换成功的  <strong>String</strong> 类型的结果。然后利用 <code>XCTAssertEqual</code> 判断一下，当左右值相同时，它才会通过。</p>
+<p>很显然，这个时候会保持，且测试不通过，因为我们的 <code>makeHeadline</code> 函数根本就不存在，现在就去实现它。</p>
+<p>回到 <strong>ViewController.swift</strong> 中，添加如下方法。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="string">"This Is A Test Headline"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Command + U</strong> 走一遍，恭喜你，测试走通了。全部显示绿色的 Build succeeded。（眼尖的朋友可能发现问题了，不过不急，至少目前为止，我们的测试用例已经通过了~）</p>
+<p>然后接下去，做的就是重构了。虽然只写了几行代码，但是还是有优化空间的。</p>
+<p>我们之前提到过，<strong>setUp</strong> 方法将在每个 <strong>test case</strong> 调用前都自动被调用，所以这里可以放一些初始化相关操作。我们这里初始化了一个 <strong>ViewController</strong> 类型的对象，不出意外的话，在每个测试用例中中需要初始化一个，这无疑是很麻烦的。所以我们可以把 <strong>viewController</strong> 提出来，当做 <strong>CapitalTest</strong> 类的一个属性，然后在 <strong>setUp</strong> 方法中去初始化它。具体如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CapitalTest</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> viewController: <span class="type">ViewController</span>!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.setUp()</span><br><span class="line">        </span><br><span class="line">        viewController = <span class="type">ViewController</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	<span class="comment">/////////</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下去，我们需要在编写另外一个测试用例，以保证第一个测试用例并不是偶然的。这也是我们在实际开发中需要做的，列举多个测试用例，来保证某个功能确实通过了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital2</span><span class="params">()</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> string = <span class="string">"Here is another Example"</span></span><br><span class="line">    <span class="keyword">let</span> headline = viewController.makeHeadline(string)</span><br><span class="line">    </span><br><span class="line">    <span class="type">XCTAssertEqual</span>(headline, <span class="string">"Here Is Another Example"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再次 <strong>Command + U</strong>，不出意外，第一个还是通过，第二个则显示失败。原因大家都懂~</p>
+<p>接下去修改 <code>makeHeadline</code> 的具体实现：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 通过“ ”分割字符串, 存入数组</span></span><br><span class="line">    <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 遍历数组, 移除首字母, 并插入对应的大写字母</span></span><br><span class="line">    <span class="keyword">var</span> headline = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">var</span> word <span class="keyword">in</span> words &#123;</span><br><span class="line">        <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">        headline += <span class="string">"<span class="subst">\(String(firstCharacter)</span>.uppercaseString)<span class="subst">\(word)</span> "</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 移除最后的“ ”</span></span><br><span class="line">    headline.removeAtIndex(headline.endIndex.predecessor())</span><br><span class="line">    <span class="keyword">return</span> headline</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码很简单，注释也写的很清楚，这里就不累述了。再次 <strong>Command + U</strong>，bingo~ 通过了。</p>
+<p>接下去再看看，是否有优化的空间。</p>
+<ol>
+<li>我们的测试用例描述的其实不太清楚，几个变量之间的关系比较凌乱。</li>
+<li><strong>makeHeadline</strong> 函数的实现太 Objc 化了，没有用上 Swift 里的高级功能。</li>
+</ol>
+<p>OK，既然不好，那就优化一下呗~</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> inputString =       <span class="string">"this is A test headline"</span></span><br><span class="line">        <span class="keyword">let</span> expectedHeadline =  <span class="string">"This Is A Test Headline"</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> result = viewController.makeHeadline(inputString)</span><br><span class="line">        <span class="type">XCTAssertEqual</span>(result, expectedHeadline)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> headline = words.<span class="built_in">map</span> &#123; (<span class="keyword">var</span> word) -&gt; <span class="type">String</span> <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">          <span class="keyword">return</span> <span class="string">"<span class="subst">\(String(firstCharacter)</span>.uppercaseString)<span class="subst">\(word)</span>"</span></span><br><span class="line">          &#125;.joinWithSeparator(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> headline</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>再次  <strong>Command + U</strong>，确保测试通过。至此，这个简单的例子算是介绍完了。</p>
+<p>虽然例子简单，只实现了一个功能，但是 TDD 相关的东西，具体流程也都涉及了，剩下的，只是重复这些操作直至完成所有需求。</p>
+<p>如果觉得这个例子太简单了，没学够，建议看下 <a href="https://www.packtpub.com/application-development/test-driven-ios-development-swift" target="_blank" rel="external">《Test-Driven iOS Development with Swift》</a>  一书中的 <a href="http://www.packtpub.com/code_download/23832" target="_blank" rel="external">ToDo 源码</a>，大篇幅介绍 TDD 的实际应用。</p>
+<p>Have Fun~</p>
+<h2 id="参考链接">参考链接</h2><p>由衷感谢以下作者的贡献，文中出现的一些理论阐述，有从相关文章中摘取。</p>
+<p><a href="https://onevcat.com/2014/02/ios-test-with-kiwi/" target="_blank" rel="external">TDD的iOS开发初步以及Kiwi使用入门</a></p>
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-tdd/index.html" target="_blank" rel="external">浅谈测试驱动开发（TDD）</a></p>
+<p><a href="http://www.cnblogs.com/whitewolf/p/4205761.html" target="_blank" rel="external">TDD(测试驱动开发)培训录</a></p>
+<p><a href="https://www.packtpub.com/application-development/test-driven-ios-development-swift" target="_blank" rel="external">《Test-Driven iOS Development with Swift》</a> </p>
+<hr>
+<p><a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external"><img src="http://i.creativecommons.org/l/by/2.5/cn/88x31.png" alt="知识共享许可协议"></a>本作品采用<a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external">知识共享署名 2.5 中国大陆许可协议</a>进行许可，欢迎转载，但转载请注明来自<a href="http://colin1994.github.io/" target="_blank" rel="external">Colin’s Nest</a>，并保持转载后文章内容的完整。本人保留所有版权相关权利。</p>
+
+      
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- css -->
+  <style type="text/css">
+      .center {
+          text-align: center;
+      }
+      .hidden {
+          display: none;
+      }
+    .donate_bar a.btn_donate{
+      display: inline-block;
+      width: 82px;
+      height: 82px;
+      background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+      _background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+
+      <!-- http://img.t.sinajs.cn/t5/style/images/apps_PRF/e_media/btn_reward.gif
+           因为本 hexo 生成的博客所用的 theme 的 a:hover 带动画效果，
+         为了在让打赏按钮显示效果正常 而 添加了以下几行 css，
+         嵌入其它博客时不一定要它们。 -->
+      -webkit-transition: background 0s;
+      -moz-transition: background 0s;
+      -o-transition: background 0s;
+      -ms-transition: background 0s;
+      transition: background 0s;
+      <!-- /让打赏按钮的效果显示正常 而 添加的几行 css 到此结束 -->
+    }
+
+    .donate_bar a.btn_donate:hover{ background-position: 0px -82px;}
+    .donate_bar .donate_txt {
+      display: block;
+      color: #9d9d9d;
+      font: 14px/2 "Microsoft Yahei";
+    }
+    .bold{ font-weight: bold; }
+  </style>
+  <!-- /css -->
+
+    <!-- Donate Module -->
+    <div id="donate_module">
+
+  <!-- btn_donate & tips -->
+  <div id="donate_board" class="donate_bar center">
+      <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+    <a id="btn_donate" class="btn_donate" target="_self" href="javascript:;" title="Donate 打赏"></a>
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+      
+    
+  </div>
+  <!-- /btn_donate & tips -->
+
+  <!-- donate guide -->
+    
+  <div id="donate_guide" class="donate_bar center hidden">
+        <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+      
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="用微信扫一扫哦~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="微信打赏 Colin" height="190px" width="auto"/>
+    </a>
+        
+        &nbsp;&nbsp;
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="用支付宝扫一扫即可~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="支付宝打赏 Colin" height="190px" width="auto"/>
+    </a>
+
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+
+  </div>
+  <!-- /donate guide -->
+
+  <!-- donate script -->
+  <script type="text/javascript">
+    document.getElementById('btn_donate').onclick = function() {
+      $('#donate_board').addClass('hidden');
+      $('#donate_guide').removeClass('hidden');
+    }
+
+    function donate_on_web(){
+      $('#donate').submit();
+        }
+
+    var original_window_onload = window.onload;
+        window.onload = function () {
+            if (original_window_onload) {
+                original_window_onload();
+            }
+            document.getElementById('donate_board_wdg').className = 'hidden';
+    }
+  </script>
+  <!-- /donate script -->
+</div>
+<!-- /Donate Module -->
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/06/14/What's_New_in_iOS_10.0_zh_0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          What&#39;s New in iOS 10.0 中文版(上)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/06/02/hexo-copyright-and-donate/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">为Hexo博客添加版权说明和打赏功能</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="TDD-With-Swift" data-title="TDD 学习总结（Swift 实践）" data-url="http://http://colin1994.github.io/2016/06/03/TDD-With-Swift/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"colin1994"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Colin丶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>

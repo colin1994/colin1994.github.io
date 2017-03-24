@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>为Hexo博客添加版权说明和打赏功能 | Colin&#39;s Nest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天为博客配置了自动添加版权说明和打赏功能，加深了对Hexo框架的理解，做个小小的总结。当然，如果喜欢也可以试试为自己的博客添加上。
+
+效果图：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为Hexo博客添加版权说明和打赏功能">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/06/02/hexo-copyright-and-donate/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="今天为博客配置了自动添加版权说明和打赏功能，加深了对Hexo框架的理解，做个小小的总结。当然，如果喜欢也可以试试为自己的博客添加上。
+
+效果图：">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/tailResult.png">
+<meta property="og:image" content="http://i.creativecommons.org/l/by/2.5/cn/88x31.png">
+<meta property="og:image" content="http://i.creativecommons.org/l/by/2.5/cn/88x31.png">
+<meta property="og:updated_time" content="2016-06-02T12:08:49.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="为Hexo博客添加版权说明和打赏功能">
+<meta name="twitter:description" content="今天为博客配置了自动添加版权说明和打赏功能，加深了对Hexo框架的理解，做个小小的总结。当然，如果喜欢也可以试试为自己的博客添加上。
+
+效果图：">
+<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/tailResult.png">
+  
+  
+    <link rel="icon" href="http://7xkc7a.com1.z0.glb.clouddn.com/author.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Colin丶</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/rss2.xml" title="rss">rss</a>
+					        
+								<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/CallKit/" style="font-size: 10px;">CallKit</a> <a href="/tags/Core-Image/" style="font-size: 13.33px;">Core Image</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/TDD/" style="font-size: 10px;">TDD</a> <a href="/tags/iOS-10/" style="font-size: 13.33px;">iOS 10</a> <a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 16.67px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/翻译/" style="font-size: 10px;">翻译</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.onevcat.com/">OneV&#39;s Den</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.devtang.com/">唐巧的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.sunnyxx.com/archives/">sunnyxx的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://objccn.io/">objc中国</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://www.bignerdranch.com/blog/">Big Nerd Ranch</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://nshipster.com/">NSHipster</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是余龙泽(@Colin__丶), 就读于哈尔滨工业大学, 软件工程专业, 目前大四。在iOS学习道路上不断努力中。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Colin丶</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Colin丶</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/rss2.xml" title="rss">rss</a>
+			        
+						<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="Hexo折腾-hexo-copyright-and-donate" class="article article-type-Hexo折腾" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/02/hexo-copyright-and-donate/" class="article-date">
+  	<time datetime="2016-06-02T12:06:06.000Z" itemprop="datePublished">Jun 2 2016</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      为Hexo博客添加版权说明和打赏功能
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/教程/">教程</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>今天为博客配置了自动添加版权说明和打赏功能，加深了对Hexo框架的理解，做个小小的总结。当然，如果喜欢也可以试试为自己的博客添加上。</p>
+</blockquote>
+<p>效果图：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/tailResult.png" alt="tailResult"></p>
+<a id="more"></a>
+<h2 id="版权说明">版权说明</h2><p>具体实现步骤如下：</p>
+<ol>
+<li>在博客根目录下（和 source 同级），新建一个名为 <code>scripts</code> 的文件夹。</li>
+<li>在 <code>scripts</code> 文件夹内, 新建一个 <code>AddTail.js</code> 脚本文件，脚本具体内容详见下文。</li>
+<li><p>在博客根目录下，新建一个 <code>tail.md</code> 文件，里面写想要展示的版本说明内容。示例如下文所示。</p>
+<p><code>AddTail.js</code> 脚本文件：</p>
+</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Filename: AddTail.js</span></span><br><span class="line"><span class="comment">// Author: Colin</span></span><br><span class="line"><span class="comment">// Date: 2016/06/02</span></span><br><span class="line"><span class="comment">// Based on the script by KUANG Qi: http://kuangqi.me/tricks/append-a-copyright-info-after-every-post/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Add a tail to every post from tail.md</span></span><br><span class="line"><span class="comment">// Great for adding copyright info</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line">hexo.extend.filter.register(<span class="string">'before_post_render'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(data.copyright == <span class="literal">false</span>) <span class="keyword">return</span> data;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// Add seperate line</span></span><br><span class="line">	data.content += <span class="string">'\n___\n'</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// Try to read tail.md</span></span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="keyword">var</span> file_content = fs.readFileSync(<span class="string">'tail.md'</span>);</span><br><span class="line">		<span class="keyword">if</span>(file_content &amp;&amp; data.content.length &gt; <span class="number">50</span>) </span><br><span class="line">		&#123;</span><br><span class="line">			data.content += file_content;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">		<span class="keyword">if</span> (err.code !== <span class="string">'ENOENT'</span>) <span class="keyword">throw</span> err;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// No process for ENOENT error</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">  	<span class="comment">// 添加具体文章链接, 不需要去掉即可</span></span><br><span class="line">	<span class="keyword">var</span> permalink = <span class="string">'\n本文链接：'</span> + data.permalink;</span><br><span class="line">	data.content += permalink;</span><br><span class="line">  </span><br><span class="line">	<span class="keyword">return</span> data;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>tail.md</code> 文件示例：</p>
+<p><a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external"><img src="http://i.creativecommons.org/l/by/2.5/cn/88x31.png" alt="知识共享许可协议"></a>本作品采用<a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external">知识共享署名 2.5 中国大陆许可协议</a>进行许可，欢迎转载，但转载请注明来自<a href="http://colin1994.github.io/" target="_blank" rel="external">Colin’s Nest</a>，并保持转载后文章内容的完整。本人保留所有版权相关权利。</p>
+<p>如此，<code>hero clean</code> 后重新 <code>hexo generate</code> 即可。</p>
+<h2 id="打赏功能">打赏功能</h2><p>打赏功能的实现其实是直接嵌入到博客主题中的，所以修改了原先 <code>clone</code> 下来的源码。当然，你可以发个 <code>PR</code> ，或者直接选择支持打赏功能的主题。我这里选择的 <a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="external">Yilia</a> 主题并不支持这个功能，所以只好自己实现一下。（虽然知道大概并没有什么用…）</p>
+<h3 id="目标">目标</h3><p>既然是嵌入到博客主题中，那么当然希望是可定制的。例如主题本身给我们提供的配置一样。大致目标如下：</p>
+<p>我们只需要在 <code>_config.yml</code> 中加入如下语句, 即可完成打赏的配置</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#打赏</span><br><span class="line">donate:</span><br><span class="line">  enable: true</span><br><span class="line">  text: Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！</span><br><span class="line">  wechat: http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png</span><br><span class="line">  alipay: http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>enable</code> 参数设置是否开启打赏功能。( <code>true</code> or <code>false</code> )</li>
+<li><code>text</code> 参数配置需要显示的内容</li>
+<li><code>wechat</code> 参数设置微信支付二维码 URL</li>
+<li><code>alipay</code> 参数设置支付宝支付二维码 URL</li>
+</ul>
+<h3 id="实现步骤">实现步骤</h3><p>编辑主题内的 <code>article.ejs</code> 文件，比如我这里位于 <code>themes/yilia/layout/_partial/article.ejs</code> 。</p>
+<p>在 <code>&lt;div class=&quot;article-content&quot;&gt;...&lt;/div&gt;</code> 的下面，<code>&lt;%- partial(&#39;footer&#39;) %&gt;</code> 的上面插入如下HTML代码：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">theme.donate</span>) &#123; %&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- css --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">"text/css"</span>&gt;</span><span class="xml"></span><br><span class="line">      .center &#123;</span><br><span class="line">          text-align: center;</span><br><span class="line">      &#125;</span><br><span class="line">      .hidden &#123;</span><br><span class="line">          display: none;</span><br><span class="line">      &#125;</span><br><span class="line">    .donate_bar a.btn_donate&#123;</span><br><span class="line">      display: inline-block;</span><br><span class="line">      width: 82px;</span><br><span class="line">      height: 82px;</span><br><span class="line">      background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;</span><br><span class="line">      _background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;</span><br><span class="line"></span><br><span class="line">      <span class="comment">&lt;!-- http://img.t.sinajs.cn/t5/style/images/apps_PRF/e_media/btn_reward.gif</span><br><span class="line">           因为本 hexo 生成的博客所用的 theme 的 a:hover 带动画效果，</span><br><span class="line">         为了在让打赏按钮显示效果正常 而 添加了以下几行 css，</span><br><span class="line">         嵌入其它博客时不一定要它们。 --&gt;</span></span><br><span class="line">      -webkit-transition: background 0s;</span><br><span class="line">      -moz-transition: background 0s;</span><br><span class="line">      -o-transition: background 0s;</span><br><span class="line">      -ms-transition: background 0s;</span><br><span class="line">      transition: background 0s;</span><br><span class="line">      <span class="comment">&lt;!-- /让打赏按钮的效果显示正常 而 添加的几行 css 到此结束 --&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    .donate_bar a.btn_donate:hover&#123; background-position: 0px -82px;&#125;</span><br><span class="line">    .donate_bar .donate_txt &#123;</span><br><span class="line">      display: block;</span><br><span class="line">      color: #9d9d9d;</span><br><span class="line">      font: 14px/2 "Microsoft Yahei";</span><br><span class="line">    &#125;</span><br><span class="line">    .bold&#123; font-weight: bold; &#125;</span><br><span class="line">  </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- /css --&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Donate Module --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"donate_module"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- btn_donate &amp; tips --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"donate_board"</span> <span class="attr">class</span>=<span class="string">"donate_bar center"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">      ------------------------------------------------------------------------------------------------------------------------------</span><br><span class="line">      <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">id</span>=<span class="string">"btn_donate"</span> <span class="attr">class</span>=<span class="string">"btn_donate"</span> <span class="attr">target</span>=<span class="string">"_self"</span> <span class="attr">href</span>=<span class="string">"javascript:;"</span> <span class="attr">title</span>=<span class="string">"Donate 打赏"</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"donate_txt"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">%=</span> <span class="attr">theme.donate.text</span> %&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">      </span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- /btn_donate &amp; tips --&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- donate guide --&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"donate_guide"</span> <span class="attr">class</span>=<span class="string">"donate_bar center hidden"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">      ------------------------------------------------------------------------------------------------------------------------------</span><br><span class="line">      <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%= theme.donate.wechat %&gt;"</span> <span class="attr">title</span>=<span class="string">"用微信扫一扫哦~"</span> <span class="attr">class</span>=<span class="string">"fancybox"</span> <span class="attr">rel</span>=<span class="string">"article0"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"&lt;%= theme.donate.wechat %&gt;"</span> <span class="attr">title</span>=<span class="string">"微信打赏 Colin"</span> <span class="attr">height</span>=<span class="string">"190px"</span> <span class="attr">width</span>=<span class="string">"auto"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">        &amp;nbsp;&amp;nbsp;</span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%= theme.donate.alipay %&gt;"</span> <span class="attr">title</span>=<span class="string">"用支付宝扫一扫即可~"</span> <span class="attr">class</span>=<span class="string">"fancybox"</span> <span class="attr">rel</span>=<span class="string">"article0"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"&lt;%= theme.donate.alipay %&gt;"</span> <span class="attr">title</span>=<span class="string">"支付宝打赏 Colin"</span> <span class="attr">height</span>=<span class="string">"190px"</span> <span class="attr">width</span>=<span class="string">"auto"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"donate_txt"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">%=</span> <span class="attr">theme.donate.text</span> %&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- /donate guide --&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- donate script --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="javascript"></span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'btn_donate'</span>).onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      $(<span class="string">'#donate_board'</span>).addClass(<span class="string">'hidden'</span>);</span><br><span class="line">      $(<span class="string">'#donate_guide'</span>).removeClass(<span class="string">'hidden'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">donate_on_web</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      $(<span class="string">'#donate'</span>).submit();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> original_window_onload = <span class="built_in">window</span>.onload;</span><br><span class="line">        <span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (original_window_onload) &#123;</span><br><span class="line">                original_window_onload();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">document</span>.getElementById(<span class="string">'donate_board_wdg'</span>).className = <span class="string">'hidden'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- /donate script --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- /Donate Module --&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这里通过判断是否显示打赏模块，执行相应的操作。点击打赏按钮，显示相应的二维码。</p>
+<p>这里还有个问题，在文章列表中，有时候也会显示打赏功能，这显然不是我们想要的。需要做的就是判断当前的的页面是详情页面还是介绍页面，比如我这里，把上面的代码放在如下判断语句中：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (!<span class="attr">post.excerpt</span> || !<span class="attr">index</span>)&#123; %&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">&lt;!-- /上述代码 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">%</span> &#125;%&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如此，一个简单的打赏功能就实现了。</p>
+<p>当然，你如果觉得麻烦，但是又想实现打赏功能，那么可以尝试下 <a href="http://www.dashangcloud.com" target="_blank" rel="external">云打赏</a>，据说一行代码集成打赏功能。</p>
+<p>Have fun ~     ：）</p>
+<h2 id="参考链接">参考链接</h2><p><a href="https://tono.tk/2016/03/26/Add_copyright_for_hexo/" target="_blank" rel="external">￼为Hexo博客文章自动添加版权信息</a></p>
+<p><a href="http://icehe.me/web/donate/" target="_blank" rel="external">实现网站的支付宝打赏功能</a></p>
+<hr>
+<p><a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external"><img src="http://i.creativecommons.org/l/by/2.5/cn/88x31.png" alt="知识共享许可协议"></a>本作品采用<a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external">知识共享署名 2.5 中国大陆许可协议</a>进行许可，欢迎转载，但转载请注明来自<a href="http://colin1994.github.io/" target="_blank" rel="external">Colin’s Nest</a>，并保持转载后文章内容的完整。本人保留所有版权相关权利。</p>
+
+      
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- css -->
+  <style type="text/css">
+      .center {
+          text-align: center;
+      }
+      .hidden {
+          display: none;
+      }
+    .donate_bar a.btn_donate{
+      display: inline-block;
+      width: 82px;
+      height: 82px;
+      background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+      _background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+
+      <!-- http://img.t.sinajs.cn/t5/style/images/apps_PRF/e_media/btn_reward.gif
+           因为本 hexo 生成的博客所用的 theme 的 a:hover 带动画效果，
+         为了在让打赏按钮显示效果正常 而 添加了以下几行 css，
+         嵌入其它博客时不一定要它们。 -->
+      -webkit-transition: background 0s;
+      -moz-transition: background 0s;
+      -o-transition: background 0s;
+      -ms-transition: background 0s;
+      transition: background 0s;
+      <!-- /让打赏按钮的效果显示正常 而 添加的几行 css 到此结束 -->
+    }
+
+    .donate_bar a.btn_donate:hover{ background-position: 0px -82px;}
+    .donate_bar .donate_txt {
+      display: block;
+      color: #9d9d9d;
+      font: 14px/2 "Microsoft Yahei";
+    }
+    .bold{ font-weight: bold; }
+  </style>
+  <!-- /css -->
+
+    <!-- Donate Module -->
+    <div id="donate_module">
+
+  <!-- btn_donate & tips -->
+  <div id="donate_board" class="donate_bar center">
+      <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+    <a id="btn_donate" class="btn_donate" target="_self" href="javascript:;" title="Donate 打赏"></a>
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+      
+    
+  </div>
+  <!-- /btn_donate & tips -->
+
+  <!-- donate guide -->
+    
+  <div id="donate_guide" class="donate_bar center hidden">
+        <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+      
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="用微信扫一扫哦~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="微信打赏 Colin" height="190px" width="auto"/>
+    </a>
+        
+        &nbsp;&nbsp;
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="用支付宝扫一扫即可~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="支付宝打赏 Colin" height="190px" width="auto"/>
+    </a>
+
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+
+  </div>
+  <!-- /donate guide -->
+
+  <!-- donate script -->
+  <script type="text/javascript">
+    document.getElementById('btn_donate').onclick = function() {
+      $('#donate_board').addClass('hidden');
+      $('#donate_guide').removeClass('hidden');
+    }
+
+    function donate_on_web(){
+      $('#donate').submit();
+        }
+
+    var original_window_onload = window.onload;
+        window.onload = function () {
+            if (original_window_onload) {
+                original_window_onload();
+            }
+            document.getElementById('donate_board_wdg').className = 'hidden';
+    }
+  </script>
+  <!-- /donate script -->
+</div>
+<!-- /Donate Module -->
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/06/03/TDD-With-Swift/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          TDD 学习总结（Swift 实践）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/16/Interactive-animation-is-so-simple/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Jazzhands, 交互动画就是这么简单</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="hexo-copyright-and-donate" data-title="为Hexo博客添加版权说明和打赏功能" data-url="http://http://colin1994.github.io/2016/06/02/hexo-copyright-and-donate/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"colin1994"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Colin丶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
