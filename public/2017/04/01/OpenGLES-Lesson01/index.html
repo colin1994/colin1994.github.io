@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>OpenGL ES 基础概念 | Colin&#39;s Nest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这里主要描述一些 OpenGL ES 必须先了解的一些概念，为之后的实战铺路。
+状态机
+OpenGL 是一个状态机，它维持自己的状态，并根据用户调用的函数来改变自己的状态。
+根据状态的不同，调用同样的函数也可能产生不同的效果。
+
+在 OpenGL 的世界里，大多数元素都可以用状态来描述，比如：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenGL ES 基础概念">
+<meta property="og:url" content="http://http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="这里主要描述一些 OpenGL ES 必须先了解的一些概念，为之后的实战铺路。
+状态机
+OpenGL 是一个状态机，它维持自己的状态，并根据用户调用的函数来改变自己的状态。
+根据状态的不同，调用同样的函数也可能产生不同的效果。
+
+在 OpenGL 的世界里，大多数元素都可以用状态来描述，比如：">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420103614414.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420555397978.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017011229641BBC4CB30-3B94-4F28-8FAB-AF502E37E641.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017011250662FC720569-D123-4FC5-9F0D-C99287364AC7.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148421538042641.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148421539517039.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112706113F85123B-6006-4633-9D8C-C4C4DB4BA3AC.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112997054573CDB0-956C-4A00-837F-6BDA9BA4F550.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017011371566F6C27776-D170-48EF-8877-E0E541F6F193.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017011214842168484373.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148423006492580.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170113188548B1802A3-32BF-465F-A4E0-DDC1A4D6CFF2.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453735421681.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453238386304.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453800669809.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453810158450.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453793035367.jpg?imageView2/0/format/jpg">
+<meta property="og:image" content="http://i.creativecommons.org/l/by/2.5/cn/88x31.png">
+<meta property="og:updated_time" content="2017-04-01T14:42:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenGL ES 基础概念">
+<meta name="twitter:description" content="这里主要描述一些 OpenGL ES 必须先了解的一些概念，为之后的实战铺路。
+状态机
+OpenGL 是一个状态机，它维持自己的状态，并根据用户调用的函数来改变自己的状态。
+根据状态的不同，调用同样的函数也可能产生不同的效果。
+
+在 OpenGL 的世界里，大多数元素都可以用状态来描述，比如：">
+<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png">
+  
+  
+    <link rel="icon" href="http://7xkc7a.com1.z0.glb.clouddn.com/author.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Colin丶</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="/rss2.xml" title="rss">rss</a>
+					        
+								<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/CallKit/" style="font-size: 10px;">CallKit</a> <a href="/tags/Core-Image/" style="font-size: 12.5px;">Core Image</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/OpenGLES/" style="font-size: 15px;">OpenGLES</a> <a href="/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/tags/TDD/" style="font-size: 10px;">TDD</a> <a href="/tags/iOS-10/" style="font-size: 12.5px;">iOS 10</a> <a href="/tags/iOS开发/" style="font-size: 20px;">iOS开发</a> <a href="/tags/图像处理/" style="font-size: 15px;">图像处理</a> <a href="/tags/宏/" style="font-size: 10px;">宏</a> <a href="/tags/教程/" style="font-size: 17.5px;">教程</a> <a href="/tags/正则/" style="font-size: 10px;">正则</a> <a href="/tags/翻译/" style="font-size: 10px;">翻译</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.onevcat.com/">OneV&#39;s Den</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.devtang.com/">唐巧的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.sunnyxx.com/archives/">sunnyxx的技术博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://objccn.io/">objc中国</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="https://www.bignerdranch.com/blog/">Big Nerd Ranch</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://nshipster.com/">NSHipster</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">我是余龙泽(@Colin__丶), 就读于哈尔滨工业大学, 软件工程专业, 目前大四。在iOS学习道路上不断努力中。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Colin丶</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkc7a.com1.z0.glb.clouddn.com/author.png" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Colin丶</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/colin1994" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://www.weibo.com/u/3171165012" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="/rss2.xml" title="rss">rss</a>
+			        
+						<a class="mail" target="_blank" href="mailto:hitwhylz@163.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-OpenGLES-Lesson01" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/04/01/OpenGLES-Lesson01/" class="article-date">
+  	<time datetime="2017-04-01T14:30:10.000Z" itemprop="datePublished">Apr 1 2017</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      OpenGL ES 基础概念
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenGLES/">OpenGLES</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS开发/">iOS开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/图像处理/">图像处理</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这里主要描述一些 OpenGL ES 必须先了解的一些概念，为之后的实战铺路。</p>
+<h2 id="状态机">状态机</h2><blockquote>
+<p>OpenGL 是一个状态机，它维持自己的状态，并根据用户调用的函数来改变自己的状态。</p>
+<p>根据状态的不同，调用同样的函数也可能产生不同的效果。</p>
+</blockquote>
+<p>在 OpenGL 的世界里，<strong>大多数元素都可以用状态来描述</strong>，比如：</p>
+<a id="more"></a>
+<ul>
+<li>颜色、纹理坐标、光源的各种参数…</li>
+<li>是否启用了光照、是否启用了纹理、是否启用了混合、是否启用了深度测试…</li>
+<li>…</li>
+</ul>
+<p><strong>OpenGL 会保持状态，除非我们调用 OpenGL 函数来改变它。</strong></p>
+<ul>
+<li>比如你用 <code>glEnablexxx</code> 开启了一个状态，在以后的渲染中将一直保留并应用这个状态，除非你调用 <code>glDisablexxx</code> 及同类函数来改变该状态或程序退出。</li>
+</ul>
+<ul>
+<li>又或者当前颜色是一个状态变量，可以把当前颜色设置为白色、红色或其他任何颜色，在此之后绘制的所有物体都将使用这种颜色，直到把当前颜色设置为其他颜色。</li>
+</ul>
+<p>理解了状态机这个概念，我们再来看 OpenGL ES 提供的 API，就会非常明了，因为OpenGL 当中很多 API，其实仅仅是向 OpenGL 这个状态机传数据或者读数据。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png" alt="201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png"></p>
+<p>100 来个接口，如果按照不同的数据类型（GLfloat，GLint，GLsize …），不同的元素（Uniform，Color，Texture…）划分开来，再看各个分类的接口，（<del>无法</del>）无非就是围绕状态展开的。</p>
+<p>比如：<code>glClearColor</code> 函数是一个状态设置函数，而 <code>glClear</code> 函数则是一个状态应用的函数。</p>
+<h2 id="上下文">上下文</h2><p>上面提到的各种状态值，将保存在对应的上下文（<strong>Context</strong>）中。</p>
+<blockquote>
+<p>OpenGL ES 上下文（EAGLContext） : 管理所有 iOS 要绘制的 OpenGL ES 信息。</p>
+<p>类似在 Core Graphics 中做任何事情都需要一个 Core Graphics 上下文。</p>
+</blockquote>
+<p>通过放置这些状态到上下文中，上下文可以跟踪用于渲染的帧缓存、用于几何数据、颜色等的缓存。还会决定是否使用如纹理、灯光等功能以及会为渲染定义当前的坐标系统等。并且在多任务的情况下，就能很容易的共享硬件设备，而互不影响各自的状态。</p>
+<p>因此渲染的时候，要<strong>指定对应的当前上下文</strong>。</p>
+<h2 id="渲染管线">渲染管线</h2><p>在 OpenGL 中，任何事物都在 3D 空间中，而屏幕和窗口却是 2D 像素数组，这导致 OpenGL 的大部分工作都是关于把 3D 坐标转变为适应你屏幕的 2D 像素。3D 坐标转为 2D 坐标的处理过程是由 OpenGL 的图形渲染管线（Graphics Pipeline，实际上指的是一堆原始图形数据途经一个输送管道，期间经过各种变化处理最终出现在屏幕的过程）管理的。图形渲染管线可以被划分为两个主要部分：<strong>第一部分把你的3D 坐标转换为 2D 坐标，第二部分是把 2D 坐标转变为实际的有颜色的像素。</strong></p>
+<blockquote>
+<p>2D 坐标和像素也是不同的，2D 坐标精确表示一个点在 2D 空间中的位置，而 2D 像素是这个点的近似值，2D 像素受到你的屏幕/窗口分辨率的限制。</p>
+</blockquote>
+<p>图形渲染管线可以被划分为几个阶段，每个阶段将会把前一个阶段的输出作为输入。所有这些阶段都是高度专门化的（它们都有一个特定的函数），并且很容易并行执行。<strong>它的工作过程和车间流水线一致，各个模块各司其职但是又相互依赖。</strong></p>
+<p>下图就是渲染管线：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420103614414.jpg?imageView2/0/format/jpg" alt="20170112148420103614414.jpg"></p>
+<blockquote>
+<p>PS：OpenGL ES 采用<strong>服务器/客户端编程模型</strong>，客户端运行在 CPU 上，服务端运行在 GPU 上，调用 OpenGL ES 函数的时，由客户端发送至服务器端，并被服务端转换成底层图形硬件支持的绘制命令。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg" alt="20170111148411873373682.jpg"></p>
+</blockquote>
+<p>左边的客户端程序通过调用 OpenGL ES 接口，将顶点，着色器程序，纹理，以及其他一些 GL 状态参数传入右边的 GL 服务端， 然后在客户端调用绘制命令的时候， GL 便会将输入的图元，逐一执行渲染管线的每个阶段，然后将每个像素的颜色值写入到帧缓存中， 最后视窗系统就可以将帧缓存中的颜色值显示在屏幕上。 此外，应用程序也可以从帧缓存中读取数据到客户端。</p>
+<p>在整个管线中，<strong>顶点着色器和片段着色器是可编程的部分</strong>，应用程序可以通过提供着色器程序在 GPU 中被作用于渲染管线，可编程就是说这个操作可以动态编程实现而不必固定写死在代码中。可动态编程实现这一功能一般都是脚本提供的，在 OpenGL ES 中也一样，编写这样脚本的能力是由 OpenGL 着色语言（OpenGL Shading Language, GLSL）提供的。</p>
+<p>那可编程管线有什么好处呢？<strong>方便我们动态修改渲染过程，而无需重写编译代码</strong>。当然也和很多脚本语言一样，调试起来不太方便。其他阶段则只能使用一些固定的 GL 命令来影响该阶段的执行。</p>
+<p>下面以<strong>绘制一个三角形为例</strong>，针对渲染管线的各个阶段，详细分析。</p>
+<h3 id="1-_顶点数组">1. 顶点数组</h3><p>为了渲染一个三角形，我们以数组的形式传递3个 3D 坐标作为图形渲染管线的输入，用来表示一个三角形，这个数组叫做顶点数据（Vertex Data）；<strong>顶点数据是一系列顶点的集合。</strong>一个顶点（Vertex）是一个 3D 坐标的数据的集合。而顶点数据是用顶点属性（Vertex Attribute）表示的，它可以包含任何我们想用的数据，但是简单起见，我们假定每个顶点只由一个 3D 位置和一些颜色值组成。</p>
+<p>至此，你可能会疑惑，</p>
+<ul>
+<li>我们仅仅是传递了三个点，但是 OpenGL ES 是怎么知道它们用来组成三角形呢？</li>
+<li>加入我要绘制一个 3D 模型，那么要怎么传入顶点数据？</li>
+</ul>
+<p>为了让 OpenGL 知道我们的坐标和颜色值构成的到底是什么，OpenGL 需要你去指定这些数据所表示的渲染类型。我们是希望把这些数据渲染成一系列的点？一系列的三角形？还是仅仅是一个长长的线？做出的这些提示叫做图元（Primitive），任何一个绘制指令的调用都将把图元传递给 OpenGL 。OpenGL 支持三种基本图元：点，线和三角形。</p>
+<p>当然，OpenGL ES 并不提供对 3D 模型的定义，在传入 OpenGL ES 之前应用程序应该首先将 3D 模型转换为一组图元的集合。每个模型是独立绘制的，修改其中一个模型的一些设置并不会影响其他模型。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420555397978.jpg?imageView2/0/format/jpg" alt="20170112148420555397978.jpg"></p>
+<p>每个图元由一个或者多个顶点组成，每个顶点定义一个点，一条边的一端或者三角形的一个角。每个顶点关联一些数据，这些数据包括顶点坐标，颜色，法向量以及纹理坐标等。所有这些顶点相关的信息就构成顶点数据，这些数据首先被上传到 GL 服务端，然后就可以进行绘制。</p>
+<blockquote>
+<p>PS：OpenGL 中的命令总是按照它被接收到的顺序执行，这意味着一组图元必须被全部绘制完毕才会开始绘制下一组图元。同时也意味着程序对帧缓冲的像素读取的结果一定是该命令之前所有 OpenGL 命令执行的结果。</p>
+</blockquote>
+<h3 id="2-_顶点着色器">2. 顶点着色器</h3><p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017011229641BBC4CB30-3B94-4F28-8FAB-AF502E37E641.png" alt="2017011229641BBC4CB30-3B94-4F28-8FAB-AF502E37E641.png"></p>
+<p><strong>顶点着色器对每个顶点执行一次运算</strong>，它可以使用顶点数据来计算该顶点的坐标，颜色，光照，纹理坐标等，在渲染管线中每个顶点都是独立地被执行。</p>
+<p>在顶点着色器中最重要的任务是执行顶点坐标变换，应用程序中设置的图元顶点坐标通常是针对本地坐标系的。本地坐标系简化了程序中的坐标计算，但是 GL 并不识别本地坐标系，所以在顶点着色器中要对本地坐标执行模型视图变换，将本地坐标转化为裁剪坐标系的坐标值。</p>
+<p>顶点着色器的另一个功能是向后面的片段着色器提供一组易变变量（varying）。易变变量会在图元装配阶段之后被执行插值计算，如果是单重采样，其插值点为片段的中心，如果多重采样，其插值点可能为多个采样片段中的任意一个位置。易变变量可以用来保存插值计算片段的颜色，纹理坐标等信息。</p>
+<h3 id="3-_图元装配">3. 图元装配</h3><p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017011250662FC720569-D123-4FC5-9F0D-C99287364AC7.png" alt="2017011250662FC720569-D123-4FC5-9F0D-C99287364AC7.png"></p>
+<p>在顶点着色器程序输出顶点坐标之后，各个顶点被按照绘制命令中的图元类型参数，以及顶点索引数组被组装成一个个图元。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148421538042641.jpg?imageView2/0/format/jpg" alt="20170112148421538042641.jpg"></p>
+<p>顶点数组首先通过 GL 命令输入到 GL 渲染管线中，此时顶点坐标位于应用程序的本地坐标系；在经过顶点着色器的计算之后，顶点坐标被转化到裁剪坐标系中，这通常通过向顶点着色器传入一个模型视图变换矩阵，然后在顶点着色器中执行坐标变换。</p>
+<p>裁剪坐标系被定义在一个视锥体裁剪的空间里，视锥体是游戏场景的一个可视空间，它由6个裁剪平面构成，分别是：近平面，远平面，左平面，右平面，上平面和下平面。</p>
+<p>视锥体在 3D 应用程序中通常表现为一个摄像机，其观察点为裁剪坐标系的原点，方向为穿过远近平面的中点。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148421539517039.jpg?imageView2/0/format/jpg" alt="20170112148421539517039.jpg"></p>
+<p>处于视锥体以外的图元将被丢弃，如果该图元与视锥体相交则会发生裁剪产生新的图元。值得注意的是透视裁剪是一个比较影响性能的过程，因为每个图元都需要和 6 个面进行相交计算，并产生新的图元。但是一般在x，y方向超出屏幕之外的，则无需产生新的图元，这些顶点能在视口变换的时候被更高效的丢弃。</p>
+<p><strong>通过图元装配，所有 3D 的图元已经被转化为屏幕上 2D 的图元。</strong></p>
+<h3 id="4-_光栅化">4. 光栅化</h3><p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112706113F85123B-6006-4633-9D8C-C4C4DB4BA3AC.png" alt="20170112706113F85123B-6006-4633-9D8C-C4C4DB4BA3AC.png"></p>
+<p><strong>在光栅化阶段，基本图元被转换为供片段着色器使用的片段</strong>（Fragment），Fragment 表示可以被渲染到屏幕上的像素，它包含位置，颜色，纹理坐标等信息，这些值是由图元的顶点信息进行插值计算得到的。这些片元接着被送到片元着色器中处理。<strong>这是从顶点数据到可渲染在显示设备上的像素的质变过程。</strong></p>
+<p>在片段着色器运行之前会执行裁切（Clipping）。裁切会丢弃超出你的视图以外的所有像素，用来提升执行效率。</p>
+<h3 id="5-_片段着色器">5. 片段着色器</h3><p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112997054573CDB0-956C-4A00-837F-6BDA9BA4F550.png" alt="20170112997054573CDB0-956C-4A00-837F-6BDA9BA4F550.png"></p>
+<p>可编程的片段着色器是实现一些高级特效如纹理贴图，光照，环境光，阴影等功能的基础。<strong>片段着色器的主要作用是计算每一个片段最终的颜色值（或者丢弃该片段）。</strong></p>
+<p>在片段着色器之前的阶段，渲染管线都只是在和顶点，图元打交道。在 3D 图形程序开发中，贴图是最重要的部分，程序可以通过 GL 命令上传纹理数据至 GL 内存中，这些纹理可以被片段着色器使用。片段着色器可以根据顶点着色器输出的顶点纹理坐标对纹理进行采样，以计算该片段的颜色值。</p>
+<p>另外，片段着色器也是执行光照等高级特效的地方，比如可以传给片段着色器一个光源位置和光源颜色，可以根据一定的公式计算出一个新的颜色值，这样就可以实现光照特效。</p>
+<h3 id="6-_片段测试">6. 片段测试</h3><p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017011371566F6C27776-D170-48EF-8877-E0E541F6F193.png" alt="2017011371566F6C27776-D170-48EF-8877-E0E541F6F193.png"></p>
+<p>片段着色器输出的颜色值，还要经过几个阶段的片段操作，这些操作可能会修改片段的颜色值，或者丢弃该片段，<strong>最终的片段颜色值才会被写入到帧缓冲中。</strong></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017011214842168484373.jpg?imageView2/0/format/jpg" alt="2017011214842168484373.jpg"></p>
+<p>像素所有权测试用来判断帧缓冲区中该位置的像素是否属于当前 OpenGL ES，例如在窗口系统中该位置可能会被其他应用程序窗口遮挡，此时该像素则不会被显示。</p>
+<p>在片段测试之后，片段要么被丢弃，要么每个片段对应的颜色，深度，模板值会被写入帧缓冲区，最终呈现在设备屏幕上。帧缓冲区中的颜色值也可以被读回到客户端应用程序中，这样可以实现绘制到纹理的效果。</p>
+<p>至此，OpenGL ES 渲染管道最终将每个像素点的颜色，深度，模板等数据输送到帧缓存中（Framebuffer）。</p>
+<h2 id="帧缓存_/_渲染缓存">帧缓存 / 渲染缓存</h2><p>那么，帧缓存和渲染缓存到底代表什么，又用来做什么呢？</p>
+<p>总的来说，<strong>帧缓存是接收渲染结果的缓冲区，为GPU指定存储渲染结果的区域</strong>。它存储着 OpenGL ES 绘制每个像素点最终的所有信息：颜色，深度和模板值。更通俗点，可以理解成存储屏幕上最终显示的一帧画面的区域。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148423006492580.jpg?imageView2/0/format/jpg" alt="20170112148423006492580.jpg"></p>
+<p>而<strong>渲染缓存则存储呈现在屏幕上的渲染图像，它也被称作颜色缓冲区</strong>，因为它本质上是存储要显示的颜色。多个纹理对象或多个渲染缓存对象，可通过连接点（attachment points）连接到帧缓存对象上。</p>
+<p>可以同时存在很多帧缓存，并且可以通过 OpenGL ES 让 GPU 把渲染结果存储到任意数量的帧缓存中。但是，只有将内容绘制到视窗体提供的帧缓存中，才能将内容输出到显示设备。视图系统提供的帧缓存通常由两个缓存对象组成，一个前端缓存，一个后端缓存。</p>
+<p>前帧缓存决定了屏幕上显示的像素颜色。程序的渲染结果通常保存在后帧缓存在内的其他帧缓存，当渲染后的后帧缓存包含一个完成的图像时，前后帧缓存会立即互换，前帧缓存变成新的后帧缓存，后帧缓存变成新的前帧缓存。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170113188548B1802A3-32BF-465F-A4E0-DDC1A4D6CFF2.png" alt="20170113188548B1802A3-32BF-465F-A4E0-DDC1A4D6CFF2.png"></p>
+<p>但是前后帧我们无法去操纵，它是由系统控制的。我们只能显式的告诉系统，要展示哪个帧缓存了，然后由系统去完成前后帧的切换。</p>
+<h2 id="纹理">纹理</h2><p><strong>纹理是一个用来保存图像的色值的 OpenGL ES 缓存。</strong></p>
+<p>现实生活中，纹理最通常的作用是装饰我们的物体模型，它就像是贴纸一样贴在物体表面，使得物体表面拥有图案。</p>
+<p>但实际上在 OpenGL 中，纹理的作用不仅限于此，它可以用来存储大量的数据。一个典型的例子就是利用纹理存储画笔笔刷的 mask 信息。</p>
+<h2 id="坐标系">坐标系</h2><p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453735421681.jpg?imageView2/0/format/jpg" alt="20170116148453735421681.jpg"></p>
+<p>OpenGL 渲染管线整个流程中，涉及了多个坐标系变化，看起来非常繁琐。但是针对 2D 图像处理，我们其实不需要关心这些变化，我们只需要了解<strong>标准化设备坐标</strong>即可。</p>
+<p>标准化设备坐标是一个 x、y 和 z 值在 -1.0 到 1.0 的一小段空间。任何落在范围外的坐标都会被丢弃／裁剪，不会显示在你的屏幕上。下面你会看到我们定义的在标准化设备坐标中的三角形（忽略 z 轴，仅处理 2D 图像，z 轴设置为 0.0）：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453238386304.jpg?imageView2/0/format/jpg" alt="20170116148453238386304.jpg"></p>
+<p>与通常的屏幕（UIKit）坐标不同，y 轴正方向为向上，(0, 0)坐标是这个图像的中心，而不是左上角。</p>
+<p>为了方便记忆，可以借助右手左边系。</p>
+<p>按照惯例，OpenGL 是一个右手坐标系。简单来说，就是正 x 轴在你的右手边，正 y 轴朝上，而正 z 轴是朝向后方的。想象你的屏幕处于三个轴的中心，则正 z 轴穿过你的屏幕朝向你。坐标系画起来如下：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453800669809.jpg?imageView2/0/format/jpg" alt="20170116148453800669809.jpg"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453810158450.jpg?imageView2/0/format/jpg" alt="20170116148453810158450.jpg"></p>
+<p>另外，为了能够把纹理映射到三角形上，我们需要指定三角形的每个顶点各自对应纹理的哪个部分。这样每个顶点就会关联着一个纹理坐标，用来标明该从纹理图像的哪个部分采样（采集片段颜色）。之后在图形的其它片段上进行片段插值。</p>
+<p>纹理坐标在 x 和 y 轴上，范围为 0 到 1 之间（我们使用的是 2D 纹理图像）。使用纹理坐标获取纹理颜色叫做采样。纹理坐标起始于（0, 0），也就是纹理图片的左下角，终始于（1, 1），即纹理图片的右上角。下面的图片展示了我们是如何把纹理坐标映射到三角形上。</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453793035367.jpg?imageView2/0/format/jpg" alt="20170116148453793035367.jpg"></p>
+<hr>
+<p><a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external"><img src="http://i.creativecommons.org/l/by/2.5/cn/88x31.png" alt="知识共享许可协议"></a>本作品采用<a href="http://creativecommons.org/licenses/by/2.5/cn/" target="_blank" rel="external">知识共享署名 2.5 中国大陆许可协议</a>进行许可，欢迎转载，但转载请注明来自<a href="http://colin1994.github.io/" target="_blank" rel="external">Colin’s Nest</a>，并保持转载后文章内容的完整。本人保留所有版权相关权利。</p>
+
+      
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- css -->
+  <style type="text/css">
+      .center {
+          text-align: center;
+      }
+      .hidden {
+          display: none;
+      }
+    .donate_bar a.btn_donate{
+      display: inline-block;
+      width: 82px;
+      height: 82px;
+      background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+      _background: url("http://7xsl28.com1.z0.glb.clouddn.com/btn_reward.gif") no-repeat;
+
+      <!-- http://img.t.sinajs.cn/t5/style/images/apps_PRF/e_media/btn_reward.gif
+           因为本 hexo 生成的博客所用的 theme 的 a:hover 带动画效果，
+         为了在让打赏按钮显示效果正常 而 添加了以下几行 css，
+         嵌入其它博客时不一定要它们。 -->
+      -webkit-transition: background 0s;
+      -moz-transition: background 0s;
+      -o-transition: background 0s;
+      -ms-transition: background 0s;
+      transition: background 0s;
+      <!-- /让打赏按钮的效果显示正常 而 添加的几行 css 到此结束 -->
+    }
+
+    .donate_bar a.btn_donate:hover{ background-position: 0px -82px;}
+    .donate_bar .donate_txt {
+      display: block;
+      color: #9d9d9d;
+      font: 14px/2 "Microsoft Yahei";
+    }
+    .bold{ font-weight: bold; }
+  </style>
+  <!-- /css -->
+
+    <!-- Donate Module -->
+    <div id="donate_module">
+
+  <!-- btn_donate & tips -->
+  <div id="donate_board" class="donate_bar center">
+      <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+    <a id="btn_donate" class="btn_donate" target="_self" href="javascript:;" title="Donate 打赏"></a>
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+      
+    
+  </div>
+  <!-- /btn_donate & tips -->
+
+  <!-- donate guide -->
+    
+  <div id="donate_guide" class="donate_bar center hidden">
+        <br>
+      ------------------------------------------------------------------------------------------------------------------------------
+      <br>
+      
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="用微信扫一扫哦~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png" title="微信打赏 Colin" height="190px" width="auto"/>
+    </a>
+        
+        &nbsp;&nbsp;
+
+    <a href="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="用支付宝扫一扫即可~" class="fancybox" rel="article0">
+      <img src="http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png" title="支付宝打赏 Colin" height="190px" width="auto"/>
+    </a>
+
+    <span class="donate_txt">
+      Enjoy it ? Donate me !  欣赏此文？求鼓励，求支持！
+    </span>
+
+  </div>
+  <!-- /donate guide -->
+
+  <!-- donate script -->
+  <script type="text/javascript">
+    document.getElementById('btn_donate').onclick = function() {
+      $('#donate_board').addClass('hidden');
+      $('#donate_guide').removeClass('hidden');
+    }
+
+    function donate_on_web(){
+      $('#donate').submit();
+        }
+
+    var original_window_onload = window.onload;
+        window.onload = function () {
+            if (original_window_onload) {
+                original_window_onload();
+            }
+            document.getElementById('donate_board_wdg').className = 'hidden';
+    }
+  </script>
+  <!-- /donate script -->
+</div>
+<!-- /Donate Module -->
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/04/01/OpenGLES-Lesson00/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">OpenGL ES 开篇</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="OpenGLES-Lesson01" data-title="OpenGL ES 基础概念" data-url="http://http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"colin1994"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 Colin丶
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
