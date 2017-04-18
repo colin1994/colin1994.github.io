@@ -88,7 +88,7 @@ feed:
   hub:
 
 ## Themes: https://github.com/hexojs/hexo/wiki/Themes
-theme: yilia
+theme: even
 exclude_generator:
 
 # Deployment
