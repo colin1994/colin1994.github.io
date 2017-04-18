@@ -53,8 +53,9 @@ tags:
 1. [OpenGL ES 开篇](http://colin1994.github.io/2017/04/01/OpenGLES-Lesson00/) : 以 Q&A 的形式，列举出在学习 OpenGL ES 之前会存在的一些疑惑。权衡是否该继续学习 OpenGL ES。
 2. [OpenGL ES 基础概念](http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/)：扫盲篇，先介绍一些必须了解的知识，便于之后能直接进入实战阶段。
 3. [OpenGL ES 环境搭建](http://colin1994.github.io/2017/04/09/OpenGLES-Lesson02/)：详解 OpenGL ES 接入方式，以最基础效果（设置背景色）来阐述。
-4. 渲染基本图元，三角形：详细介绍可编程图形渲染管线是如何工作的。
-5. GLSL 全解：详细介绍 OpenGL ES 2.0 着色器语言 GLSL。
+4. [渲染基本图元，三角形](http://colin1994.github.io/2017/04/18/OpenGLES-Lesson03/)：详细介绍可编程图形渲染管线是如何工作的。
+5. GLSL 详解（基础篇）：详细介绍 OpenGL ES 2.0 着色器语言 GLSL 基础语法。
+6. GLSL 详解（高级篇）：详细介绍 OpenGL ES 2.0 着色器语言高级特性。
 
 
 

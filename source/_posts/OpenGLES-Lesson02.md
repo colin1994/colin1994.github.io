@@ -26,7 +26,7 @@ tags:
 
 ## 0. 初始工程
 
-你可以从[这里](https://github.com/colin1994/OpenGLES/blob/master/Lesson02/OpenGLESDemo_0.zip)下载到初始工程，避免重复实现一些和本节内容不相干的事情。
+你可以从[这里](https://github.com/colin1994/OpenGLES/blob/master/Lesson02/OpenGLESDemo_1.zip)下载到初始工程，避免重复实现一些和本节内容不相干的事情。
 
 在这个初始工程里面，已经实现了新建一个继承自 **UIView** 的 **GLView**，这个自定义的视图将用来显示 OpenGL ES 的渲染内容。然后在 Main.storyboard 中，将 ViewController 的 view 改成 **GLView** 类型，即可。
 
