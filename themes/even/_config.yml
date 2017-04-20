@@ -30,8 +30,8 @@ menu:
 theme:
   color: Default
   toc: true
-  search: true
-  fancybox: true
+  search: false
+  fancybox: false
 
 copyright:
   enable: false
