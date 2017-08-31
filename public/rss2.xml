@@ -8,8 +8,200 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Thu, 20 Apr 2017 13:56:30 GMT</pubDate>
+    <pubDate>Thu, 31 Aug 2017 12:18:27 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>iOS 单元测试</title>
+      <link>http://http://colin1994.github.io/2017/08/31/iOS-Unit-Testing/</link>
+      <guid>http://http://colin1994.github.io/2017/08/31/iOS-Unit-Testing/</guid>
+      <pubDate>Thu, 31 Aug 2017 12:10:15 GMT</pubDate>
+      <description>
+      
+        &lt;h2 id=&quot;什么是单元测试&quot;&gt;什么是单元测试&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;形象版：&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;工厂在组装一台机器之前，会&lt;strong&gt;对每个元件都进行测试&lt;/strong&gt;。这，就是单元测试。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;官方版：&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;单元测试是指对软件中的&lt;strong&gt;最小可测试单元&lt;/strong&gt;进行&lt;strong&gt;检查和验证&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+      
+      </description>
+      
+      <content:encoded>&lt;h2 id=&quot;什么是单元测试&quot;&gt;什么是单元测试&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;形象版：&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;工厂在组装一台机器之前，会&lt;strong&gt;对每个元件都进行测试&lt;/strong&gt;。这，就是单元测试。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;官方版：&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;单元测试是指对软件中的&lt;strong&gt;最小可测试单元&lt;/strong&gt;进行&lt;strong&gt;检查和验证&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;p&gt;&lt;strong&gt;特点：FIRST 原则&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fast&lt;/strong&gt;：测试的运行速度要快，这样就不介意运行它们。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Independent / Isolated&lt;/strong&gt;：一个测试不应当依赖于另一个测试，不依赖外部环境。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Repeatable&lt;/strong&gt;：同一个测试，每次都应当获得相同的结果。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Self-validating&lt;/strong&gt;：测试应当是完全自动化的，输出结果要么是 pass 要么是 fail，而不是依靠程序员对日志文件的解释。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Timely&lt;/strong&gt;：理想情况下，测试的编写，应当在编写要测试的产品代码之前。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Q：单元测试和其他的测试方法有什么不同呢？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A：单元测试是在软件开发过程中要进行的最低级别的测试活动。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这里我们和常见的集成测试，系统测试做对比，如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;测试方式&lt;/th&gt;
+&lt;th&gt;类别&lt;/th&gt;
+&lt;th&gt;察范围&lt;/th&gt;
+&lt;th&gt;基准&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;单元测试&lt;/td&gt;
+&lt;td&gt;白盒测试&lt;/td&gt;
+&lt;td&gt;单元内部的数据结构、逻辑控制、异常处理..&lt;/td&gt;
+&lt;td&gt;逻辑覆盖率&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;集成测试&lt;/td&gt;
+&lt;td&gt;灰盒测试&lt;/td&gt;
+&lt;td&gt;模块之间的接口和接口数据传递的关系，以及模块组合后的整体功能..&lt;/td&gt;
+&lt;td&gt;接口覆盖率&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;系统测试&lt;/td&gt;
+&lt;td&gt;黑盒测试&lt;/td&gt;
+&lt;td&gt;整个系统相对于需求的符合度&lt;/td&gt;
+&lt;td&gt;需求规格的覆盖率&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;是否需要单元测试&quot;&gt;是否需要单元测试&lt;/h2&gt;&lt;p&gt;首先我们要知道，写代码的最终目标有两个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;实现需求&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;提高代码质量和可维护性。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：代码的可维护性是指增加一个新功能，或改变现有功能的成本。&lt;strong&gt;成本越低，可维护性即越高&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;那，在保证完成需求的前提下，单元测试能否提高代码质量和可维护性，则关系到我们是否需要采用它。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;先划个重点，&lt;strong&gt;单元测试能提高代码质量和可维护性&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;如果要加入单元测试这个环节，那么前提就得保证，代码是”&lt;strong&gt;可测试&lt;/strong&gt;“的。所谓可测试，就是要满足之前提到的那几个基本特性。&lt;/p&gt;
+&lt;p&gt;单元测试，要求你能 mock 掉&lt;strong&gt;数据库&lt;/strong&gt;、&lt;strong&gt;线程操作&lt;/strong&gt;、&lt;strong&gt;文件操作&lt;/strong&gt;、&lt;strong&gt;网络操作&lt;/strong&gt;、&lt;strong&gt;UI&lt;/strong&gt;等等，它是可以独立工作，不依赖其他单元。不难想象，一份能独立进行这种 mock 的代码，耦合程度肯定很低。&lt;/p&gt;
+&lt;p&gt;所以单元测试其实本身最重要的不是测试的那个阶段，而是&lt;strong&gt;代码最初设计结构&lt;/strong&gt;的那个阶段。不是为了发现 Bug，而是为了提高开发效率，为了我们的代码健康可持续发展。写单元测试会让你&lt;strong&gt;更好地去思考模块划分是否合理，解耦是否到位&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;总结来说，执行单元测试有如下好处：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;可以放心修改、重构业务代码，而不用担心修改某处代码后带来的副作用。（因为每次修改，都要保证测试用例能通过）&lt;/li&gt;
+&lt;li&gt;帮助反思模块划分的合理性，解耦是否到位。（如果一个单元测试写得逻辑非常复杂、或者说一个函数复杂到无法写单测，那就说明模块的抽象有问题)&lt;/li&gt;
+&lt;li&gt;使得软件具备更好的可维护性、具备更好的可读性。对于团队的新人来说，可以从单元测试入手，比文档更容易被程序员接受。&lt;/li&gt;
+&lt;li&gt;保证代码被测试，更容易及早发现问题，降低风险。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：单元测试不是万能的，它也是存在一些弊端的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不能减少研发的代码量，反而会花费很多精力在编写单元测试上，增加了开发成本，而且对开发人员的要求也会更高。&lt;/li&gt;
+&lt;li&gt;对于小项目来说，是否执行单元测试意义不大。&lt;/li&gt;
+&lt;li&gt;单元测试聚焦的是一个模块单元的功能完整性和鲁棒性，但是模块间互动可能带来的问题并不属于单元测试的范畴，同时也有很大部分的界面测试和功能测试仍旧离不开测试工程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Q：为什么不用 UI 测试？&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;A：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;耗时长。特别是需要运行多个 case 的时候&lt;/li&gt;
+&lt;li&gt;无法测试内部的具体逻辑，比如 URL 是否正确&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;iOS_上的单元测试&quot;&gt;iOS 上的单元测试&lt;/h2&gt;&lt;h3 id=&quot;XCTest_能做什么&quot;&gt;XCTest 能做什么&lt;/h3&gt;&lt;p&gt;XCTest 是 Apple 提供的测试框架，和 Xcode 无缝结合。使用它，可以很方便的进行 &lt;strong&gt;UI 测试，测试点录制，单元测试，性能测试，调试测试点，查看代码覆盖率，集成自动化测试..&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-results-srceditor_2x.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-runtst-10_2x.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/465386-6bfe56ab9062ffb9.gif?imageMogr2/auto-orient/strip&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7xkc7a.com1.z0.glb.clouddn.com/2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png&quot; alt=&quot;2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://7xkc7a.com1.z0.glb.clouddn.com/2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png&quot; alt=&quot;2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;至于如何使用 XCTest，这不是本文要讨论的内容，直接对照官方文档 &lt;a href=&quot;https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Testing with Xcode&lt;/a&gt; 就能上手了。&lt;/p&gt;
+&lt;h3 id=&quot;应该测试什么&quot;&gt;应该测试什么&lt;/h3&gt;&lt;p&gt;那么，讲了这么久的单元测试，在 iOS 上，我们到底应该要测哪些内容呢？&lt;/p&gt;
+&lt;p&gt;单元测试侧重的是&lt;strong&gt;逻辑测试和接口测试&lt;/strong&gt;。在我看来，以下几部分是可以进行测试的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;公共类中的公开方法&lt;/li&gt;
+&lt;li&gt;网络数据层&lt;/li&gt;
+&lt;li&gt;业务逻辑层&lt;/li&gt;
+&lt;li&gt;修复 Bug 的测试&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;实际操作过程中，要&lt;strong&gt;自下而上&lt;/strong&gt;进行。从最基础的 Base 层，往上写测试。确保基础的 Model，Manager 测试通过，才开始为 Controller 编写测试，因为这部分业务是最复杂的，也是最容易改变的。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：编写单元测试需要注意的一点是&lt;strong&gt;责任分离&lt;/strong&gt;。即你的测试&lt;strong&gt;只需要针对特定单元内部的逻辑&lt;/strong&gt;，至于其他模块是否正确，是由该模块的编写者来负责测试的。&lt;/p&gt;
+&lt;p&gt;把这一点应用到实际场景，就能看出 HTTP 通信的实现并不属于我们网络请求类的逻辑。不管是用第三方的 AFNetworking，还是用系统的 NSURLConnection，这些类本身的接口不需要我们来写单元测试。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;可测试的代码（Swift)&quot;&gt;可测试的代码（Swift)&lt;/h2&gt;&lt;p&gt;先来看一段基本的测试代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;testArraySorting&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Given&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; input = [&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;comment&quot;&gt;// When&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; output = input.sorted()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;comment&quot;&gt;// Then&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;type&quot;&gt;XCTAssertEqual&lt;/span&gt;(output, [&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;6&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;7&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;])&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;img src=&quot;http://7xkc7a.com1.z0.glb.clouddn.com/20170823150345694914363.jpg?imageView2/0/format/jpg&quot; alt=&quot;20170823150345694914363.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;总结来说，测试用例可以按以下三步执行：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Given&lt;/strong&gt;：配置测试的初始状态&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;When&lt;/strong&gt;：对要测试的目标执行代码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Then&lt;/strong&gt;：对测试结果进行断言（成功 or 失败）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样我们一眼扫过去就可以清晰的看出一个 case 大体上都在干什么。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：同样一个方法，要写多个测试用例，确保每一种，每一条路径都执行到，特别是边界值。另外 Bugfix 也需要补上对应的 case。确保验证通过。&lt;/p&gt;
+&lt;p&gt;另外，确保一个 case 只测试一种情况。可能我们调用的一个 API 内部有一个 if…else…。建议 if 一个case，else 一个 case。分两个不同的 case 来作测试，这样每个 case 就很清晰自己在测试什么东西。当然，如果存在大量的 if…else…，那就要考虑下代码设计上，是否存在问题了。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;但是实际上，我们的项目中很少有这样单一，中规中矩的方法。很多时候，项目中难免发生多个类之间的交互处理，耦合度高，而这种操作非常的不好调试。单元测试的原则之一就在于我们用来&lt;strong&gt;测试的代码要求功能很单一&lt;/strong&gt;，这其实与良好的代码设计的思想是非常相符的。&lt;/p&gt;
+&lt;p&gt;那，如何保证每一个方法都是可测试的呢？&lt;/p&gt;
+&lt;p&gt;下面通过一个例子，来介绍 Swift 应该如何让代码变的可测试：&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Phone&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(number: String)&lt;/span&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;print&lt;/span&gt; (&lt;span class=&quot;string&quot;&gt;&quot;Real phone calling to &lt;span class=&quot;subst&quot;&gt;\(number)&lt;/span&gt;&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;PersonalAssitant&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; phone = &lt;span class=&quot;type&quot;&gt;Phone&lt;/span&gt;()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; bossNumber = &lt;span class=&quot;string&quot;&gt;&quot;12345678&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;callBoss&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        phone.call(number: bossNumber)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这段代码也很简单，但是，我们要怎么进行测试呢？&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;PersonalAssistantTestClass&lt;/span&gt;: &lt;span class=&quot;title&quot;&gt;XCTestCase&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;testCallingBoss&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; assistant = &lt;span class=&quot;type&quot;&gt;PersonalAssistant&lt;/span&gt;()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        assistant.callBoss()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;// Asset ？？&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这里存在这么几个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;phone，bossNumber 都是不可控的，由 PersonalAssitant 内部自己管理，他们的&lt;strong&gt;耦合度很高&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;我们没法验证 callBoss &lt;strong&gt;是否正确执行&lt;/strong&gt;了。&lt;/li&gt;
+&lt;li&gt;这只是测试用例，难道每次测试，都需要&lt;strong&gt;真正调用&lt;/strong&gt; phone.call，给 boss 打电话？（小心人才网）&lt;/li&gt;
+&lt;li&gt;没法&lt;strong&gt;快速执行&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;Dependency_Injection&quot;&gt;Dependency Injection&lt;/h4&gt;&lt;p&gt;为了降低代码本身的耦合，也为了让代码更好测试，这里我们需要引入 DI（Dependency Injection，依赖注入）。&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;PhoneProtocol&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(number: String)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Phone&lt;/span&gt;: &lt;span class=&quot;title&quot;&gt;PhoneProtocol&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(number: String)&lt;/span&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;print&lt;/span&gt; (&lt;span class=&quot;string&quot;&gt;&quot;Real phone calling to &lt;span class=&quot;subst&quot;&gt;\(number)&lt;/span&gt;&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;PersonalAssistant&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; phone: &lt;span class=&quot;type&quot;&gt;PhoneProtocol&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; bossNumber: &lt;span class=&quot;type&quot;&gt;String&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;init&lt;/span&gt;(aPhone: &lt;span class=&quot;type&quot;&gt;PhoneProtocol&lt;/span&gt;, myBossNumber: &lt;span class=&quot;type&quot;&gt;String&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        phone = aPhone&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        bossNumber = myBossNumber&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;callBoss&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        phone.call(number: bossNumber)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;甚至可以&lt;strong&gt;提供默认值&lt;/strong&gt;： &lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;init&lt;/span&gt;(aPhone: &lt;span class=&quot;type&quot;&gt;PhoneProtocol&lt;/span&gt; = &lt;span class=&quot;type&quot;&gt;Phone&lt;/span&gt;(), myBossNumber: &lt;span class=&quot;type&quot;&gt;String&lt;/span&gt; = &lt;span class=&quot;string&quot;&gt;&quot;12345678&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;通过 DI，我们获得了对 phone 和 number 的完全控制，我们可以传人任意的号码，任意的通讯设备，这使得整个代码的扩展性更好了。同时，也解决了我们提到的第一个问题，降低耦合度。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Q：为什么说这降低了耦合度呢？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A：这里，依赖注入通过声明 phone 这个属性就可以获得对这个对象的控制权，而对该对象的依赖关系管理、加载、配置都由外部完成。&lt;/p&gt;
+&lt;p&gt;更具体来说，依赖注入使得你不用关心对象的生命周期，什么时候被创建，怎么创建的，什么时候销毁。只需直接使用即可，对象的生命周期由提供依赖注入的框架来管理。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;总之，依赖注入的意思是你需要的东西不是由你创建的，而是第三方，或者说容器提供给你的。这样的设计符合正交性，即所谓的松耦合。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;上面的前后代码，可以这样比喻：&lt;br&gt;前：在原始社会里，几乎没有社会分工。需要斧子的人只能自己去磨一把斧子。&lt;/p&gt;
+&lt;p&gt;后：进入工业社会，工厂出现了，斧子不再由普通人完成，而在工厂里被生产出来，此时需要斧子的人找到工厂，购买斧子，无须关心斧子的制造过程。&lt;/p&gt;
+&lt;h4 id=&quot;Mock&quot;&gt;Mock&lt;/h4&gt;&lt;p&gt;至于剩下的三个问题，其实本质上是一个问题，归纳起来就是：如何快速的模拟 phone.call 这个操作，并验证它是否成功调用。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;有的人可能有疑惑，我们现在是在测 assistant.callBoss 这个方法，但是为什么变成验证 phone.call 是否调用成功？我们之前说过。当前模块的测试，只需要关注该模块本身，所以 phone.call 的测试，应该是 Phone 模块自己需要完成的。所以，如果 phone.call 被正常调用了。 那是不是就变相意味着，assistant.callBoss 这个方法测试通过？（至于调用后，是否拨打成功，这个应该是 Phone 模块应该关心的）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以，这里我们引入 Mock 这个概念，来完成这个操作。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;所谓 mock，即模拟出我们想要的内容。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;MockPhone&lt;/span&gt;: &lt;span class=&quot;title&quot;&gt;PhoneProtocol&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; wasCalled = &lt;span class=&quot;literal&quot;&gt;false&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(number: String)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        wasCalled = &lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;testCallingBoss&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; mockPhone = &lt;span class=&quot;type&quot;&gt;MockPhone&lt;/span&gt;()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; assistant = &lt;span class=&quot;type&quot;&gt;PersonalAssistant&lt;/span&gt;(aPhone: mockPhone, myBossNumber: &lt;span class=&quot;string&quot;&gt;&quot;12345678&quot;&lt;/span&gt;) &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    assistant.callBoss()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;type&quot;&gt;XCTAssertTrue&lt;/span&gt;(mockPhone.wasCalled, &lt;span class=&quot;string&quot;&gt;&quot;Assistant should have called the boss&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这里我们模拟出了一个专门用来测试的 “Phone”。（它应该声明在 test 文件里。test bundle 的内容，不会包含在正式包里头）。它也实现了 call 方法，但是并不是真正的拨打电话，而是标记已经调用了 call，拨打出去了。这使得，我们的 asset 得以书写。&lt;/p&gt;
+&lt;p&gt;至此，这个简单的例子，就介绍完了。通过 Protocol 依赖注入，使得我们代码的耦合度更低，扩展性更好，可测试。所以，良好的代码设计是很有必要的。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;自测&quot;&gt;自测&lt;/h2&gt;&lt;p&gt;如果说，下面一个例子，能通过重构代码，写出对应的 case，那么，我这篇文章也就没白写..&lt;/p&gt;
+&lt;figure class=&quot;highlight swift&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;@IBAction&lt;/span&gt; &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;openTapped&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;number&quot;&gt;_&lt;/span&gt; sender: Any)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; mode: &lt;span class=&quot;type&quot;&gt;String&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;switch&lt;/span&gt; segmentedControl.selectedSegmentIndex &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mode = &lt;span class=&quot;string&quot;&gt;&quot;view&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mode = &lt;span class=&quot;string&quot;&gt;&quot;edit&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;default&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;fatalError&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;Impossible Case&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; url = &lt;span class=&quot;type&quot;&gt;URL&lt;/span&gt;(string: &lt;span class=&quot;string&quot;&gt;&quot;myappscheme://open?id=&lt;span class=&quot;subst&quot;&gt;\(document!.identifier)&lt;/span&gt;&amp;amp;mode=&lt;span class=&quot;subst&quot;&gt;\(mode)&lt;/span&gt;&quot;&lt;/span&gt;)!&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;type&quot;&gt;UIApplication&lt;/span&gt;.shared.canOpenURL(url) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;type&quot;&gt;UIApplication&lt;/span&gt;.shared.open(url, options: [:], completionHandler: &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;print&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;url error&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Test&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;testOpensDocumentURLWhenButtonIsTapped&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;let&lt;/span&gt; controller = &lt;span class=&quot;type&quot;&gt;UIStoryboard&lt;/span&gt;(name: &lt;span class=&quot;string&quot;&gt;&quot;Main&quot;&lt;/span&gt;, bundle: &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;).instantiateViewController(withIdentifier: &lt;span class=&quot;string&quot;&gt;&quot;Preview&quot;&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt;! &lt;span class=&quot;type&quot;&gt;PreviewViewController&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    controller.loadViewIfNeeded()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    controller.segmentedControl.selectedSegmentIndex = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    controller.document = &lt;span class=&quot;type&quot;&gt;Document&lt;/span&gt;(identifier: &lt;span class=&quot;string&quot;&gt;&quot;TheID&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    controller.openTapped(controller.button)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Asset ??&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;Enjoy it～&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;参考链接&quot;&gt;参考链接&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Testing with Xcode&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://medium.com/practical-ios-development/what-should-we-unit-test-in-our-ios-apps-769d55a2423b&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What should we Unit Test in our iOS apps?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://masilotti.com/better-swift-unit-testing/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Better Unit Testing with Swift&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://academy.realm.io/posts/appbuilders-natasha-muraschev-practical-protocol-oriented-programming/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Practical Protocol-Oriented-Programming&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/yangyubo/zh-unit-testing-guidelines&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;单元测试准则&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.oschina.net/translate/12-unit-testing-myths-and-practices&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;12 个单元测试秘籍和实践&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://onevcat.com/2016/11/pop-cocoa-1/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;面向协议编程与 Cocoa 的邂逅&lt;/a&gt;&lt;/p&gt;
+</content:encoded>
+      
+      <comments>http://http://colin1994.github.io/2017/08/31/iOS-Unit-Testing/#disqus_thread</comments>
+    </item>
     
     <item>
       <title>渲染基本图元</title>
@@ -2261,160 +2453,6 @@
     </item>
     
     <item>
-      <title>正则表达式</title>
-      <link>http://http://colin1994.github.io/2015/07/11/Regular-Expressions/</link>
-      <guid>http://http://colin1994.github.io/2015/07/11/Regular-Expressions/</guid>
-      <pubDate>Sat, 11 Jul 2015 02:14:52 GMT</pubDate>
-      <description>
-      
-        &lt;blockquote&gt;
-&lt;p&gt;正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ol&gt;
-&lt;li&gt;系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://regexkit.sourceforge.net/RegexKitLite/&quot;&gt;RegexKitLite&lt;/a&gt; RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;至于&lt;code&gt;RegexKitLite&lt;/code&gt;, 这里不做介绍。着重介绍系统自带的那几个办法。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;正则表达式学习链接：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&quot;http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html&quot;&gt;55分钟学会正则表达式&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://www.regexlab.com/zh/regref.htm&quot;&gt;揭开正则表达式的神秘面纱&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;amp;categoryId=5&quot;&gt;RegExLib.com(正则表达式库查询)&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;hr&gt;
-      
-      </description>
-      
-      <content:encoded>&lt;blockquote&gt;
-&lt;p&gt;正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ol&gt;
-&lt;li&gt;系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://regexkit.sourceforge.net/RegexKitLite/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RegexKitLite&lt;/a&gt; RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;至于&lt;code&gt;RegexKitLite&lt;/code&gt;, 这里不做介绍。着重介绍系统自带的那几个办法。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;正则表达式学习链接：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&quot;http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;55分钟学会正则表达式&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://www.regexlab.com/zh/regref.htm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;揭开正则表达式的神秘面纱&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&quot;http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;amp;categoryId=5&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RegExLib.com(正则表达式库查询)&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;hr&gt;
-&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;h2 id=&quot;1-_NSPredicate&quot;&gt;1. NSPredicate&lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *), ...];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;其中, 常见的&lt;code&gt;Format&lt;/code&gt;有:&lt;/p&gt;
-&lt;p&gt;(1) 比较运算符: &amp;gt;, &amp;lt;, ==, &amp;gt;=, &amp;lt;=, !=&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;number &amp;gt; 100&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;(2) 范围运算符: IN, BETWEEN&lt;/p&gt;
-&lt;p&gt;​    &lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;number BETWEEN &amp;#123;1,5&amp;#125;&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;address IN &amp;#123;&amp;apos;shanghai&amp;apos;,&amp;apos;beijing&amp;apos;&amp;#125;&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;(3) 字符串本身: SELF &lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@“SELF == ‘APPLE’&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;name CONTAINS[cd] &amp;apos;ang&amp;apos;&amp;quot;  //包含某个字符串&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;name BEGINSWITH[c] &amp;apos;sh&amp;apos;&amp;quot;  //以某个字符串开头&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;name ENDSWITH[d] &amp;apos;ang&amp;apos;&amp;quot;   //以某个字符串结束&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;注:[c]不区分大小写&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   [d]不区分发音符号即没有重音符号&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   [cd]既不区分大小写，也不区分发音符号。&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;(5) 通配符: LIKE&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;name LIKE[cd] &amp;apos;*er*&amp;apos;&amp;quot;    //*代表通配符,Like也接受[cd].&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;name LIKE[cd] &amp;apos;???er*&amp;apos;&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;(6) 正则表达式: MATCHES&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：NSString *regex = @&amp;quot;^A.+e$&amp;quot;;   //以A开头，e结尾&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  @&amp;quot;name MATCHES %@&amp;quot;,regex&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;至于如何使用呢? 下面举几个例子:&lt;/p&gt;
-&lt;p&gt;(a) 对NSArray进行过滤, 帅选出包含”ang”的项&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSArray&lt;/span&gt; *array = [[&lt;span class=&quot;built_in&quot;&gt;NSArray&lt;/span&gt; alloc]initWithObjects:&lt;span class=&quot;string&quot;&gt;@&quot;beijing&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;@&quot;shanghai&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;@&quot;guangzou&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;@&quot;wuhan&quot;&lt;/span&gt;, &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *string = &lt;span class=&quot;string&quot;&gt;@&quot;ang&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *pred = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;SELF CONTAINS %@&quot;&lt;/span&gt;, string];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;%@&quot;&lt;/span&gt;, [array filteredArrayUsingPredicate:pred]);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    打印结果:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    (&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//     shanghai,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//     guangzou&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    )&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;(b) 对NSDate进行筛选&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//日期在十天之内:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; *endDate = [&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; date];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSTimeInterval&lt;/span&gt; timeInterval= [endDate timeIntervalSinceReferenceDate];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;timeInterval -=&lt;span class=&quot;number&quot;&gt;3600&lt;/span&gt;*&lt;span class=&quot;number&quot;&gt;24&lt;/span&gt;*&lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; *beginDate = [&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; dateWithTimeIntervalSinceReferenceDate:timeInterval];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//对coredata进行筛选(假设有fetchRequest)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate_date = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;date &amp;gt;= %@ AND date &amp;lt;= %@&quot;&lt;/span&gt;, beginDate,endDate];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[fetchRequest setPredicate:predicate_date];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;OK, &lt;code&gt;NSPredicate&lt;/code&gt;的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 判断是否是有效邮箱&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)isValidateEmail:(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *)email&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *regex = &lt;span class=&quot;string&quot;&gt;@&quot;[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&amp;#123;2,4&amp;#125;&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;SELF MATCHES %@&quot;&lt;/span&gt;, regex];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [predicate evaluateWithObject:email];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 判断字符串首字母是否为字母&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)isStartedWithWord:(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *)aString&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *regex = &lt;span class=&quot;string&quot;&gt;@&quot;[A-Za-z]+&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;SELF MATCHES %@&quot;&lt;/span&gt;, regex];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [predicate evaluateWithObject:aString];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;hr&gt;
-&lt;h2 id=&quot;2-_利用rangeOfString：option：直接查找&quot;&gt;2. 利用rangeOfString：option：直接查找&lt;/h2&gt;&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *searchText = &lt;span class=&quot;string&quot;&gt;@&quot;// Do any additional setup after loading the view, typically from a nib.&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSRange&lt;/span&gt; range = [searchText rangeOfString:&lt;span class=&quot;string&quot;&gt;@&quot;(?:[^,])*\\.&quot;&lt;/span&gt; options:&lt;span class=&quot;built_in&quot;&gt;NSRegularExpressionSearch&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (range.location != &lt;span class=&quot;built_in&quot;&gt;NSNotFound&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;%@&quot;&lt;/span&gt;, [searchText substringWithRange:range]);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    打印结果:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//      typically from a nib.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;blockquote&gt;
-&lt;p&gt;options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h1 id=&quot;3-_使用正则表达式类&quot;&gt;3. 使用正则表达式类&lt;/h1&gt;&lt;p&gt;详细了解:  &lt;a href=&quot;http://blog.csdn.net/crayondeng/article/details/16991579&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;iOS 正则表达式 NSRegularExpression&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;上面那篇文章总结的很不错. 这里简单再举个例子:&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *searchText = &lt;span class=&quot;string&quot;&gt;@&quot;// Do any additional setup after loading the view, typically from a nib.&quot;&lt;/span&gt;;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSError&lt;/span&gt; *error = &lt;span class=&quot;literal&quot;&gt;NULL&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSRegularExpression&lt;/span&gt; *regex = [&lt;span class=&quot;built_in&quot;&gt;NSRegularExpression&lt;/span&gt; regularExpressionWithPattern:&lt;span class=&quot;string&quot;&gt;@&quot;(?:[^,])*\\.&quot;&lt;/span&gt; options:&lt;span class=&quot;built_in&quot;&gt;NSRegularExpressionCaseInsensitive&lt;/span&gt; error:&amp;amp;error];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSTextCheckingResult&lt;/span&gt; *result = [regex firstMatchInString:searchText options:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; range:&lt;span class=&quot;built_in&quot;&gt;NSMakeRange&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, [searchText length])];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (result) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;%@\n&quot;&lt;/span&gt;, [searchText substringWithRange:result.range]);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    打印结果:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//      typically from a nib.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;blockquote&gt;
-&lt;p&gt;使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;p&gt;针对以上3种方式, 做一个小小总结&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&amp;gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如果只关心第一个匹配的结果，第二种匹配较为简洁；&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&amp;gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&amp;gt;&lt;/p&gt;
-&lt;h2 id=&quot;常用正则表达式&quot;&gt;常用正则表达式&lt;/h2&gt;&lt;p&gt;参考:  &lt;a href=&quot;http://blog.csdn.net/chaoyuan899/article/details/38583759&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;IOS常用正则表达式&lt;/a&gt;&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;表达式&lt;/th&gt;
-&lt;th&gt;作用&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;[\u4e00-\u9fa5]&lt;/td&gt;
-&lt;td&gt;匹配中文字符&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;[^\x00-\xff]&lt;/td&gt;
-&lt;td&gt;匹配双字节字符(包括汉字在内)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;\n\s*\r&lt;/td&gt;
-&lt;td&gt;匹配空白行&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&amp;lt;(\S*?)[^&amp;gt;]*&amp;gt;.*?&amp;lt;/\1&amp;gt;\&lt;/td&gt;
-&lt;td&gt;&amp;lt;.*? /&amp;gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;^\s*\&lt;/td&gt;
-&lt;td&gt;\s*$&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*&lt;/td&gt;
-&lt;td&gt;匹配Email地&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;[a-zA-z]+://[^\s]*&lt;/td&gt;
-&lt;td&gt;匹配网址URL&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;\d{3}-\d{8}\&lt;/td&gt;
-&lt;td&gt;\d{4}-\d{7}&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;[1-9]\d{5}(?!\d)&lt;/td&gt;
-&lt;td&gt;匹配中国邮政编码&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;\d+.\d+.\d+.\d+&lt;/td&gt;
-&lt;td&gt;匹配ip地址&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</content:encoded>
-      
-      <comments>http://http://colin1994.github.io/2015/07/11/Regular-Expressions/#disqus_thread</comments>
-    </item>
-    
-    <item>
       <title>阿里, 网易, 腾讯</title>
       <link>http://http://colin1994.github.io/2015/07/11/interview-summary/</link>
       <guid>http://http://colin1994.github.io/2015/07/11/interview-summary/</guid>
@@ -2590,6 +2628,160 @@
 </content:encoded>
       
       <comments>http://http://colin1994.github.io/2015/07/11/interview-summary/#disqus_thread</comments>
+    </item>
+    
+    <item>
+      <title>正则表达式</title>
+      <link>http://http://colin1994.github.io/2015/07/11/Regular-Expressions/</link>
+      <guid>http://http://colin1994.github.io/2015/07/11/Regular-Expressions/</guid>
+      <pubDate>Sat, 11 Jul 2015 02:14:52 GMT</pubDate>
+      <description>
+      
+        &lt;blockquote&gt;
+&lt;p&gt;正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://regexkit.sourceforge.net/RegexKitLite/&quot;&gt;RegexKitLite&lt;/a&gt; RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;至于&lt;code&gt;RegexKitLite&lt;/code&gt;, 这里不做介绍。着重介绍系统自带的那几个办法。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;正则表达式学习链接：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html&quot;&gt;55分钟学会正则表达式&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.regexlab.com/zh/regref.htm&quot;&gt;揭开正则表达式的神秘面纱&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;amp;categoryId=5&quot;&gt;RegExLib.com(正则表达式库查询)&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+      
+      </description>
+      
+      <content:encoded>&lt;blockquote&gt;
+&lt;p&gt;正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://regexkit.sourceforge.net/RegexKitLite/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RegexKitLite&lt;/a&gt; RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;至于&lt;code&gt;RegexKitLite&lt;/code&gt;, 这里不做介绍。着重介绍系统自带的那几个办法。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;正则表达式学习链接：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;55分钟学会正则表达式&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.regexlab.com/zh/regref.htm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;揭开正则表达式的神秘面纱&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;amp;categoryId=5&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;RegExLib.com(正则表达式库查询)&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;1-_NSPredicate&quot;&gt;1. NSPredicate&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *), ...];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;其中, 常见的&lt;code&gt;Format&lt;/code&gt;有:&lt;/p&gt;
+&lt;p&gt;(1) 比较运算符: &amp;gt;, &amp;lt;, ==, &amp;gt;=, &amp;lt;=, !=&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;number &amp;gt; 100&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;(2) 范围运算符: IN, BETWEEN&lt;/p&gt;
+&lt;p&gt;​    &lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;number BETWEEN &amp;#123;1,5&amp;#125;&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;address IN &amp;#123;&amp;apos;shanghai&amp;apos;,&amp;apos;beijing&amp;apos;&amp;#125;&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;(3) 字符串本身: SELF &lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@“SELF == ‘APPLE’&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;name CONTAINS[cd] &amp;apos;ang&amp;apos;&amp;quot;  //包含某个字符串&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;name BEGINSWITH[c] &amp;apos;sh&amp;apos;&amp;quot;  //以某个字符串开头&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;name ENDSWITH[d] &amp;apos;ang&amp;apos;&amp;quot;   //以某个字符串结束&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;注:[c]不区分大小写&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   [d]不区分发音符号即没有重音符号&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   [cd]既不区分大小写，也不区分发音符号。&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;(5) 通配符: LIKE&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：@&amp;quot;name LIKE[cd] &amp;apos;*er*&amp;apos;&amp;quot;    //*代表通配符,Like也接受[cd].&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @&amp;quot;name LIKE[cd] &amp;apos;???er*&amp;apos;&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;(6) 正则表达式: MATCHES&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;例：NSString *regex = @&amp;quot;^A.+e$&amp;quot;;   //以A开头，e结尾&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  @&amp;quot;name MATCHES %@&amp;quot;,regex&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;至于如何使用呢? 下面举几个例子:&lt;/p&gt;
+&lt;p&gt;(a) 对NSArray进行过滤, 帅选出包含”ang”的项&lt;/p&gt;
+&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSArray&lt;/span&gt; *array = [[&lt;span class=&quot;built_in&quot;&gt;NSArray&lt;/span&gt; alloc]initWithObjects:&lt;span class=&quot;string&quot;&gt;@&quot;beijing&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;@&quot;shanghai&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;@&quot;guangzou&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;@&quot;wuhan&quot;&lt;/span&gt;, &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *string = &lt;span class=&quot;string&quot;&gt;@&quot;ang&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *pred = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;SELF CONTAINS %@&quot;&lt;/span&gt;, string];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;%@&quot;&lt;/span&gt;, [array filteredArrayUsingPredicate:pred]);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    打印结果:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    (&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//     shanghai,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//     guangzou&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    )&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;(b) 对NSDate进行筛选&lt;/p&gt;
+&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//日期在十天之内:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; *endDate = [&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; date];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSTimeInterval&lt;/span&gt; timeInterval= [endDate timeIntervalSinceReferenceDate];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;timeInterval -=&lt;span class=&quot;number&quot;&gt;3600&lt;/span&gt;*&lt;span class=&quot;number&quot;&gt;24&lt;/span&gt;*&lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; *beginDate = [&lt;span class=&quot;built_in&quot;&gt;NSDate&lt;/span&gt; dateWithTimeIntervalSinceReferenceDate:timeInterval];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//对coredata进行筛选(假设有fetchRequest)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate_date = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;date &amp;gt;= %@ AND date &amp;lt;= %@&quot;&lt;/span&gt;, beginDate,endDate];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[fetchRequest setPredicate:predicate_date];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;OK, &lt;code&gt;NSPredicate&lt;/code&gt;的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。&lt;/p&gt;
+&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 判断是否是有效邮箱&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)isValidateEmail:(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *)email&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *regex = &lt;span class=&quot;string&quot;&gt;@&quot;[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&amp;#123;2,4&amp;#125;&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;SELF MATCHES %@&quot;&lt;/span&gt;, regex];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [predicate evaluateWithObject:email];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 判断字符串首字母是否为字母&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)isStartedWithWord:(&lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *)aString&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *regex = &lt;span class=&quot;string&quot;&gt;@&quot;[A-Za-z]+&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; *predicate = [&lt;span class=&quot;built_in&quot;&gt;NSPredicate&lt;/span&gt; predicateWithFormat:&lt;span class=&quot;string&quot;&gt;@&quot;SELF MATCHES %@&quot;&lt;/span&gt;, regex];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [predicate evaluateWithObject:aString];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;2-_利用rangeOfString：option：直接查找&quot;&gt;2. 利用rangeOfString：option：直接查找&lt;/h2&gt;&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *searchText = &lt;span class=&quot;string&quot;&gt;@&quot;// Do any additional setup after loading the view, typically from a nib.&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSRange&lt;/span&gt; range = [searchText rangeOfString:&lt;span class=&quot;string&quot;&gt;@&quot;(?:[^,])*\\.&quot;&lt;/span&gt; options:&lt;span class=&quot;built_in&quot;&gt;NSRegularExpressionSearch&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (range.location != &lt;span class=&quot;built_in&quot;&gt;NSNotFound&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;%@&quot;&lt;/span&gt;, [searchText substringWithRange:range]);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    打印结果:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//      typically from a nib.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;blockquote&gt;
+&lt;p&gt;options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h1 id=&quot;3-_使用正则表达式类&quot;&gt;3. 使用正则表达式类&lt;/h1&gt;&lt;p&gt;详细了解:  &lt;a href=&quot;http://blog.csdn.net/crayondeng/article/details/16991579&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;iOS 正则表达式 NSRegularExpression&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;上面那篇文章总结的很不错. 这里简单再举个例子:&lt;/p&gt;
+&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSString&lt;/span&gt; *searchText = &lt;span class=&quot;string&quot;&gt;@&quot;// Do any additional setup after loading the view, typically from a nib.&quot;&lt;/span&gt;;    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSError&lt;/span&gt; *error = &lt;span class=&quot;literal&quot;&gt;NULL&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSRegularExpression&lt;/span&gt; *regex = [&lt;span class=&quot;built_in&quot;&gt;NSRegularExpression&lt;/span&gt; regularExpressionWithPattern:&lt;span class=&quot;string&quot;&gt;@&quot;(?:[^,])*\\.&quot;&lt;/span&gt; options:&lt;span class=&quot;built_in&quot;&gt;NSRegularExpressionCaseInsensitive&lt;/span&gt; error:&amp;amp;error];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSTextCheckingResult&lt;/span&gt; *result = [regex firstMatchInString:searchText options:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; range:&lt;span class=&quot;built_in&quot;&gt;NSMakeRange&lt;/span&gt;(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, [searchText length])];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (result) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;NSLog&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;@&quot;%@\n&quot;&lt;/span&gt;, [searchText substringWithRange:result.range]);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//    打印结果:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//      typically from a nib.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;blockquote&gt;
+&lt;p&gt;使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;p&gt;针对以上3种方式, 做一个小小总结&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&amp;gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果只关心第一个匹配的结果，第二种匹配较为简洁；&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&amp;gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&amp;gt;&lt;/p&gt;
+&lt;h2 id=&quot;常用正则表达式&quot;&gt;常用正则表达式&lt;/h2&gt;&lt;p&gt;参考:  &lt;a href=&quot;http://blog.csdn.net/chaoyuan899/article/details/38583759&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;IOS常用正则表达式&lt;/a&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表达式&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;[\u4e00-\u9fa5]&lt;/td&gt;
+&lt;td&gt;匹配中文字符&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;[^\x00-\xff]&lt;/td&gt;
+&lt;td&gt;匹配双字节字符(包括汉字在内)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;\n\s*\r&lt;/td&gt;
+&lt;td&gt;匹配空白行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;lt;(\S*?)[^&amp;gt;]*&amp;gt;.*?&amp;lt;/\1&amp;gt;\&lt;/td&gt;
+&lt;td&gt;&amp;lt;.*? /&amp;gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;^\s*\&lt;/td&gt;
+&lt;td&gt;\s*$&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*&lt;/td&gt;
+&lt;td&gt;匹配Email地&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;[a-zA-z]+://[^\s]*&lt;/td&gt;
+&lt;td&gt;匹配网址URL&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;\d{3}-\d{8}\&lt;/td&gt;
+&lt;td&gt;\d{4}-\d{7}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;[1-9]\d{5}(?!\d)&lt;/td&gt;
+&lt;td&gt;匹配中国邮政编码&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;\d+.\d+.\d+.\d+&lt;/td&gt;
+&lt;td&gt;匹配ip地址&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</content:encoded>
+      
+      <comments>http://http://colin1994.github.io/2015/07/11/Regular-Expressions/#disqus_thread</comments>
     </item>
     
   </channel>
