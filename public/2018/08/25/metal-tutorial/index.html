@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Metal 系列教程"/>
+
+
+
+
+  <meta name="keywords" content="教程,图像处理,iOS 开发,Metal," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2018/08/25/metal-tutorial/"/>
+
+
+<meta name="description" content="从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。
+直到 WWDC 2018，Apple 宣布 iOS 12 将弃用 OpenGL / CL，我想，这或许是个机会。
+
+Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is deprec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Metal 系列教程">
+<meta property="og:url" content="http://http://colin1994.github.io/2018/08/25/metal-tutorial/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。
+直到 WWDC 2018，Apple 宣布 iOS 12 将弃用 OpenGL / CL，我想，这或许是个机会。
+
+Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is deprec">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/de088c47205fd04fc8d9e11748813b10.jpeg">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/4677bca4a9633908b463e670646d434c.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/68788a0103eac111ea445b0dcf02fa58.png">
+<meta property="og:updated_time" content="2018-08-25T03:05:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Metal 系列教程">
+<meta name="twitter:description" content="从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。
+直到 WWDC 2018，Apple 宣布 iOS 12 将弃用 OpenGL / CL，我想，这或许是个机会。
+
+Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is deprec">
+<meta name="twitter:image" content="https://diycode.b0.upaiyun.com/photo/2018/de088c47205fd04fc8d9e11748813b10.jpeg">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+
+
+    <title> Metal 系列教程 · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Metal 系列教程
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Aug 25, 2018
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#目录"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础概念："><span class="toc-text">基础概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础实践："><span class="toc-text">基础实践：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例实战："><span class="toc-text">案例实战：</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。</p>
+<p>直到 <strong>WWDC 2018，Apple 宣布 iOS 12 将弃用 OpenGL / CL</strong>，我想，这或许是个机会。</p>
+<blockquote>
+<p>Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is deprecated in iOS 12. Games and graphics-intensive apps that previously used OpenGL ES should now adopt Metal.</p>
+</blockquote>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/de088c47205fd04fc8d9e11748813b10.jpeg" alt=""></p>
+<p>这个系列会回顾整理之前学习的内容，有序输出。算是对自己的一个交代，同时也希望，能帮助到那些想要学习 Metal 却不知道怎么下手的朋友。</p>
+<a id="more"></a>
+<blockquote>
+<p>这系列文章，目前发布在我的小专栏 <a href="https://xiaozhuanlan.com/colin" target="_blank" rel="external">iOS 图像处理</a> 上。欢迎订阅~</p>
+</blockquote>
+<p>那么，<strong>什么是 Metal</strong> ？</p>
+<blockquote>
+<p>Render advanced 3D graphics and perform data-parallel computations using the GPU.</p>
+</blockquote>
+<p>总结来说，<strong>Metal 能让你尽可能的发挥 GPU 强大的渲染、运算的能力。</strong></p>
+<p>这里，我不做过多的阐述，如果你对图像处理，游戏编程感兴趣，又或者你只是认可这项技术，相信它是未来，值得投资学习。那么，我想这个系列不会让你失望。</p>
+<p>这个系列的文章，<strong>是教程、实践，而不是文档</strong>。</p>
+<p>我会尽可能，在实现功能的过程中，穿插介绍各个知识点。而不是一股脑的全部输出。</p>
+<p>不然可能看了四五篇，发现自己还是什么都做不了，还是不懂之前学到的具体是什么。</p>
+<p>然后，就不了了之了。</p>
+<p>Metal 系列的实战教程，会循序渐进，穿插详细介绍各个用到的 Metal 对象。</p>
+<p>由于 Metal（iOS 8 + A7），MetalKit（iOS 9 + A7）的软／硬件限制，以及不同读者的需求，之后的配套 Demo，会同时包含 iOS+Swift 和 macOS+ObjC 两种，文章以 iOS+Swift 进行演示。并且尽可能不用 MetalKit，功能都自己实现（避免一些实现细节被屏蔽了，以及降低系统版本限制）。当然，也会有专门的文章，介绍 MetalKit 相关。</p>
+<p>另外，每节 Demo 都有 start ／ end 两份代码，建议阅读完后，自己根据 start 基础工程，完成本节新的内容。该系列 Demo 主要是为了学习 Metal，所以一些语法特性，代码／文件结构，容错，封装等，不会去细究。</p>
+<p>每篇文章争取控制在 15 分钟的阅读量，细分知识点，便于随时阅读，学习。</p>
+<p>另外，之后的实战，会侧重于<strong>图像处理</strong>，比如<strong>滤镜，画笔，马赛克，增高，相机，AR 贴图</strong>等。开发过程中，也会结合系统的其他框架，比如 <strong>Core Image、ARKit、Core ML、Vision</strong> 等，做一些好玩的事情。</p>
+<blockquote>
+<p>PS：<br>订阅后的朋友，可以加我微信：wxidlongze，拉你进群。交流，扯淡，学习资源分享～<br> 最后，源码在小专栏中有链接～</p>
+</blockquote>
+<hr>
+<h2 id="目录">目录</h2><h3 id="基础概念：">基础概念：</h3><p><strong><a href="https://xiaozhuanlan.com/topic/3420765198" target="_blank" rel="external">一。Metal 概述</a></strong></p>
+<blockquote>
+<p>Metal 是什么，Metal 能做什么，为什么要用 Metal。</p>
+</blockquote>
+<p><strong><a href="https://xiaozhuanlan.com/topic/1287954630" target="_blank" rel="external">二。Metal 框架一览</a></strong></p>
+<blockquote>
+<p>Metal 进行图像处理的整体框架。宏观介绍渲染管线。</p>
+</blockquote>
+<h3 id="基础实践：">基础实践：</h3><p><strong><a href="https://xiaozhuanlan.com/topic/9870134265" target="_blank" rel="external">三。清屏</a></strong></p>
+<blockquote>
+<p>最最最最简单的一个基础工程。介绍整体的显示渲染流程。</p>
+</blockquote>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/4677bca4a9633908b463e670646d434c.png" alt=""></p>
+<p><a href="https://xiaozhuanlan.com/topic/6503719284" target="_blank" rel="external"><strong>四。绘制一个三角形</strong></a></p>
+<blockquote>
+<p>堪称图形界的 Hello World。会较为完整的过一遍渲染管线。麻雀虽小，五脏俱全。</p>
+</blockquote>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/68788a0103eac111ea445b0dcf02fa58.png" alt=""></p>
+<p><strong>五。MSL 介绍</strong></p>
+<blockquote>
+<p>介绍如何编写 Metal 着色器。以及它们是如何被加载工作的。</p>
+</blockquote>
+<p><strong>六。显示图片</strong></p>
+<blockquote>
+<p>还在纠结绘制三角形有什么用吗？</p>
+<p>这节会教你如何加载纹理，如何显示相册导入的图片。</p>
+</blockquote>
+<p><strong>七。视图封装</strong></p>
+<blockquote>
+<p>封装一个通用的控件。支持不同 contentMode，支持缩放，最大显示像素格，长按对比。</p>
+</blockquote>
+<h3 id="案例实战：">案例实战：</h3><p><strong>八。色温滤镜</strong></p>
+<blockquote>
+<p>基础的颜色滤镜，以及如何使用 CLUT（Color Lookup Table）实现效果。</p>
+</blockquote>
+<p><strong>九。多重滤镜</strong></p>
+<blockquote>
+<p>滤镜链的实现，多个滤镜组合。</p>
+</blockquote>
+<p><strong>十。增高</strong></p>
+<blockquote>
+<p>不再是逐像素的简单处理，涉及形变。</p>
+</blockquote>
+<p>…<br><strong>To be continued ~</strong></p>
+<hr>
+<blockquote>
+<p>这系列文章，目前发布在我的小专栏 <a href="https://xiaozhuanlan.com/colin" target="_blank" rel="external">iOS 图像处理</a> 上。欢迎订阅~</p>
+</blockquote>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/教程/">教程</a>
+            
+              <a href="/tags/图像处理/">图像处理</a>
+            
+              <a href="/tags/iOS-开发/">iOS 开发</a>
+            
+              <a href="/tags/Metal/">Metal</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2017/04/18/OpenGLES-Lesson03/">
+        <span class="next-text nav-default">渲染基本图元</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>

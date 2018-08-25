@@ -7,6 +7,19 @@ tags:
 
 ------
 
+Core Image 系列，目前的文章如下：
+
+- [Core Image 你需要了解的那些事~](http://colin1994.github.io/2016/10/21/Core-Image-OverView/)
+- [Core Image 之自定义 Filter~](http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/)
+- [Core Image【3】—— 2017 新特性](https://xiaozhuanlan.com/topic/3095648721)
+- [Core Image【4】—— 2018 新特性](https://xiaozhuanlan.com/topic/5094762183)
+
+
+
+---
+
+
+
 ## 前言
 
 最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了解。故此记录，与君交流~
