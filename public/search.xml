@@ -101,7 +101,1045 @@
     </entry>
     
     <entry>
-      <title><![CDATA[渲染基本图元]]></title>
+      <title><![CDATA[GLSL 详解（高级篇）]]></title>
+      <url>/2017/11/12/OpenGLES-Lesson05/</url>
+      <content type="html"><![CDATA[<blockquote>
+<p>PS：<br>无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。</p>
+</blockquote>
+<a id="more"></a>
+<h3 id="7-_预处理">7. 预处理</h3><p>GLSL 中预处理指令的使用也跟 C 语言的预处理指令相似。以下代码是宏及宏的条件判断：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>注意与 C 语言中不同，<strong>宏不能带参数定义</strong>。使用 <code>#if</code>，<code>#else</code> 和 <code>#elif</code> 可以用来判断宏是否被定义过。以下是一些预先定义好的宏及它们的描述：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">__LINE__ 	<span class="comment">// 当前源码中的行号.</span></span><br><span class="line">__FILE__ 	<span class="comment">// OpenGL ES 2.0 中始终为 0.</span></span><br><span class="line">__VERSION__ <span class="comment">// 一个整数,指示当前的 glsl版本. 比如 100 ps: 100 = v1.00</span></span><br><span class="line">GL_ES 		<span class="comment">// 如果当前是在 OPGL ES 环境中运行则 GL_ES 被设置成1,一般用来检查当前环境是不是 OPENGL ES.</span></span><br></pre></td></tr></table></figure>
+<p>在着色器编译过程中，<strong><code>#error</code> 指令会触发编译错误并向日志中写入内容。使用 <code>#pragma</code> 指令可以向编译器明确与实现相关的指令</strong>。还有一种与 C 语言中不同的预处理指令是 <strong><code>#version</code></strong>，<strong>它指定了编译着色器的 GLSL 对应版本</strong>，可以在未来更新的版本中据此判断着色器的语言版本，以使用对应的版本来完成编译。这一标记需要写在代码的最开始位置，对于OpenGL ES 2.0 的着色器应将此值设置为 100。如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version 100 <span class="comment">// OpenGL ES Shading Language v1.00</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>实例:</strong></p>
+<p><strong>Q：1，如何通过判断系统环境，来选择合适的精度：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> GL_ES</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> GL_FRAGMENT_PRECISION_HIGH</span></span><br><span class="line">precision highp <span class="keyword">float</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">precision mediump <span class="keyword">float</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>Q：2，如何自定义宏：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NUM 100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> NUM==100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>预处理指令中另一个非常重要的是 <code>#extension</code>，<strong>用来控制是否启用某些扩展的功能。</strong>当供应商扩展 GLSL 时，会增加新的语言扩展明细，如 <code>GL_OES_texture_3D</code> 等。着色器必须告知编译器是否允许使用扩展或以怎样的行为方式出现，这就需要使用 <code>#extension</code> 指令来完成，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set behavior for an extension</span></span><br><span class="line"><span class="meta">#extension extension_name : behavior</span></span><br><span class="line"><span class="comment">// Set behavior for ALL extensions</span></span><br><span class="line"><span class="meta">#extension all : behavior</span></span><br></pre></td></tr></table></figure>
+<p>第一个参数应为扩展的名称或者 “all”，“all” 表示该行为方式适用于所有的扩展。</p>
+<table>
+<thead>
+<tr>
+<th>扩展的行为方式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>require</td>
+<td>指明扩展是必须的，如果该扩展不被支持，预处理器会抛出错误。如果扩展参数为 “all” 则一定会抛出错误。</td>
+</tr>
+<tr>
+<td>enable</td>
+<td>指明扩展是启用的，如果该扩展不被支持，预处理器会发出警告。代码会按照扩展被启用的状态执行，如果扩展参数为“all”则一定会抛出错误。</td>
+</tr>
+<tr>
+<td>warn</td>
+<td>除非是因为该扩展被其它处于启用状态的扩展所需要，否则在使用该扩展时会发出警告。如果扩展参数为 “all” 则无论何时使用扩展都会抛出警告。除此之外，如果扩展不被支持，也会发出警告。</td>
+</tr>
+<tr>
+<td>disable</td>
+<td>指明扩展被禁用，如果使用该扩展会抛出错误。如果扩展参数为 “all”（即默认设置），则不允许使用任何扩展。</td>
+</tr>
+</tbody>
+</table>
+<p>例如，实现不支持 3D 纹理扩展，如果你希望处理器发出警告（此时着色器也会同样被执行，如同实现支持 3D 纹理扩展一样），应当在着色器顶部加入以下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#extension GL_OES_texture_3D : enable</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-_内置变量">8. 内置变量</h3><h4 id="顶点着色器内置变量">顶点着色器内置变量</h4><p>顶点着色器中有变量 <code>gl_Position</code>，此变量用于写入齐次顶点位置坐标。一个完整的顶点着色器的所有执行命令都应该向此变量写入值。写入的时机可以是着色器执行过程中的任意时间。当被写入之后也同样可以读取此变量的值。在处理顶点之后的图元装配、剪切（clipping）、剔除（culling）等对于图元的固定功能操作中将会使用此值。如果编译器发现 <code>gl_Position</code> 未写入或在写入之前有读取行为将会产生一条诊断信息，但并非所有的情况都能发现。如果执行顶点着色器而未写入 <code>gl_Position</code>，则 <code>gl_Position</code> 的值将是未定义。<br>顶点着色器中有变量 <code>gl_PointSize</code>，此变量用于为顶点着色器写入将要栅格化的点的大小，以像素为单位。<br>顶点着色器中的这些内置变量固有的声明类型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">highp vec4 gl_Position; <span class="comment">// should be written to</span></span><br><span class="line">mediump <span class="keyword">float</span> gl_PointSize; <span class="comment">// may be written to</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>这些变量如果未写入或在在写入之前读取，则取到的值是未定义值。</li>
+<li>如果被写入多次，则在后续步骤中使用的是最后一次写入的值。</li>
+<li>这些内置变量拥有全局作用域。</li>
+<li>OpenGL ES 中没有内置的 attribute 名称。</li>
+</ul>
+<h4 id="片段着色器内置变量">片段着色器内置变量</h4><p>OpenGL ES 渲染管线最后的步骤会对片段着色器的输出进行处理。<br>如果没有使用过 <code>discard</code> 关键字，则片段着色器使用内置变量 <code>gl_FragColor</code> 和 <code>gl_FragData</code> 来向渲染管线输出数据。</p>
+<p>同样，</p>
+<ul>
+<li>在片段着色器中，并非必须要对 <code>gl_FragColor</code> 和 <code>gl_FragData</code> 的值进行写入。</li>
+<li>这些变量可以多次写入值，这样管线中后续步骤使用的是最后一次赋的值。</li>
+<li>写入的值可以再次读取出，如果在写入之前读取则会得到未定义值。</li>
+<li>写入的 <code>gl_FragColor</code> 值定义了后续固定功能管线中使用的片段的颜色。而变量 <code>gl_FragData</code> 是一个数组，写入的数值 <code>gl_FragData[n]</code> 指定了后续固定功能管线中对应于数据 <code>n</code> 的片段数据。</li>
+<li>如果着色器为 <code>gl_FragColor</code> 静态赋值，则可不必为 <code>gl_FragData</code> 赋值，同样如果着色器为 <code>gl_FragData</code> 中任意元素静态赋值，则可不必为 <code>gl_FragColor</code> 赋值。每个着色器应为二者之一赋值，而非二者同时。（在着色器中，如果某个变量在该着色器完成预处理之后，不受运行时的流程控制语句影响，一定会被写入值，则称之为对该变量的静态赋值）。</li>
+<li>如果着色器执行了<code>discard</code> 关键字，则该片段被丢弃，且 <code>gl_FragColor</code> 和 <code>gl_FragData</code> 不再相关。</li>
+<li>片段着色器中有一个只读变量 <code>gl_FragCoord</code>，存储了片段的窗口相对坐标 <code>x</code>、<code>y</code>、<code>z</code> 及 <code>1/w</code>。该值是在顶点处理阶段之后对图元插值生成片段计算所得。<code>z</code> 分量是深度值用来表示片段的深度。</li>
+<li>片段着色器可以访问内置的只读变量 <code>gl_FrontFacing</code> ，如果片段属于正面向前（front-facing）的图元，则该变量的值为 <code>true</code>。该变量可以选取顶点着色器计算出的两个颜色之一以模拟两面光照。</li>
+<li>片段着色器有只读变量 <code>gl_PointCoord</code>。<code>gl_PointCoord</code> 存储的是当前片段所在点图元的二维坐标。点的范围是 0.0 到 1.0。如果当前的图元不是一个点，那么从 <code>gl_PointCoord</code> 读出的值是未定义的。</li>
+</ul>
+<p>片段着色器中这些内置变量固有声明类型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mediump vec4 gl_FragCoord;</span><br><span class="line"><span class="keyword">bool</span> gl_FrontFacing;</span><br><span class="line">mediump vec4 gl_FragColor;</span><br><span class="line">mediump vec4 gl_FragData[gl_MaxDrawBuffers];</span><br><span class="line">mediump vec2 gl_PointCoord;</span><br></pre></td></tr></table></figure>
+<p>但是它们实际的行为并不像是无存储限定符，而是像上边描述的样子。<br>这些内置变量拥有全局作用域。</p>
+<h4 id="uniform_状态变量">uniform 状态变量</h4><p>GLSL 中还有一种内置的 uniform 状态变量,  <code>gl_DepthRange</code> 它用来表明全局深度范围。</p>
+<p>结构如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> gl_DepthRangeParameters &#123;</span><br><span class="line"> highp <span class="keyword">float</span> near; <span class="comment">// n</span></span><br><span class="line"> highp <span class="keyword">float</span> far; <span class="comment">// f</span></span><br><span class="line"> highp <span class="keyword">float</span> diff; <span class="comment">// f - n</span></span><br><span class="line"> &#125;;</span><br><span class="line"> uniform gl_DepthRangeParameters gl_DepthRange;</span><br></pre></td></tr></table></figure>
+<p>除了  gl_DepthRange 外的所有 uniform 状态常量都已在 GLSL 1.30 中废弃。</p>
+<h3 id="9-_内置常量">9. 内置常量</h3><p>以下是提供给顶点着色器或片段着色器的内置常量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Implementation dependent constants. The example values below</span></span><br><span class="line"><span class="comment">// are the minimum values allowed for these maximums.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxVertexAttribs 表示在vertex shader(顶点着色器)中可用的最大attributes数.这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 不过最低不能小于 8 个.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxVertexAttribs = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxVertexUniformVectors 表示在vertex shader(顶点着色器)中可用的最大uniform vectors数. 这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 不过最低不能小于 128 个.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxVertexUniformVectors = <span class="number">128</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxVaryingVectors 表示在vertex shader(顶点着色器)中可用的最大varying vectors数. 这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 不过最低不能小于 8 个.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxVaryingVectors = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxCombinedTextureImageUnits 表示在vertex shader(顶点着色器)中可用的最大纹理单元数(贴图). 这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 甚至可以一个都没有(无法获取顶点纹理)</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxVertexTextureImageUnits = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxCombinedTextureImageUnits 表示在 vertex Shader和fragment Shader总共最多支持多少个纹理单元. 这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 不过最低不能小于 8 个.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxCombinedTextureImageUnits = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxTextureImageUnits 表示在 fragment Shader(片元着色器)中能访问的最大纹理单元数,这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 不过最低不能小于 8 个.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxTextureImageUnits = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxFragmentUniformVectors 表示在 fragment Shader(片元着色器)中可用的最大uniform vectors数,这个值的大小取决于 OpenGL ES 在某设备上的具体实现, 不过最低不能小于 16 个.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxFragmentUniformVectors = <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gl_MaxDrawBuffers 表示可用的drawBuffers数,在OpenGL ES 2.0中这个值为1, 在将来的版本可能会有所变化.</span></span><br><span class="line"><span class="keyword">const</span> mediump <span class="keyword">int</span> gl_MaxDrawBuffers = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="10-_内置函数">10. 内置函数</h3><p>在 GLSL 中还有很多内置的函数，如下边的例子是片段着色器中用来计算镜面光的代码。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> nDotL = dot(normal , light);</span><br><span class="line"><span class="keyword">float</span> rDotV = dot(viewDir, (<span class="number">2.0</span> * normal) * nDotL – light);</span><br><span class="line"><span class="keyword">float</span> specular = <span class="function">specularColor * <span class="title">pow</span><span class="params">(rDotV, specularPower)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>在上边的代码中，使用内置函数 <code>dot</code> 来计算两个矢量的点乘积，使用内置函数 <code>pow</code> 来完成标量的幂计算。<br>在编写着色程序时，GLSL 中有大量的内置函数供使用。绝大多数的内置函数可用于多种着色器，也有一些只适用于一种特定的着色器。这些内置函数大致可分为以下三类：</p>
+<ul>
+<li><p>将一些必要的硬件功能显露成方便调用的函数，如访问纹理图。着色器无法用语言模拟这些函数。</p>
+</li>
+<li><p>代表一系列琐碎的操作，虽然这些操作可以由用户直接编写完成，但是这些操作都很常用并且可能会有一些硬件支持。编译器处理表达式于汇编指令的映射是非常困难的事情。</p>
+</li>
+<li><p>代表可获得图形硬件加速的操作，如三角函数属于这一分类。</p>
+<p>​</p>
+</li>
+</ul>
+<p>很多函数与一些常见的 C 语言库里的同名函数相似，但这些内置函数不仅支持标量输入，还可以支持矢量输入。应用程序中应当尽量使用这些内置函数而不是有相同计算的自定义代码，因为内置函数很可能是最优化的（如可能是硬件直接支持的）。用户函数可以重载内置函数，但不能将其重定义。</p>
+<p>在下边的内置函数中，函数的输入参数（及相对应的输出）可以是 float、vec2、vec3 或 vec4，则使用 genType 来作为参数。在实际使用一个函数时，所有的参数类型及返回类型必须是一致的。对于 mat 也相似，其具体类型可以是 mat2、mat3 或 mat4。</p>
+<p>参数和返回值的精度限定符不显示。对于纹理函数，返回类型的精度与采样器的类型相匹配。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">uniform lowp sampler2D sampler;</span><br><span class="line">highp vec2 coord;</span><br><span class="line">...</span><br><span class="line">lowp vec4 col = texture2D (sampler, coord); <span class="comment">// texture2D returns lowp</span></span><br></pre></td></tr></table></figure>
+<p>其它内置函数的形式参数的精度限定符则无关。调用这些内置函数将会返回一个匹配输入参数的最高精度级的精度限定符。</p>
+<p>按功能大致可以分成 7 类：</p>
+<h4 id="角度和三角函数">角度和三角函数</h4><p>函数参数是以弧度为单位的角度值。以下内置函数是按逐个分量进行操作，但按单个分量操作进行描述。</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>genType radians (genType degrees)</td>
+<td>Converts degrees to radians</td>
+</tr>
+<tr>
+<td>genType degrees (genType radians)</td>
+<td>Converts radians to degrees</td>
+</tr>
+<tr>
+<td>genType sin (genType angle)</td>
+<td>The standard trigonometric sine function.</td>
+</tr>
+<tr>
+<td>genType cos (genType angle)</td>
+<td>The standard trigonometric cosine function.</td>
+</tr>
+<tr>
+<td>genType tan (genType angle)</td>
+<td>The standard trigonometric tangent.</td>
+</tr>
+<tr>
+<td>genType asin (genType x)</td>
+<td>Arc sine. Returns an angle whose sine is x. The range of values returned by this function is[-π/2,π/2] .Results are undefined if ∣x∣ &gt; 1.</td>
+</tr>
+<tr>
+<td>genType acos (genType x)</td>
+<td>Arc cosine. Returns an angle whose cosine is x. The range of values returned by this function is [0, π]. Results are undefined if ∣x∣ &gt; 1.</td>
+</tr>
+<tr>
+<td>genType atan (genType y, genType x)</td>
+<td>Arc tangent. Returns an angle whose tangent is y/x. The signs of x and y are used to determine what quadrant the angle is in . The range of values returned by this function is [−π,π]. Results are undefined if x and y are both 0.</td>
+</tr>
+<tr>
+<td>genType atan (genType y_over_x)</td>
+<td>Arc tangent. Returns an angle whose tangent is y_over_x. The range of values returned by this function is [−π/2,π/2]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="指数函数">指数函数</h4><p>以下内置函数是按逐个分量进行操作，但按单个分量操作进行描述。</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>genType pow (genType x, genType y)</td>
+<td>Returns x raised to the y power. Results are undefined if x &lt; 0 .Results are undefined if x = 0 and y &lt;= 0.</td>
+</tr>
+<tr>
+<td>genType exp (genType x)</td>
+<td>Returns the natural exponentiation of x.</td>
+</tr>
+<tr>
+<td>genType log (genType x)</td>
+<td>Returns the natural logarithm of x. Results are undefined if x &lt;= 0.</td>
+</tr>
+<tr>
+<td>genType exp2 (genType x)</td>
+<td>Returns 2 raised to the x power.</td>
+</tr>
+<tr>
+<td>genType log2 (genType x)</td>
+<td>Returns the base 2 logarithm of x. Results are undefined if x &lt;= 0.</td>
+</tr>
+<tr>
+<td>genType sqrt (genType x)</td>
+<td>Returns square root of x. Results are undefined if x &lt; 0.</td>
+</tr>
+<tr>
+<td>genType inversesqrt (genType x)</td>
+<td>Returns 1/sqrt(x) . Results are undefined if x &lt;= 0.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="通用函数">通用函数</h4><p>以下内置函数是按逐个分量进行操作，但按单个分量操作进行描述。</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>genType abs (genType x)</td>
+<td>Returns x if x &gt;= 0, otherwise it returns –x.</td>
+</tr>
+<tr>
+<td>genType sign (genType x)</td>
+<td>Returns 1.0 if x &gt; 0, 0.0 if x = 0, or –1.0 if x &lt; 0</td>
+</tr>
+<tr>
+<td>genType floor (genType x)</td>
+<td>Returns a value equal to the nearest integer that is less than or equal to x</td>
+</tr>
+<tr>
+<td>genType ceil (genType x)</td>
+<td>Returns a value equal to the nearest integer that is greater than or equal to x</td>
+</tr>
+<tr>
+<td>genType fract (genType x)</td>
+<td>Returns x – floor (x)</td>
+</tr>
+<tr>
+<td>genType mod (genType x, float y)</td>
+<td>Modulus (modulo). Returns x – y ∗ floor (x/y)</td>
+</tr>
+<tr>
+<td>genType mod (genType x, genType y)</td>
+<td>Modulus. Returns x – y ∗ floor (x/y)</td>
+</tr>
+<tr>
+<td>genType min (genType x, genType y)genType min (genType x, float y)</td>
+<td>Returns y if y &lt; x, otherwise it returns x</td>
+</tr>
+<tr>
+<td>genType max (genType x, genType y) genType max (genType x, float y)</td>
+<td>Returns y if x &lt; y, otherwise it returns x.</td>
+</tr>
+<tr>
+<td>genType clamp (genType x,genType minVal, genType maxVal)genType clamp (genType x, float minVal,float maxVal)</td>
+<td>Returns min (max (x, minVal), maxVal) Results are undefined if minVal &gt; maxVal.</td>
+</tr>
+<tr>
+<td>genType mix (genType x,genType y,genType a)genType mix (genType x,genType y, float a)</td>
+<td>Returns the linear blend of x and y: x<em>(1-a)+y</em>a</td>
+</tr>
+<tr>
+<td>genType step (genType edge, genType x)genType step (float edge, genType x)</td>
+<td>Returns 0.0 if x &lt; edge, otherwise it returns 1.0</td>
+</tr>
+<tr>
+<td>genType smoothstep (genType edge0,genType edge1,genType x)genType smoothstep (float edge0,float edge1,genType x)</td>
+<td>Returns 0.0 if x &lt;= edge0 and 1.0 if x &gt;= edge1 and performs smooth Hermite interpolation between 0 and 1 when edge0 &lt; x &lt; edge1. This is useful in cases where you would want a threshold function with a smooth transition. This is equivalent to: <code>genType t; t = clamp ((x – edge0) / (edge1 – edge0), 0, 1); return t * t * (3 – 2 * t);</code> Results are undefined if edge0 &gt;= edge1.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="几何函数">几何函数</h4><p>以下内置函数是按逐个分量进行操作，但按单个分量操作进行描述。</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>float length (genType x)</td>
+<td>Returns the length of vector x.</td>
+</tr>
+<tr>
+<td>float distance (genType p0, genType p1)</td>
+<td>Returns the distance between p0 and p1.</td>
+</tr>
+<tr>
+<td>float dot (genType x, genType y)</td>
+<td>Returns the dot product of x and y.</td>
+</tr>
+<tr>
+<td>vec3 cross (vec3 x, vec3 y)</td>
+<td>Returns the cross product of x and y.</td>
+</tr>
+<tr>
+<td>genType normalize (genType x)</td>
+<td>Returns a vector in the same direction as x but with a length of 1.</td>
+</tr>
+<tr>
+<td>genType faceforward(genType N,genType I,genType Nref)</td>
+<td>If dot(Nref, I) &lt; 0 return N, otherwise return –N.</td>
+</tr>
+<tr>
+<td>genType reflect (genType I, genType N)</td>
+<td>For the incident vector I and surface orientation N,returns the reflection direction: I – 2 ∗ dot(N, I) ∗ N. N must already be normalized in order to achieve the desired result.</td>
+</tr>
+<tr>
+<td>genType refract(genType I, genType N,float eta)</td>
+<td>For the incident vector I and surface normal N, and the ratio of indices of refraction eta, return the refraction vector. The result is computed by <code>k = 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I)); if (k &lt; 0.0) return genType(0.0) else return eta * I - (eta * dot(N, I) + sqrt(k)) * N</code>. The input parameters for the incident vector I and thesurface normal N must already be normalized to get the desired results.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="矩阵函数">矩阵函数</h4><table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mat matrixCompMult (mat x, mat y)</td>
+<td>Multiply matrix x by matrix y component-wise, i.e.,result[i][j] is the scalar product of x[i][j] and y[i][j]. Note: to get linear algebraic matrix multiplication, usethe multiply operator (*).</td>
+</tr>
+</tbody>
+</table>
+<h4 id="矢量关系函数">矢量关系函数</h4><p>矢量之间的比较关系符号（&lt;, &lt;=, &gt;, &gt;=, ==, !=）被定义（或保留）比较产生一个标量的布尔型结果。使用下边的函数可以得到矢量结果。</p>
+<p>以下的 ”bvec” 指代 ”bvec2”、”bvec3” 或 ”bvec4” 之一，”ivec” 指代 ”ivec2”、”ivec3” 或 ”ivec4” 之一，”vec” 指代 ”vec2”、”vec3” 或 ”vec4”之一。输入参数和返回值各矢量的大小必须一致。</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bvec lessThan(vec x, vec y)bvec lessThan(ivec x, ivec y)</td>
+<td>Returns the component-wise compare of x &lt; y.</td>
+</tr>
+<tr>
+<td>bvec lessThanEqual(vec x, vec y)bvec lessThanEqual(ivec x, ivec y)</td>
+<td>Returns the component-wise compare of x &lt;= y.</td>
+</tr>
+<tr>
+<td>bvec greaterThan(vec x, vec y)bvec greaterThan(ivec x, ivec y)</td>
+<td>Returns the component-wise compare of x &gt; y.</td>
+</tr>
+<tr>
+<td>bvec greaterThanEqual(vec x, vec y)bvec greaterThanEqual(ivec x, ivec y)</td>
+<td>Returns the component-wise compare of x &gt;= y.</td>
+</tr>
+<tr>
+<td>bvec equal(vec x, vec y)bvec equal(ivec x, ivec y)bvec equal(bvec x, bvec y)bvec notEqual(vec x, vec y)bvec notEqual(ivec x, ivec y)bvec notEqual(bvec x, bvec y)</td>
+<td>Returns the component-wise compare of x == y; Returns the component-wise compare of x != y.</td>
+</tr>
+<tr>
+<td>bool any(bvec x)</td>
+<td>Returns true if any component of x is true.</td>
+</tr>
+<tr>
+<td>bool all(bvec x)</td>
+<td>Returns true only if all components of x are true.</td>
+</tr>
+<tr>
+<td>bvec not(bvec x)</td>
+<td>Returns the component-wise logical complement of x.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="纹理查找函数">纹理查找函数</h4><p>纹理查询的最终目的是从 sampler 中提取指定坐标的颜色信息。</p>
+<p>顶点着色器和片段着色器中都可以使用纹理查找函数。但是在顶点着色器中不会计算细节层次（level of detail），所以二者的纹理查找函数略有不同。</p>
+<p>图像纹理有两种：一种是平面2d纹理，另一种是盒纹理。针对不同的纹理类型有不同访问方法。</p>
+<ul>
+<li>函数中带有 Cube 字样的是指需要传入盒状纹理。</li>
+<li>带有 Proj 字样的是指带投影的版本。</li>
+</ul>
+<p>以下函数只在顶点着色器中可用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec4 <span class="title">texture2DLod</span><span class="params">(sampler2D sampler, vec2 coord, <span class="keyword">float</span> lod)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">texture2DProjLod</span><span class="params">(sampler2D sampler, vec3 coord, <span class="keyword">float</span> lod)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">texture2DProjLod</span><span class="params">(sampler2D sampler, vec4 coord, <span class="keyword">float</span> lod)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">textureCubeLod</span><span class="params">(samplerCube sampler, vec3 coord, <span class="keyword">float</span> lod)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>以下函数只在片段着色器中可用:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec4 <span class="title">texture2D</span><span class="params">(sampler2D sampler, vec2 coord, <span class="keyword">float</span> bias)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">texture2DProj</span><span class="params">(sampler2D sampler, vec3 coord, <span class="keyword">float</span> bias)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">texture2DProj</span><span class="params">(sampler2D sampler, vec4 coord, <span class="keyword">float</span> bias)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">textureCube</span><span class="params">(samplerCube sampler, vec3 coord, <span class="keyword">float</span> bias)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>在定点着色器和片段着色器中都可用:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec4 <span class="title">texture2D</span><span class="params">(sampler2D sampler, vec2 coord)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">texture2DProj</span><span class="params">(sampler2D sampler, vec3 coord)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">texture2DProj</span><span class="params">(sampler2D sampler, vec4 coord)</span></span>;</span><br><span class="line"><span class="function">vec4 <span class="title">textureCube</span><span class="params">(samplerCube sampler, vec3 coord)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="11-_自测">11. 自测</h3><p>下面是官方的一段实例着色器。如果你可以一眼看懂，说明你已经对 GLSL 语言基本掌握了，那么这篇文章就没有白写了~</p>
+<p><strong>Vertex Shader:</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">uniform mat4 mvp_matrix; 	<span class="comment">// 透视矩阵 * 视图矩阵 * 模型变换矩阵</span></span><br><span class="line">uniform mat3 normal_matrix; <span class="comment">// 法线变换矩阵(用于物体变换后法线跟着变换)</span></span><br><span class="line">uniform vec3 ec_light_dir; 	<span class="comment">// 光照方向</span></span><br><span class="line">attribute vec4 a_vertex; 	<span class="comment">// 顶点坐标</span></span><br><span class="line">attribute vec3 a_normal; 	<span class="comment">// 顶点法线</span></span><br><span class="line">attribute vec2 a_texcoord; 	<span class="comment">// 纹理坐标</span></span><br><span class="line">varying <span class="keyword">float</span> v_diffuse; 	<span class="comment">// 法线与入射光的夹角</span></span><br><span class="line">varying vec2 v_texcoord; 	<span class="comment">// 2d纹理坐标</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 归一化法线</span></span><br><span class="line">  vec3 ec_normal = normalize(normal_matrix * a_normal);</span><br><span class="line">  <span class="comment">// v_diffuse 是法线与光照的夹角.根据向量点乘法则,当两向量长度为1是 乘积即cosθ值</span></span><br><span class="line">  v_diffuse = max(dot(ec_light_dir, ec_normal), <span class="number">0.0</span>);</span><br><span class="line">  v_texcoord = a_texcoord;</span><br><span class="line">  gl_Position = mvp_matrix * a_vertex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Fragment Shader:</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">precision mediump <span class="keyword">float</span>;</span><br><span class="line">uniform sampler2D t_reflectance;</span><br><span class="line">uniform vec4 i_ambient;</span><br><span class="line">varying <span class="keyword">float</span> v_diffuse;</span><br><span class="line">varying vec2 v_texcoord;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span> <span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">  vec4 color = texture2D(t_reflectance, v_texcoord);</span><br><span class="line">  <span class="comment">// 这里分解开来是 color*vec3(1,1,1)*v_diffuse + color*i_ambient</span></span><br><span class="line">  <span class="comment">// 色*光*夹角cos + 色*环境光</span></span><br><span class="line">  gl_FragColor = color*(vec4(v_diffuse) + i_ambient);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+        
+        <tags>
+            
+            <tag> iOS开发 </tag>
+            
+            <tag> OpenGLES </tag>
+            
+            <tag> 图像处理 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[GLSL 详解（基础篇）]]></title>
+      <url>/2017/11/11/OpenGLES-Lesson04/</url>
+      <content type="html"><![CDATA[<p>上节在绘制三角形的时候，简单讲解了一些着色器，GLSL 的相关概念，可能看的云里雾里的。不要担心，在本节中，我将详细讲解着色语言 GL Shader Language（GLSL）的一些基本的概念。</p>
+<blockquote>
+<p>PS：<br>无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="概览">概览</h2><p>OpenGL ES 的渲染管线包含有一个可编程的顶点阶段的一个可编程的片段阶段。其余的阶段则有固定的功能，应用程序对其行为的控制非常有限。每个可编程阶段中编译单元的集合组成了一个着色器。在OpenGL ES 2.0 中，每个着色器只支持一个编译单元。着色程序则是一整套编译好并链接在一起的着色器的集合。着色器 shader 的编写需要使用着色语言 GL Shader Language（GLSL），GLSL 的语法与 C 语言很类似。</p>
+<p>在上一节中，我们看到了一个非常简单的着色器，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 顶点着色器 .vsh</span></span><br><span class="line">attribute vec4 position;</span><br><span class="line">attribute vec4 color;</span><br><span class="line"></span><br><span class="line">varying vec4 colorVarying;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    colorVarying = color;</span><br><span class="line">    gl_Position = position;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 片段着色器 .fsh</span></span><br><span class="line">varying lowp vec4 colorVarying;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    gl_FragColor = colorVarying;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>习惯上，我们一般把顶点着色器命名为 <strong>xx.vsh</strong>，片段着色器命名为 <strong>xx.fsh</strong>。当然，你喜欢怎么样就怎么样~</p>
+<p>和 C 语言程序对应，用 GLSL 写出的着色器，它同样包括：</p>
+<ul>
+<li>变量 position</li>
+<li>变量类型 vec4</li>
+<li>限定符 attribute</li>
+<li>main 函数</li>
+<li>基本赋值语句 colorVarying = color</li>
+<li>内置变量 gl_Position</li>
+<li>…</li>
+</ul>
+<p>这一切，都是那么像…所以，<strong>在掌握 C 语言的基础上，GLSL 的学习成本是很低的</strong>。</p>
+<p>学习一门语言，我们无非是从<strong>变量类型，结构体，数组，语句，函数，限定符等</strong>方面展开。下面，我们就照着这个顺序，学习 GLSL。</p>
+<h2 id="使用_GLSL_构建着色器">使用 GLSL 构建着色器</h2><h3 id="1-_变量">1. 变量</h3><h4 id="变量及变量类型">变量及变量类型</h4><table>
+<thead>
+<tr>
+<th>变量类别</th>
+<th>变量类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空</td>
+<td>void</td>
+<td>用于无返回值的函数或空的参数列表</td>
+</tr>
+<tr>
+<td>标量</td>
+<td>float, int, bool</td>
+<td>浮点型，整型，布尔型的标量数据类型</td>
+</tr>
+<tr>
+<td>浮点型向量</td>
+<td>float, vec2, vec3, vec4</td>
+<td>包含1，2，3，4个元素的浮点型向量</td>
+</tr>
+<tr>
+<td>整数型向量</td>
+<td>int, ivec2, ivec3, ivec4</td>
+<td>包含1，2，3，4个元素的整型向量</td>
+</tr>
+<tr>
+<td>布尔型向量</td>
+<td>bool, bvec2, bvec3, bvec4</td>
+<td>包含1，2，3，4个元素的布尔型向量</td>
+</tr>
+<tr>
+<td>矩阵</td>
+<td>mat2, mat3, mat4</td>
+<td>尺寸为2x2，3x3，4x4的浮点型矩阵</td>
+</tr>
+<tr>
+<td>纹理句柄</td>
+<td>sampler2D, samplerCube</td>
+<td>表示2D，立方体纹理的句柄</td>
+</tr>
+</tbody>
+</table>
+<p>除上述之外，着色器中还可以将它们构成数组或结构体，以实现更复杂的数据类型。</p>
+<blockquote>
+<p>PS：</p>
+<p>GLSL 中没有指针类型。</p>
+</blockquote>
+<h4 id="变量构造器和类型转换">变量构造器和类型转换</h4><p>对于变量运算，GLSL 中有非常严格的规则，即<strong>只有类型一致时，变量才能完成赋值或其它对应的操作。</strong>可以通过对应的构造器来实现类型转换。</p>
+<h5 id="标量">标量</h5><p>标量对应 C 语言的基础数据类型，它的构造和 C 语言一致，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> myFloat = <span class="number">1.0</span>;</span><br><span class="line"><span class="keyword">bool</span> myBool = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">myFloat = <span class="keyword">float</span>(myBool); 	<span class="comment">// bool -&gt; float</span></span><br><span class="line">myBool = <span class="keyword">bool</span>(myFloat);     <span class="comment">// float -&gt; bool</span></span><br></pre></td></tr></table></figure>
+<h5 id="向量">向量</h5><p>当构造向量时，向量构造器中的各参数将会被转换成相同的类型（浮点型、整型或布尔型）。往向量构造器中传递参数有两种形式：</p>
+<ul>
+<li>如果向量构造器中只提供了一个标量参数，则向量中所有值都会设定为该标量值。</li>
+<li>如果提供了多个标量值或提供了向量参数，则会从左至右使用提供的参数来给向量赋值，如果使用多个标量来赋值，则需要确保标量的个数要多于向量构造器中的个数。</li>
+</ul>
+<p>向量构造器用法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vec4 myVec4 = vec4(<span class="number">1.0</span>); 			<span class="comment">// myVec4 = &#123;1.0, 1.0, 1.0, 1.0&#125;</span></span><br><span class="line">vec3 myVec3 = vec3(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.5</span>);  <span class="comment">// myVec3 = &#123;1.0, 0.0, 0.5&#125;</span></span><br><span class="line"></span><br><span class="line">vec3 temp = vec3(myVec3); 			<span class="comment">// temp = myVec3</span></span><br><span class="line">vec2 myVec2 = vec2(myVec3);         <span class="comment">// myVec2 = &#123;myVec3.x, myVec3.y&#125;</span></span><br><span class="line"></span><br><span class="line">myVec4 = vec4(myVec2, temp, <span class="number">0.0</span>);   <span class="comment">// myVec4 = &#123;myVec2.x, myVec2.y , temp, 0.0 &#125;</span></span><br></pre></td></tr></table></figure>
+<h5 id="矩阵">矩阵</h5><p>矩阵的构造方法则更加灵活，有以下规则：</p>
+<ul>
+<li>如果对矩阵构造器只提供了一个标量参数，该值会作为矩阵的对角线上的值。例如 <code>mat4(1.0)</code> 可以构造一个 4 × 4 的单位矩阵</li>
+<li>矩阵可以通过多个向量作为参数来构造，例如一个 mat2 可以通过两个 vec2 来构造</li>
+<li>矩阵可以通过多个标量作为参数来构造，矩阵中每个值对应一个标量，按照从左到右的顺序</li>
+</ul>
+<p>除此之外，矩阵的构造方法还可以更灵活，只要有足够的组件来初始化矩阵，其构造器参数可以是标量和向量的组合。在 OpenGL ES 中，矩阵的值会以<strong>列</strong>的顺序来存储。在构造矩阵时，构造器参数会按照列的顺序来填充矩阵，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mat3 myMat3 = mat3(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,  <span class="comment">// 第一列</span></span><br><span class="line">                   <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,  <span class="comment">// 第二列</span></span><br><span class="line">                   <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>); <span class="comment">// 第三列</span></span><br></pre></td></tr></table></figure>
+<h4 id="向量和矩阵的分量">向量和矩阵的分量</h4><p>单独获得向量中的组件有两种方法：即使用 <code>&quot;.&quot;</code> 符号或使用数组下标方法。依据构成向量的组件个数，向量的组件可以通过 <code>{x, y, z, w}</code> ， <code>{r, g, b, a}</code> 或 <code>{s, t, r, q}</code> 等 swizzle 操作来获取。之所以采用这三种不同的命名方法，是因为向量常常会用来表示数学向量、颜色、纹理坐标等。其中的<code>x</code>、<code>r</code>、<code>s</code> 组件总是表示向量中的第一个元素，如下表：</p>
+<table>
+<thead>
+<tr>
+<th>分量访问符</th>
+<th>符号描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(x,y,z,w)</td>
+<td>与位置相关的分量</td>
+</tr>
+<tr>
+<td>(r,g,b,a)</td>
+<td>与颜色相关的分量</td>
+</tr>
+<tr>
+<td>(s,t,p,q)</td>
+<td>与纹理坐标相关的分量</td>
+</tr>
+</tbody>
+</table>
+<p>不同的命名约定是为了方便使用，所以哪怕是描述位置的向量，也是可以通过 <code>{r, g, b, a}</code>  来获取。但是在使用向量时不能混用不同的命名约定，即不能使用 <code>.xgr</code> 这样的方式，每次只能使用同一种命名约定。当使用 <code>&quot;.&quot;</code> 操作符时，还可以对向量中的元素重新排序，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vec3 myVec3 = vec3(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">2.0</span>); <span class="comment">// myVec3 = &#123;0.0, 1.0, 2.0&#125;</span></span><br><span class="line">vec3 temp;</span><br><span class="line">temp = myVec3.xyz; <span class="comment">// temp = &#123;0.0, 1.0, 2.0&#125;</span></span><br><span class="line">temp = myVec3.xxx; <span class="comment">// temp = &#123;0.0, 0.0, 0.0&#125;</span></span><br><span class="line">temp = myVec3.zyx; <span class="comment">// temp = &#123;2.0, 1.0, 0.0&#125;</span></span><br></pre></td></tr></table></figure>
+<p>除了使用 <code>&quot;.&quot;</code> 操作符之外，还可以使用数组下标操作。在使用数组下标操作时，元素 <code>[0]</code> 对应的是 <code>x</code>，元素 <code>[1]</code> 对应 <code>y</code>，以此类推。值得注意的是，在 OpenGL ES 2.0 中的某些情况下，数组下标不支持使用非常数的整型表达式（如使用整型变量索引），这是因为对于向量的动态索引操作，某些硬件设备处理起来很困难。在 OpenGL ES 2.0 中仅对 uniform 类型的变量支持这种动态索引。</p>
+<p>矩阵可以认为是向量的组合。例如一个 mat2 可以认为是两个 vec2，一个 mat3 可以认为是三个 vec3 等等。对于矩阵来说，可以通过数组下标 <code>“[]”</code> 来获取某一列的值，然后获取到的向量又可以继续使用向量的操作方法，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mat4 myMat4 = mat4(<span class="number">1.0</span>); 	<span class="comment">// Initialize diagonal to 1.0 (identity)</span></span><br><span class="line">vec4 col0 = myMat4[<span class="number">0</span>];	    <span class="comment">// Get col0 vector out of the matrix </span></span><br><span class="line"><span class="keyword">float</span> m1_1 = myMat4[<span class="number">1</span>][<span class="number">1</span>];  <span class="comment">// Get element at [1][1] in matrix </span></span><br><span class="line"><span class="keyword">float</span> m2_2 = myMat4[<span class="number">2</span>].z;   <span class="comment">// Get element at [2][2] in matrix</span></span><br></pre></td></tr></table></figure>
+<h4 id="向量和矩阵的操作">向量和矩阵的操作</h4><p>绝大多数情况下，向量和矩阵的计算是逐分量进行的（component-wise）。当运算符作用于向量或矩阵时，该运算独立地作用于向量或矩阵的每个分量。<br>以下是一些示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vec3 v, u;</span><br><span class="line"><span class="keyword">float</span> f;</span><br><span class="line">v = u + f;</span><br></pre></td></tr></table></figure>
+<p>等价于：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v.x = u.x + f;</span><br><span class="line">v.y = u.y + f;</span><br><span class="line">v.z = u.z + f;</span><br></pre></td></tr></table></figure>
+<p>再如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec3 v, u, w;</span><br><span class="line">w = v + u;</span><br></pre></td></tr></table></figure>
+<p>等价于：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">w.x = v.x + u.x;</span><br><span class="line">w.y = v.y + u.y;</span><br><span class="line">w.z = v.z + u.z;</span><br></pre></td></tr></table></figure>
+<p>对于整型和浮点型的向量和矩阵，绝大多数的计算都同上，但是对于向量乘以矩阵、矩阵乘以向量、矩阵乘以矩阵则是不同的计算规则。这三种计算使用线性代数的乘法规则，并且要求参与计算的运算数值有相匹配的尺寸或阶数。<br>例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vec3 v, u;</span><br><span class="line">mat3 m;</span><br><span class="line">u = v * m;</span><br></pre></td></tr></table></figure>
+<p>等价于：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">u.x = dot(v, m[<span class="number">0</span>]); <span class="comment">// m[0] is the left column of m</span></span><br><span class="line">u.y = dot(v, m[<span class="number">1</span>]); <span class="comment">// dot(a,b) is the inner (dot) product of a and b</span></span><br><span class="line">u.z = dot(v, m[<span class="number">2</span>]);</span><br></pre></td></tr></table></figure>
+<p>再如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u = m * v;</span><br></pre></td></tr></table></figure>
+<p>等价于：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">u.x = m[<span class="number">0</span>].x * v.x + m[<span class="number">1</span>].x * v.y + m[<span class="number">2</span>].x * v.z;</span><br><span class="line">u.y = m[<span class="number">0</span>].y * v.x + m[<span class="number">1</span>].y * v.y + m[<span class="number">2</span>].y * v.z;</span><br><span class="line">u.z = m[<span class="number">0</span>].z * v.x + m[<span class="number">1</span>].z * v.y + m[<span class="number">2</span>].z * v.z;</span><br></pre></td></tr></table></figure>
+<p>再如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mat m, n, r;</span><br><span class="line">r = m * n;</span><br></pre></td></tr></table></figure>
+<p>等价于：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">r[<span class="number">0</span>].x = m[<span class="number">0</span>].x * n[<span class="number">0</span>].x + m[<span class="number">1</span>].x * n[<span class="number">0</span>].y + m[<span class="number">2</span>].x * n[<span class="number">0</span>].z;</span><br><span class="line">r[<span class="number">1</span>].x = m[<span class="number">0</span>].x * n[<span class="number">1</span>].x + m[<span class="number">1</span>].x * n[<span class="number">1</span>].y + m[<span class="number">2</span>].x * n[<span class="number">1</span>].z;</span><br><span class="line">r[<span class="number">2</span>].x = m[<span class="number">0</span>].x * n[<span class="number">2</span>].x + m[<span class="number">1</span>].x * n[<span class="number">2</span>].y + m[<span class="number">2</span>].x * n[<span class="number">2</span>].z;</span><br><span class="line">r[<span class="number">0</span>].y = m[<span class="number">0</span>].y * n[<span class="number">0</span>].x + m[<span class="number">1</span>].y * n[<span class="number">0</span>].y + m[<span class="number">2</span>].y * n[<span class="number">0</span>].z;</span><br><span class="line">r[<span class="number">1</span>].y = m[<span class="number">0</span>].y * n[<span class="number">1</span>].x + m[<span class="number">1</span>].y * n[<span class="number">1</span>].y + m[<span class="number">2</span>].y * n[<span class="number">1</span>].z;</span><br><span class="line">r[<span class="number">2</span>].y = m[<span class="number">0</span>].y * n[<span class="number">2</span>].x + m[<span class="number">1</span>].y * n[<span class="number">2</span>].y + m[<span class="number">2</span>].y * n[<span class="number">2</span>].z;</span><br><span class="line">r[<span class="number">0</span>].z = m[<span class="number">0</span>].z * n[<span class="number">0</span>].x + m[<span class="number">1</span>].z * n[<span class="number">0</span>].y + m[<span class="number">2</span>].z * n[<span class="number">0</span>].z;</span><br><span class="line">r[<span class="number">1</span>].z = m[<span class="number">0</span>].z * n[<span class="number">1</span>].x + m[<span class="number">1</span>].z * n[<span class="number">1</span>].y + m[<span class="number">2</span>].z * n[<span class="number">1</span>].z;</span><br><span class="line">r[<span class="number">2</span>].z = m[<span class="number">0</span>].z * n[<span class="number">2</span>].x + m[<span class="number">1</span>].z * n[<span class="number">2</span>].y + m[<span class="number">2</span>].z * n[<span class="number">2</span>].z;</span><br></pre></td></tr></table></figure>
+<p>对于2阶和4阶的向量或矩阵也是相似的规则。</p>
+<h3 id="2-_结构体">2. 结构体</h3><p>与 C 语言相似，除了基本的数据类型之外，还可以将多个变量聚合到一个结构体中，下边的示例代码演示了在GLSL中如何声明结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> customStruct</span><br><span class="line">&#123;</span><br><span class="line">	vec4 color;</span><br><span class="line">	vec2 position;</span><br><span class="line">&#125; customVertex;</span><br></pre></td></tr></table></figure>
+<p>首先，定义会产生一个新的类型叫做 <code>customStruct</code> ，及一个名为 <code>customVertex</code> 的变量。结构体可以用构造器来初始化，在定义了新的结构体之后，还会定义一个与结构体类型名称相同的构造器。构造器与结构体中的数据类型必须一一对应，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">customVertex = customStruct(vec4(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>), <span class="comment">// color</span></span><br><span class="line">							vec2(<span class="number">0.5</span>, <span class="number">0.5</span>)); 		  <span class="comment">// position</span></span><br></pre></td></tr></table></figure>
+<p>结构体的构造器是基于类型的名称，以参数的形式来赋值。获取结构体内元素的方法和C语言中一致：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vec4 color = customVertex.color;</span><br><span class="line">vec4 position = customVertex.position;</span><br></pre></td></tr></table></figure>
+<h3 id="3-_数组">3. 数组</h3><p>除了结构体外，GLSL 中还支持数组。 语法与 C 语言相似，创建数组的方式如下代码所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> floatArray[<span class="number">4</span>];</span><br><span class="line">vec4 vecArray[<span class="number">2</span>];</span><br></pre></td></tr></table></figure>
+<p>与C语言不同，在GLSL中，关于数组有两点需要注意：</p>
+<ul>
+<li>除了 uniform 变量之外，数组的索引只允许使用常数整型表达式。</li>
+<li>在 GLSL 中不能在创建的同时给数组初始化，即数组中的元素需要在定义数组之后逐个初始化，且数组不能使用 const 限定符。</li>
+</ul>
+<h3 id="4-_语句">4. 语句</h3><h4 id="运算符">运算符</h4><p>下表展示了 GLSL 中支持的运算符：</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>运算符类别</th>
+<th>运算符</th>
+<th>结合方向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (最高)</td>
+<td>成组操作</td>
+<td>()</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td></td>
+<td>数组下标，函数调用与构造函数，访问分量或结构体的字段，后置自增和自减</td>
+<td>[] () . ++ –</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>3</td>
+<td>前置自增和自减，一元正/负数，一元逻辑非</td>
+<td>++ – + - !</td>
+<td>从右向左</td>
+</tr>
+<tr>
+<td>4</td>
+<td>乘法，除法</td>
+<td>* /</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>5</td>
+<td>加法，减法</td>
+<td>+ -</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>6</td>
+<td>关系比较操作</td>
+<td>&lt; &gt; &lt;= &gt;=</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>7</td>
+<td>相等操作</td>
+<td>== !=</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>8</td>
+<td>逻辑与</td>
+<td>&amp;&amp;</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>9</td>
+<td>逻辑异或</td>
+<td>^^</td>
+<td>从左向右</td>
+</tr>
+<tr>
+<td>10</td>
+<td>逻辑或</td>
+<td>\ \</td>
+<td>\</td>
+<td></td>
+<td>\ 从左向右</td>
+</tr>
+<tr>
+<td>11</td>
+<td>三元选择操作（问号表达式）</td>
+<td>?:</td>
+<td>从右向左</td>
+</tr>
+<tr>
+<td>12</td>
+<td>赋值与算数赋值</td>
+<td>= += -= *= /=</td>
+<td>从右向左</td>
+</tr>
+<tr>
+<td>13(最低)</td>
+<td>操作符序列</td>
+<td>,</td>
+<td>从左向右</td>
+</tr>
+</tbody>
+</table>
+<p>绝大多数的运算符与 C 语言中一致。与 C 语言不同的是：GLSL 中对于参与运算的数据类型要求比较严格，即运算符两侧的变量必须有相同的数据类型。对于二目运算符（*，/，+，-），操作数必须为浮点型或整型，除此之外，乘法操作可以放在不同的数据类型之间如浮点型、向量和矩阵等。</p>
+<p><strong>前面矩阵的行数就是结果矩阵的行数，后面矩阵的列数就是结果矩阵的列数。</strong></p>
+<p>比较运算符仅能作用于标量，对于向量的比较，GLSL 中有内置的函数，稍后会介绍。</p>
+<h4 id="流程控制语句">流程控制语句</h4><p>流程控制语句与 C 语言非常相似，以下示例代码是 <code>if-else</code> 的使用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (color.a &lt; <span class="number">0.25</span>) &#123;</span><br><span class="line">	color *= color.a;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	color = vec4(<span class="number">0.0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>判断的内容必须是布尔值或布尔表达式，除了基本的 <code>if-else</code> 语句，还可以使用 <code>for</code> 循环，在使用 <code>for</code> 循环时也有一些约束，如<strong>循环变量的值必须是编译时已知</strong>。如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">	sum += i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 GLSL 中使用循环时一定要注意：只有一个循环变量，循环变量必须使用简单的语句来增减（如 i++, i–, i+=constant, i-=constant等），循环终止条件也必须是循环变量和常量的简单比较，在循环内部不能改变循环变量的值。</p>
+<p>以下代码是 GLSL 中不支持的循环用法的示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> myArr[<span class="number">4</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">  	<span class="comment">// 错误, [ ]中只能为常量或 uniform 变量，不能为整数量变量（如：i，j，k）</span></span><br><span class="line">	sum += myArr[i]; </span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">uniform <span class="keyword">int</span> loopIter;</span><br><span class="line"><span class="comment">// 错误, 循环变量 loopIter 的值必须是编译时已知</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; loopIter; i++) &#123;</span><br><span class="line">	sum += i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-_函数">5. 函数</h3><p>GLSL 函数的声明与 C 语言中很相似，无非就是返回值，函数名，参数列表。</p>
+<p>GLSL 着色器同样是从 main 函数开始执行。另外， GLSL 也支持自定义函数。当然，如果一个函数在定以前被调用，则需要先声明其原型。</p>
+<p>值得注意的一点是，GLSL 中函数不能够递归调用，且必须声明返回值类型（无返回值时声明为void）。如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec4 <span class="title">getPosition</span><span class="params">()</span></span>&#123; </span><br><span class="line">    vec4 v4 = vec4(<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">1.</span>);</span><br><span class="line">    <span class="keyword">return</span> v4;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doubleSize</span><span class="params">(inout <span class="keyword">float</span> size)</span></span>&#123;</span><br><span class="line">    size= size*<span class="number">2.0</span>  ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">float</span> psize= <span class="number">10.0</span>;</span><br><span class="line">    doubleSize(psize);</span><br><span class="line">    gl_Position = getPosition();</span><br><span class="line">    gl_PointSize = psize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="6-_限定符">6. 限定符</h3><h4 id="存储限定符">存储限定符</h4><p>在声明变量时，应根据需要使用存储限定符来修饰，类似 C 语言中的说明符。GLSL 中支持的存储限定符见下表：</p>
+<table>
+<thead>
+<tr>
+<th>限定符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; none: default &gt;</td>
+<td>局部可读写变量，或者函数的参数</td>
+</tr>
+<tr>
+<td>const</td>
+<td>编译时常量，或只读的函数参数</td>
+</tr>
+<tr>
+<td>attribute</td>
+<td>由应用程序传输给顶点着色器的逐顶点的数据</td>
+</tr>
+<tr>
+<td>uniform</td>
+<td>在图元处理过程中其值保持不变，由应用程序传输给着色器</td>
+</tr>
+<tr>
+<td>varying</td>
+<td>由顶点着色器传输给片段着色器中的插值数据</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>本地变量和函数参数只能使用 const 限定符，函数返回值和结构体成员不能使用限定符。</li>
+<li>数据不能从一个着色器程序传递给下一个阶段的着色器程序，这样会阻止同一个着色器程序在多个顶点或者片段中进行并行计算。</li>
+<li>不包含任何限定符或者包含 const 限定符的全局变量可以包含初始化器，这种情况下这些变量会在 main() 函数开始之后第一行代码之前被初始化，这些初始化值必须是常量表达式。</li>
+<li>没有任何限定符的全局变量如果没有在定义时初始化或者在程序中被初始化，则其值在进入 main() 函数之后是未定义的。</li>
+<li>uniform、attribute 和 varying 限定符修饰的变量不能在初始化时被赋值，这些变量的值由 OpenGL ES 计算提供。</li>
+</ul>
+<h5 id="默认限定符">默认限定符</h5><p>如果一个全局变量没有指定限定符，则该变量与应用程序或者其他正在运行的处理单元没有任何联系。不管是全局变量还是本地变量，它们总是在自己的处理单元被分配内存，因此可以对它们执行读和写操作。</p>
+<h5 id="const_限定符">const 限定符</h5><p>任意基础类型的变量都可以声明为常量。常量表示这些变量中的值在着色器中不会发生变化，声明常量只需要在声明时加上限定符 const 即可，声明时必须赋初值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">float</span> zero = <span class="number">0.0</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">float</span> pi = <span class="number">3.14159</span>;</span><br><span class="line"><span class="keyword">const</span> vec4 red = vec4(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="keyword">const</span> mat4 identity = mat4(<span class="number">1.0</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>常量声明过的值在代码中不能再改变，这一点和 C 语言或 C++ 一样。</li>
+<li>结构体成员不能被声明为常量，但是结构体变量可以被声明为常量，并且需要在初始化时使用构造器初始化其值。</li>
+<li>常量必须被初始化为一个常量表达式。数组或者包含数组的结构体不能被声明为常量（因为数组不能在定义时被初始化）。</li>
+</ul>
+<h5 id="attribute_限定符">attribute 限定符</h5><p>GLSL 中另一种特殊的变量类型是 attribute 变量。attribute 变量只用于顶点着色器中，用来存储顶点着色器中每个顶点的输入（per-vertex inputs）。attribute 通常用来存储位置坐标、法向量、纹理坐标和颜色等。注意 attribute 是用来存储单个顶点的信息。如下是包含位置，色值 attribute 的顶点着色器示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 顶点着色器 .vsh</span></span><br><span class="line">attribute vec4 position;</span><br><span class="line">attribute vec4 color;</span><br><span class="line"></span><br><span class="line">varying vec4 colorVarying;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    colorVarying = color;</span><br><span class="line">    gl_Position = position;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>着色器中的两个 attribute 变量 <code>position</code> 和 <code>color</code> 由应用程序加载数值。应用程序会创建一个顶点数组，其中包含了每个顶点的位置坐标和色值信息。可使用的最大 attribute 数量也是有上限的，可以使用  <code>gl_MaxVertexAttribs</code> 来获取，也可以使用内置函数 <code>glGetIntegerv</code> 来询问 <code>GL_MAX_VERTEX_ATTRIBS</code>。OpenGL ES 2.0 实现支持的最少 attribute 个数是8个。</p>
+<h5 id="uniform_限定符">uniform 限定符</h5><p>uniform 是 GLSL 中的一种变量类型限定符，用于存储应用程序通过 GLSL 传递给着色器的只读值。uniform 可以用来存储着色器需要的各种数据，如变换矩阵、光参数和颜色等。传递给着色器的在所有的顶点着色器和片段着色器中保持不变的的任何参数，基本上都应该通过 uniform 来存储。uniform 变量在全局区声明，以下是 uniform 的一些示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uniform mat4 viewProjMatrix;</span><br><span class="line">uniform mat4 viewMatrix;</span><br><span class="line">uniform vec3 lightPosition;</span><br></pre></td></tr></table></figure>
+<p>需要注意的一点是，顶点着色器和片段着色器共享了 uniform 变量的命名空间。对于连接于同一个着色程序对象的顶点和片段着色器，它们共用同一组 uniform 变量，因此，如果在顶点着色器和片段着色器中都声明了 uniform 变量，二者的声明必须一致。当应用程序通过 API 加载了 uniform 变量时，该变量的值在顶点和片段着色器中都能够获取到。</p>
+<p>另一点需要注意的是，uniform 变量通常是存储在硬件中的”常量区”，这一区域是专门分配用来存储常量的，但是由于这一区域尺寸非常有限，因此着色程序中可以使用的 uniform 的个数也是有限的。可以通过读取内置变量 <code>gl_MaxVertexUniformVectors</code> 和 <code>gl_MaxFragmentUniformVectors</code> 来获得，也可以使用 <code>glGetIntegerv</code> 查询 <code>GL_MAX_VERTEX_UNIFORM_VECTORS</code> 或者 <code>GL_MAX_FRAGMENT_UNIFORM_VECTORS</code> 。OpenGL ES 2.0 的实现必须提供至少 128 个顶点 uniform 向量及 16 片段 uniform 向量。</p>
+<h5 id="varying_限定符">varying 限定符</h5><p>GLSL 中最后一个要说的存储限定符是 varying。varying 存储的是顶点着色器的输出，同时作为片段着色器的输入，通常顶点着色器都会把需要传递给片段着色器的数据存储在一个或多个 varying 变量中。这些变量在片段着色器中需要有相对应的声明且数据类型一致，然后在光栅化过程中进行插值计算。以下是一些 varying 变量的声明：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">varying vec2 texCoord;</span><br><span class="line">varying vec4 color;</span><br></pre></td></tr></table></figure>
+<p>顶点着色器和片段着色器中都会有 varying 变量的声明，由于 varying 是顶点着色器的输出且是片段着色器的输入，所以两处声明必须一致。与 uniform 和 attribute 相同，varying 也有数量的限制，可以使用 <code>gl_MaxVaryingVectors</code> 获取或使用 <code>glGetIntegerv</code> 查询  <code>GL_MAX_VARYING_VECTORS</code> 来获取。OpenGL ES 2.0 实现中的 varying 变量最小支持数为 8。</p>
+<p>回顾下最初那个着色器对应的 varying 声明：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 顶点着色器 .vsh</span></span><br><span class="line">attribute vec4 position;</span><br><span class="line">attribute vec4 color;</span><br><span class="line"></span><br><span class="line">varying vec4 colorVarying;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    colorVarying = color;</span><br><span class="line">    gl_Position = position;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 片段着色器 .fsh</span></span><br><span class="line">varying lowp vec4 colorVarying;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    gl_FragColor = colorVarying;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="invariant_限定符">invariant 限定符</h4><p>invariant 可以作用于顶点着色器输出的任何一个 varying 变量。</p>
+<p>当着色器被编译时，编译器会对其进行优化，这种优化操作可能引起指令重排序（instruction reordering），指令重排序可能引起的结果是当两个着色器进行相同的计算时无法保证得到相同的结果。<br>例如，在两个顶点着色器中，变量 <code>gl_Position</code> 使用相同的表达式赋值，并且当着色程序运行时，在表达式中传入相等的变量值，则两个着色器中 <code>gl_Position</code> 的值无法保证相等，这是因为两个着色器是分别单独编译的。这将会引起 multi-pass 算法的几何不一致问题。<br>通常情况下，不同着色器之间的这种值的差异是允许存在的。如果要避免这种差异，则可以将变量声明为invariant，可以单独指定某个变量或进行全局设置。</p>
+<p>使用 invariant 限定符可以使输出的变量保持不变。invariant 限定符可以作用于之前已声明的变量使其具有不变性，也可以在声明变量时直接作为声明的一部分，可参考以下两段示例代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">varying mediump vec3 Color;</span><br><span class="line"><span class="comment">// 使已存在的 color 变量不可变</span></span><br><span class="line">invariant Color;</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">invariant varying mediump vec3 Color;</span><br></pre></td></tr></table></figure>
+<p>以上是仅有的使用 invariant 限定符情境。如果在声明时使用 invariant 限定符，则必须保证其放在存储限定符（varying）之前。<br>只有以下变量可以声明为 invariant：</p>
+<ul>
+<li>由顶点着色器输出的内置的特殊变量</li>
+<li>由顶点着色器输出的 varying 变量</li>
+<li>向片段着色器输入的内置的特殊变量</li>
+<li>向片段着色器输入的 varying 变量</li>
+<li>由片段着色器输出的内置的特殊变量</li>
+</ul>
+<p>为保证由两个着色器输出的特定变量的不变性，必须遵循以下几点：</p>
+<ul>
+<li>该输出变量在两个着色器中都被声明为 invariant</li>
+<li>影响输出变量的所有表达式、流程控制语句的输入值必须相同</li>
+<li>对于影响输出值的所有纹理函数，纹理格式、纹理元素值和纹理过滤必须一致</li>
+<li>对输入值的所有操作都必须一致。表达式及插值计算的所有操作必须一致，相同的运算数顺序，相同的结合性，并且按相同顺序计算。插值变量和插值函数的声明，必须有相同类型，相同的显式或隐式的精度precision限定符。影响输出值的所有控制流程必须相同，影响决定控制流程的表达式也必须遵循不变性的规则。</li>
+</ul>
+<p>最基本的一点是：所有的 invariant 输出量的上游数据流或控制流必须一致。</p>
+<p>初始的默认状态下，所有的输出变量不具备不变性，可以在所有的声明之前使用以下 <code>pragma</code> 语句强制所有输出变量 invariant：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> STDGL invariant(all)</span></span><br></pre></td></tr></table></figure>
+<p>输出变量的不变性通常会以优化过程的灵活性为代价，所以使用 invariant 会牺牲整体性能。因此慎用以上的全局设置方法，可以将其用作协助 Debug 的一种方法。<br>另一点需要说明的是，这里的不变性指的是对于同一 GPU 的不变性，并不保证不同 OpenGL ES 实现之间的不变性。</p>
+<h4 id="参数限定符">参数限定符</h4><p>GLSL 提供了一种特殊的限定符用来定义某个变量的值是否可以被函数修改，详见下表：</p>
+<table>
+<thead>
+<tr>
+<th>限定符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>in</td>
+<td>默认使用的缺省限定符，指明参数传递的是值，并且函数不会修改传入的值（C 语言中值传递）</td>
+</tr>
+<tr>
+<td>inout</td>
+<td>指明参数传入的是引用，如果在函数中对参数的值进行了修改，当函数结束后参数的值也会修改（C 语言中引用传递）</td>
+</tr>
+<tr>
+<td>out</td>
+<td>参数的值不会传入函数，但是在函数内部修改其值，函数结束后其值会被修改</td>
+</tr>
+</tbody>
+</table>
+<p>使用的方式如下边的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec4 <span class="title">myFunc</span><span class="params">(inout <span class="keyword">float</span> myFloat, <span class="comment">// inout parameter</span></span><br><span class="line">            out vec4 myVec4, 	 <span class="comment">// out parameter</span></span><br><span class="line">            mat4 myMat4)</span></span>; 		 <span class="comment">// in parameter (default)</span></span><br></pre></td></tr></table></figure>
+<p>以下是一个示例函数，函数定义用来计算基础的漫反射光照：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vec4 <span class="title">diffuse</span><span class="params">(vec3 normal, vec3 light, vec4 baseColor)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function">baseColor * <span class="title">dot</span><span class="params">(normal, light)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="精度限定符">精度限定符</h4><p>OpenGL ES 与 OpenGL 之间的一个区别就是在 GLSL 中引入了精度限定符。精度限定符可使着色器的编写者明确定义着色器变量计算时使用的精度，变量可以选择被声明为低、中或高精度。精度限定符可告知编译器使其在计算时缩小变量潜在的精度变化范围，当使用低精度时，OpenGL ES 的实现可以更快速和低功耗地运行着色器，效率的提高来自于精度的舍弃，如果精度选择不合理，着色器运行的结果会很失真。</p>
+<p>OpenGL ES 对各硬件并未强制要求多种精度的支持。其实现可以使用高精度完成所有的计算并且忽略掉精度限定符，然而某些情况下使用低精度的实现会更有优势，精度限定符可以指定整型或浮点型变量的精度，如 <code>lowp</code>，<code>mediump</code>，及 <code>highp</code>，如下：</p>
+<table>
+<thead>
+<tr>
+<th>限定符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>highp</td>
+<td>满足顶点着色语言的最低要求。对片段着色语言是可选项</td>
+</tr>
+<tr>
+<td>mediump</td>
+<td>满足片段着色语言的最低要求，其对于范围和精度的要求必须不低于lowp并且不高于highp</td>
+</tr>
+<tr>
+<td>lowp</td>
+<td>范围和精度可低于mediump，但仍可以表示所有颜色通道的所有颜色值</td>
+</tr>
+</tbody>
+</table>
+<p>具体用法参考以下示例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">highp vec4 position;</span><br><span class="line">varying lowp vec4 color;</span><br><span class="line">mediump <span class="keyword">float</span> specularExp;</span><br></pre></td></tr></table></figure>
+<p>除了精度限定符，还可以指定默认使用的精度。如果某个变量没有使用精度限定符指定使用何种精度，则会使用该变量类型的默认精度。默认精度限定符放在着色器代码起始位置，以下是一些用例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">precision highp <span class="keyword">float</span>;</span><br><span class="line">precision mediump <span class="keyword">int</span>;</span><br></pre></td></tr></table></figure>
+<p>当为 <code>float</code> 指定默认精度时，所有基于浮点型的变量都会以此作为默认精度，与此类似，为 <code>int</code> 指定默认精度时，所有的基于整型的变量都会以此作为默认精度。在顶点着色器中，如果没有指定默认精度，则 <code>int</code> 和 <code>float</code> 都使用 <code>highp</code>，即顶点着色器中，未使用精度限定符指明精度的变量都默认使用最高精度。在片段着色器中，<code>float</code> 并没有默认的精度设置，即片段着色器中必须为 <code>float</code> 默认精度或者为每一个 <code>float</code> 变量指明精度。OpenGL ES 2.0 并未要求其实现在片段着色器中支持高精度，可用是否定义了宏 <code>GL_FRAGMENT_PRECISION_HIGH</code> 来判断是否支持在片段着色器中使用高精度。</p>
+<p>在片段着色器中可以使用以下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> GL_FRAGMENT_PRECISION_HIGH</span></span><br><span class="line">precision highp <span class="keyword">float</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">precision mediump <span class="keyword">float</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>这么做可以确保无论实现支持中精度还是高精度都可以完成着色器的编译。注意不同实现中精度的定义及精度的范围都不统一，而是因实现而异的。</p>
+<p>精度修饰符声明了底层实现存储这些变量时，必须要使用的最小范围和精度。实现可能会使用比要求更大的范围和精度，但绝对不会比要求少。以下是精度修饰符要求的最低范围和精度：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>浮点数范围</th>
+<th>浮点数大小范围</th>
+<th>浮点数精度范围</th>
+<th>整数范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>highp</td>
+<td>(-2^62 , 2^62)</td>
+<td>(2^-62 ,2^62)</td>
+<td>相对：2^-16</td>
+<td>(-2^16 , 2^16)</td>
+</tr>
+<tr>
+<td>mediump</td>
+<td>(-2^14 , 2^14)</td>
+<td>(2^-14 ,2^14)</td>
+<td>相对：2^-10</td>
+<td>(-2^10 , 2^10)</td>
+</tr>
+<tr>
+<td>lowp</td>
+<td>(-2, 2)</td>
+<td>(2^-8 ,2)</td>
+<td>绝对：2^-8</td>
+<td>(-2^8 , 2^8)</td>
+</tr>
+</tbody>
+</table>
+<p>在具体实现中，着色器编译器支持的不同着色器类型和数值形式的实际的范围及精度可用以下函数获取：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">GetShaderPrecisionFormat</span><span class="params">( <span class="keyword">enum</span> shadertype, <span class="keyword">enum</span> precisiontype, <span class="keyword">int</span> *range, <span class="keyword">int</span> *precision )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>其中， <code>shadertype</code> 必须是 <code>VERTEX_SHADER</code> 或 <code>FRAGMENT_SHADER</code>；<code>precisiontype</code> 必须是 <code>LOW_FLOAT</code>、<code>MEDIUM_FLOAT</code>、<code>HIGH_FLOAT</code>、<code>LOW_INT</code>、<code>MEDIUM_INT</code> 或 <code>HIGH_INT</code>。</p>
+<p><code>range</code> 是指向含有两个整数的数组的指针，这两个整数将会返回数值的范围。如果用 <code>min</code> 和 <code>max</code> 来代表对应格式的最小和最大值，则 <code>range</code> 中返回的整数值可以定义为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">range[<span class="number">0</span>] = log2(|min|)</span><br><span class="line">range[<span class="number">1</span>] = log2(|max|)</span><br></pre></td></tr></table></figure>
+<p><code>precision</code> 是指向一个整数的指针，返回的该整数是对应格式的精度的位数（number of bits）用 <code>log2</code> 取对数的值。</p>
+<p><strong>Q：如何确定精度:</strong></p>
+<p><strong>A：</strong>变量的精度首先是由精度限定符决定的，如果没有精度限定符，则要寻找其右侧表达式中，已经确定精度的变量，一旦找到，那么整个表达式都将在该精度下运行。</p>
+<p>如果找到多个，则选择精度较高的那种，如果一个都找不到，则使用默认或更大的精度类型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">uniform highp <span class="keyword">float</span> h1;</span><br><span class="line">highp <span class="keyword">float</span> h2 = <span class="number">2.3</span> * <span class="number">4.7</span>; <span class="comment">// 运算过程和结果都是 highp</span></span><br><span class="line">mediump <span class="keyword">float</span> m;</span><br><span class="line">m = <span class="number">3.7</span> * h1 * h2; 			<span class="comment">// 运算过程是 highp</span></span><br><span class="line">h2 = m * h1; 				<span class="comment">// 运算过程是 highp</span></span><br><span class="line">m = h2 – h1; 				<span class="comment">// 运算过程是 highp</span></span><br><span class="line">h2 = m + m; 				<span class="comment">// 运算过程和结果都是 mediump</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(highp <span class="keyword">float</span> p)</span></span>; 		<span class="comment">// 形参 p 是 highp</span></span><br><span class="line">f(<span class="number">3.3</span>);					    <span class="comment">// 传入的 3.3 是 highp</span></span><br></pre></td></tr></table></figure>
+<p><strong>Q：限定符的顺序</strong></p>
+<p><strong>A：</strong>当需要用到多个限定符的时候要遵循以下顺序: </p>
+<ul>
+<li>在一般变量中：invariant &gt; storage &gt; precision （storage：存储，precision：精度）</li>
+<li>在函数参数中：storage &gt; parameter &gt; precision （parameter：参数）</li>
+</ul>
+<p>我们来举例说明:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">invariant varying lowp <span class="keyword">float</span> color; <span class="comment">// invariant &gt; storage &gt; precision</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doubleSize</span><span class="params">(<span class="keyword">const</span> in lowp <span class="keyword">float</span> s)</span></span>&#123; <span class="comment">//storage &gt; parameter &gt; precision</span></span><br><span class="line">    <span class="keyword">float</span> s1=s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> iOS开发 </tag>
+            
+            <tag> OpenGLES </tag>
+            
+            <tag> 图像处理 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[iOS 单元测试]]></title>
+      <url>/2017/08/31/iOS-Unit-Testing/</url>
+      <content type="html"><![CDATA[<h2 id="什么是单元测试">什么是单元测试</h2><p><strong>形象版：</strong></p>
+<blockquote>
+<p>工厂在组装一台机器之前，会<strong>对每个元件都进行测试</strong>。这，就是单元测试。</p>
+</blockquote>
+<p><strong>官方版：</strong></p>
+<blockquote>
+<p>单元测试是指对软件中的<strong>最小可测试单元</strong>进行<strong>检查和验证</strong>。</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>特点：FIRST 原则</strong></p>
+<ul>
+<li><strong>Fast</strong>：测试的运行速度要快，这样就不介意运行它们。</li>
+<li><strong>Independent / Isolated</strong>：一个测试不应当依赖于另一个测试，不依赖外部环境。</li>
+<li><strong>Repeatable</strong>：同一个测试，每次都应当获得相同的结果。</li>
+<li><strong>Self-validating</strong>：测试应当是完全自动化的，输出结果要么是 pass 要么是 fail，而不是依靠程序员对日志文件的解释。</li>
+<li><strong>Timely</strong>：理想情况下，测试的编写，应当在编写要测试的产品代码之前。</li>
+</ul>
+<p><strong>Q：单元测试和其他的测试方法有什么不同呢？</strong></p>
+<p><strong>A：单元测试是在软件开发过程中要进行的最低级别的测试活动。</strong></p>
+<p>这里我们和常见的集成测试，系统测试做对比，如下：</p>
+<table>
+<thead>
+<tr>
+<th>测试方式</th>
+<th>类别</th>
+<th>察范围</th>
+<th>基准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单元测试</td>
+<td>白盒测试</td>
+<td>单元内部的数据结构、逻辑控制、异常处理..</td>
+<td>逻辑覆盖率</td>
+</tr>
+<tr>
+<td>集成测试</td>
+<td>灰盒测试</td>
+<td>模块之间的接口和接口数据传递的关系，以及模块组合后的整体功能..</td>
+<td>接口覆盖率</td>
+</tr>
+<tr>
+<td>系统测试</td>
+<td>黑盒测试</td>
+<td>整个系统相对于需求的符合度</td>
+<td>需求规格的覆盖率</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="是否需要单元测试">是否需要单元测试</h2><p>首先我们要知道，写代码的最终目标有两个：</p>
+<ul>
+<li><strong>实现需求</strong></li>
+<li><strong>提高代码质量和可维护性。</strong></li>
+</ul>
+<blockquote>
+<p>PS：代码的可维护性是指增加一个新功能，或改变现有功能的成本。<strong>成本越低，可维护性即越高</strong>。</p>
+</blockquote>
+<p>那，在保证完成需求的前提下，单元测试能否提高代码质量和可维护性，则关系到我们是否需要采用它。</p>
+<blockquote>
+<p>先划个重点，<strong>单元测试能提高代码质量和可维护性</strong>。</p>
+</blockquote>
+<p>如果要加入单元测试这个环节，那么前提就得保证，代码是”<strong>可测试</strong>“的。所谓可测试，就是要满足之前提到的那几个基本特性。</p>
+<p>单元测试，要求你能 mock 掉<strong>数据库</strong>、<strong>线程操作</strong>、<strong>文件操作</strong>、<strong>网络操作</strong>、<strong>UI</strong>等等，它是可以独立工作，不依赖其他单元。不难想象，一份能独立进行这种 mock 的代码，耦合程度肯定很低。</p>
+<p>所以单元测试其实本身最重要的不是测试的那个阶段，而是<strong>代码最初设计结构</strong>的那个阶段。不是为了发现 Bug，而是为了提高开发效率，为了我们的代码健康可持续发展。写单元测试会让你<strong>更好地去思考模块划分是否合理，解耦是否到位</strong>。</p>
+<p>总结来说，执行单元测试有如下好处：</p>
+<ul>
+<li>可以放心修改、重构业务代码，而不用担心修改某处代码后带来的副作用。（因为每次修改，都要保证测试用例能通过）</li>
+<li>帮助反思模块划分的合理性，解耦是否到位。（如果一个单元测试写得逻辑非常复杂、或者说一个函数复杂到无法写单测，那就说明模块的抽象有问题)</li>
+<li>使得软件具备更好的可维护性、具备更好的可读性。对于团队的新人来说，可以从单元测试入手，比文档更容易被程序员接受。</li>
+<li>保证代码被测试，更容易及早发现问题，降低风险。</li>
+</ul>
+<blockquote>
+<p>PS：单元测试不是万能的，它也是存在一些弊端的：</p>
+<ul>
+<li>不能减少研发的代码量，反而会花费很多精力在编写单元测试上，增加了开发成本，而且对开发人员的要求也会更高。</li>
+<li>对于小项目来说，是否执行单元测试意义不大。</li>
+<li>单元测试聚焦的是一个模块单元的功能完整性和鲁棒性，但是模块间互动可能带来的问题并不属于单元测试的范畴，同时也有很大部分的界面测试和功能测试仍旧离不开测试工程。</li>
+</ul>
+</blockquote>
+<p><strong>Q：为什么不用 UI 测试？</strong><br><strong>A：</strong></p>
+<ul>
+<li>耗时长。特别是需要运行多个 case 的时候</li>
+<li>无法测试内部的具体逻辑，比如 URL 是否正确</li>
+</ul>
+<hr>
+<h2 id="iOS_上的单元测试">iOS 上的单元测试</h2><h3 id="XCTest_能做什么">XCTest 能做什么</h3><p>XCTest 是 Apple 提供的测试框架，和 Xcode 无缝结合。使用它，可以很方便的进行 <strong>UI 测试，测试点录制，单元测试，性能测试，调试测试点，查看代码覆盖率，集成自动化测试..</strong></p>
+<p><img src="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-results-srceditor_2x.png" alt=""></p>
+<p><img src="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-runtst-10_2x.png" alt=""></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/465386-6bfe56ab9062ffb9.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png" alt="2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png" alt="2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png"></p>
+<p>至于如何使用 XCTest，这不是本文要讨论的内容，直接对照官方文档 <a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1" target="_blank" rel="external">Testing with Xcode</a> 就能上手了。</p>
+<h3 id="应该测试什么">应该测试什么</h3><p>那么，讲了这么久的单元测试，在 iOS 上，我们到底应该要测哪些内容呢？</p>
+<p>单元测试侧重的是<strong>逻辑测试和接口测试</strong>。在我看来，以下几部分是可以进行测试的：</p>
+<ul>
+<li>公共类中的公开方法</li>
+<li>网络数据层</li>
+<li>业务逻辑层</li>
+<li>修复 Bug 的测试</li>
+</ul>
+<p>实际操作过程中，要<strong>自下而上</strong>进行。从最基础的 Base 层，往上写测试。确保基础的 Model，Manager 测试通过，才开始为 Controller 编写测试，因为这部分业务是最复杂的，也是最容易改变的。</p>
+<blockquote>
+<p>PS：编写单元测试需要注意的一点是<strong>责任分离</strong>。即你的测试<strong>只需要针对特定单元内部的逻辑</strong>，至于其他模块是否正确，是由该模块的编写者来负责测试的。</p>
+<p>把这一点应用到实际场景，就能看出 HTTP 通信的实现并不属于我们网络请求类的逻辑。不管是用第三方的 AFNetworking，还是用系统的 NSURLConnection，这些类本身的接口不需要我们来写单元测试。</p>
+</blockquote>
+<hr>
+<h2 id="可测试的代码（Swift)">可测试的代码（Swift)</h2><p>先来看一段基本的测试代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testArraySorting</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">	<span class="keyword">let</span> input = [<span class="number">1</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">10</span>]</span><br><span class="line">	<span class="comment">// When</span></span><br><span class="line">	<span class="keyword">let</span> output = input.sorted()</span><br><span class="line">	<span class="comment">// Then</span></span><br><span class="line">	<span class="type">XCTAssertEqual</span>(output, [<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">10</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170823150345694914363.jpg?imageView2/0/format/jpg" alt="20170823150345694914363.jpg"></p>
+<p>总结来说，测试用例可以按以下三步执行：</p>
+<ol>
+<li><strong>Given</strong>：配置测试的初始状态</li>
+<li><strong>When</strong>：对要测试的目标执行代码</li>
+<li><strong>Then</strong>：对测试结果进行断言（成功 or 失败）</li>
+</ol>
+<p>这样我们一眼扫过去就可以清晰的看出一个 case 大体上都在干什么。</p>
+<blockquote>
+<p>PS：同样一个方法，要写多个测试用例，确保每一种，每一条路径都执行到，特别是边界值。另外 Bugfix 也需要补上对应的 case。确保验证通过。</p>
+<p>另外，确保一个 case 只测试一种情况。可能我们调用的一个 API 内部有一个 if…else…。建议 if 一个case，else 一个 case。分两个不同的 case 来作测试，这样每个 case 就很清晰自己在测试什么东西。当然，如果存在大量的 if…else…，那就要考虑下代码设计上，是否存在问题了。</p>
+</blockquote>
+<p>但是实际上，我们的项目中很少有这样单一，中规中矩的方法。很多时候，项目中难免发生多个类之间的交互处理，耦合度高，而这种操作非常的不好调试。单元测试的原则之一就在于我们用来<strong>测试的代码要求功能很单一</strong>，这其实与良好的代码设计的思想是非常相符的。</p>
+<p>那，如何保证每一个方法都是可测试的呢？</p>
+<p>下面通过一个例子，来介绍 Swift 应该如何让代码变的可测试：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to <span class="subst">\(number)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssitant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone = <span class="type">Phone</span>()</span><br><span class="line">    <span class="keyword">let</span> bossNumber = <span class="string">"12345678"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码也很简单，但是，我们要怎么进行测试呢？</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistantTestClass</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testCallingBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">let</span> assistant = <span class="type">PersonalAssistant</span>()</span><br><span class="line">        assistant.callBoss()</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Asset ？？</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里存在这么几个问题：</p>
+<ol>
+<li>phone，bossNumber 都是不可控的，由 PersonalAssitant 内部自己管理，他们的<strong>耦合度很高</strong>。</li>
+<li>我们没法验证 callBoss <strong>是否正确执行</strong>了。</li>
+<li>这只是测试用例，难道每次测试，都需要<strong>真正调用</strong> phone.call，给 boss 打电话？（小心人才网）</li>
+<li>没法<strong>快速执行</strong></li>
+</ol>
+<h4 id="Dependency_Injection">Dependency Injection</h4><p>为了降低代码本身的耦合，也为了让代码更好测试，这里我们需要引入 DI（Dependency Injection，依赖注入）。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span>: <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to <span class="subst">\(number)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone: <span class="type">PhoneProtocol</span></span><br><span class="line">    <span class="keyword">let</span> bossNumber: <span class="type">String</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span>, myBossNumber: <span class="type">String</span>) &#123;</span><br><span class="line">        phone = aPhone</span><br><span class="line">        bossNumber = myBossNumber</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>甚至可以<strong>提供默认值</strong>： </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span> = <span class="type">Phone</span>(), myBossNumber: <span class="type">String</span> = <span class="string">"12345678"</span>)</span><br></pre></td></tr></table></figure>
+<p>通过 DI，我们获得了对 phone 和 number 的完全控制，我们可以传人任意的号码，任意的通讯设备，这使得整个代码的扩展性更好了。同时，也解决了我们提到的第一个问题，降低耦合度。</p>
+<p><strong>Q：为什么说这降低了耦合度呢？</strong></p>
+<p>A：这里，依赖注入通过声明 phone 这个属性就可以获得对这个对象的控制权，而对该对象的依赖关系管理、加载、配置都由外部完成。</p>
+<p>更具体来说，依赖注入使得你不用关心对象的生命周期，什么时候被创建，怎么创建的，什么时候销毁。只需直接使用即可，对象的生命周期由提供依赖注入的框架来管理。</p>
+<p><strong>总之，依赖注入的意思是你需要的东西不是由你创建的，而是第三方，或者说容器提供给你的。这样的设计符合正交性，即所谓的松耦合。</strong></p>
+<p>上面的前后代码，可以这样比喻：<br>前：在原始社会里，几乎没有社会分工。需要斧子的人只能自己去磨一把斧子。</p>
+<p>后：进入工业社会，工厂出现了，斧子不再由普通人完成，而在工厂里被生产出来，此时需要斧子的人找到工厂，购买斧子，无须关心斧子的制造过程。</p>
+<h4 id="Mock">Mock</h4><p>至于剩下的三个问题，其实本质上是一个问题，归纳起来就是：如何快速的模拟 phone.call 这个操作，并验证它是否成功调用。</p>
+<blockquote>
+<p>有的人可能有疑惑，我们现在是在测 assistant.callBoss 这个方法，但是为什么变成验证 phone.call 是否调用成功？我们之前说过。当前模块的测试，只需要关注该模块本身，所以 phone.call 的测试，应该是 Phone 模块自己需要完成的。所以，如果 phone.call 被正常调用了。 那是不是就变相意味着，assistant.callBoss 这个方法测试通过？（至于调用后，是否拨打成功，这个应该是 Phone 模块应该关心的）</p>
+</blockquote>
+<p>所以，这里我们引入 Mock 这个概念，来完成这个操作。</p>
+<blockquote>
+<p>所谓 mock，即模拟出我们想要的内容。</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MockPhone</span>: <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> wasCalled = <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span> &#123;</span><br><span class="line">        wasCalled = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testCallingBoss</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mockPhone = <span class="type">MockPhone</span>()</span><br><span class="line">    <span class="keyword">let</span> assistant = <span class="type">PersonalAssistant</span>(aPhone: mockPhone, myBossNumber: <span class="string">"12345678"</span>) </span><br><span class="line">    assistant.callBoss()</span><br><span class="line">    <span class="type">XCTAssertTrue</span>(mockPhone.wasCalled, <span class="string">"Assistant should have called the boss"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们模拟出了一个专门用来测试的 “Phone”。（它应该声明在 test 文件里。test bundle 的内容，不会包含在正式包里头）。它也实现了 call 方法，但是并不是真正的拨打电话，而是标记已经调用了 call，拨打出去了。这使得，我们的 asset 得以书写。</p>
+<p>至此，这个简单的例子，就介绍完了。通过 Protocol 依赖注入，使得我们代码的耦合度更低，扩展性更好，可测试。所以，良好的代码设计是很有必要的。</p>
+<hr>
+<h2 id="自测">自测</h2><p>如果说，下面一个例子，能通过重构代码，写出对应的 case，那么，我这篇文章也就没白写..</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@IBAction</span> <span class="function"><span class="keyword">func</span> <span class="title">openTapped</span><span class="params">(<span class="number">_</span> sender: Any)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mode: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> segmentedControl.selectedSegmentIndex &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        mode = <span class="string">"view"</span></span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        mode = <span class="string">"edit"</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">fatalError</span>(<span class="string">"Impossible Case"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url = <span class="type">URL</span>(string: <span class="string">"myappscheme://open?id=<span class="subst">\(document!.identifier)</span>&amp;mode=<span class="subst">\(mode)</span>"</span>)!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="type">UIApplication</span>.shared.canOpenURL(url) &#123;</span><br><span class="line">        <span class="type">UIApplication</span>.shared.open(url, options: [:], completionHandler: <span class="literal">nil</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"url error"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Test</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testOpensDocumentURLWhenButtonIsTapped</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"Preview"</span>) <span class="keyword">as</span>! <span class="type">PreviewViewController</span></span><br><span class="line">    controller.loadViewIfNeeded()</span><br><span class="line">    controller.segmentedControl.selectedSegmentIndex = <span class="number">1</span></span><br><span class="line">    controller.document = <span class="type">Document</span>(identifier: <span class="string">"TheID"</span>)</span><br><span class="line"></span><br><span class="line">    controller.openTapped(controller.button)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Asset ??</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Enjoy it～</p>
+<hr>
+<h2 id="参考链接">参考链接</h2><p><a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1" target="_blank" rel="external">Testing with Xcode</a></p>
+<p><a href="https://medium.com/practical-ios-development/what-should-we-unit-test-in-our-ios-apps-769d55a2423b" target="_blank" rel="external">What should we Unit Test in our iOS apps?</a></p>
+<p><a href="http://masilotti.com/better-swift-unit-testing/" target="_blank" rel="external">Better Unit Testing with Swift</a></p>
+<p><a href="https://academy.realm.io/posts/appbuilders-natasha-muraschev-practical-protocol-oriented-programming/" target="_blank" rel="external">Practical Protocol-Oriented-Programming</a></p>
+<p><a href="https://github.com/yangyubo/zh-unit-testing-guidelines" target="_blank" rel="external">单元测试准则</a></p>
+<p><a href="https://www.oschina.net/translate/12-unit-testing-myths-and-practices" target="_blank" rel="external">12 个单元测试秘籍和实践</a></p>
+<p><a href="https://onevcat.com/2016/11/pop-cocoa-1/" target="_blank" rel="external">面向协议编程与 Cocoa 的邂逅</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> iOS开发 </tag>
+            
+            <tag> 设计思想 </tag>
+            
+            <tag> 测试 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenGL ES 渲染基本图元]]></title>
       <url>/2017/04/18/OpenGLES-Lesson03/</url>
       <content type="html"><![CDATA[<p>在<a href="http://colin1994.github.io/2017/04/09/OpenGLES-Lesson02/" target="_blank" rel="external">上篇文章</a>中，已经介绍了 OpenGL ES 的基础环境搭建，并且实现了设置背景色功能。</p>
 <p>在本文中，我们将会在上文的基础上，渲染基本图元，三角形。在这个过程中，将会详细介绍可编程图形渲染管线是如何工作的。</p>
@@ -652,9 +1690,9 @@
 <li><a href="http://colin1994.github.io/2017/04/01/OpenGLES-Lesson00/" target="_blank" rel="external">OpenGL ES 开篇</a> : 以 Q&amp;A 的形式，列举出在学习 OpenGL ES 之前会存在的一些疑惑。权衡是否该继续学习 OpenGL ES。</li>
 <li><a href="http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/" target="_blank" rel="external">OpenGL ES 基础概念</a>：扫盲篇，先介绍一些必须了解的知识，便于之后能直接进入实战阶段。</li>
 <li><a href="http://colin1994.github.io/2017/04/09/OpenGLES-Lesson02/" target="_blank" rel="external">OpenGL ES 环境搭建</a>：详解 OpenGL ES 接入方式，以最基础效果（设置背景色）来阐述。</li>
-<li><a href="http://colin1994.github.io/2017/04/18/OpenGLES-Lesson03/" target="_blank" rel="external">渲染基本图元，三角形</a>：详细介绍可编程图形渲染管线是如何工作的。</li>
-<li>GLSL 详解（基础篇）：详细介绍 OpenGL ES 2.0 着色器语言 GLSL 基础语法。</li>
-<li>GLSL 详解（高级篇）：详细介绍 OpenGL ES 2.0 着色器语言高级特性。</li>
+<li><a href="http://colin1994.github.io/2017/04/18/OpenGLES-Lesson03/" target="_blank" rel="external">OpenGL ES 渲染基本图元</a>：详细介绍可编程图形渲染管线是如何工作的。</li>
+<li><a href="http://colin1994.github.io/2017/11/11/OpenGLES-Lesson04/" target="_blank" rel="external">GLSL 详解（基础篇）</a>：详细介绍 OpenGL ES 2.0 着色器语言 GLSL 基础语法。</li>
+<li><a href="http://colin1994.github.io/2017/11/12/OpenGLES-Lesson05/" target="_blank" rel="external">GLSL 详解（高级篇）</a>：详细介绍 OpenGL ES 2.0 着色器语言高级特性。</li>
 </ol>
 <h3 id="Demo_讲解：">Demo 讲解：</h3><ol>
 <li>显示图片</li>
@@ -681,6 +1719,8 @@
 <p><a href="http://learnopengl.com/" target="_blank" rel="external">Learn OpenGL</a></p>
 <p><a href="http://www.edwinho.org/lessons/2015-08/opengl-es.html" target="_blank" rel="external">OpenGL ES_Max</a></p>
 <p><a href="http://blog.csdn.net/kesalin/article/details/8221393" target="_blank" rel="external">OpenGL ES 01 OpenGL ES之初体验</a></p>
+<p><a href="https://www.khronos.org/files/opengles_shading_language.pdf" target="_blank" rel="external">Opengles Shading Language</a></p>
+<p><a href="http://aillieo.cn/post/2017-01-15-opengl-es-glsl-01/" target="_blank" rel="external">OpenGL ES 2.0 着色器语言GLSL</a></p>
 <h3 id="Demo">Demo</h3><p><a href="https://github.com/twenty3/GLImageProcessing" target="_blank" rel="external">GLImageProcessing</a></p>
 <p><a href="https://github.com/BradLarson/GPUImage" target="_blank" rel="external">GPUImage</a></p>
 <p><a href="https://github.com/Ciechan/BCMeshTransformView" target="_blank" rel="external">BCMeshTransformView</a></p>
@@ -2303,143 +3343,6 @@
     </entry>
     
     <entry>
-      <title><![CDATA[正则表达式]]></title>
-      <url>/2015/07/11/Regular-Expressions/</url>
-      <content type="html"><![CDATA[<blockquote>
-<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
-</blockquote>
-<ol>
-<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
-<li><a href="http://regexkit.sourceforge.net/RegexKitLite/" target="_blank" rel="external">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
-</ol>
-<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
-<blockquote>
-<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
-</blockquote>
-<p>正则表达式学习链接：</p>
-<ol>
-<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html" target="_blank" rel="external">55分钟学会正则表达式</a></li>
-<li><a href="http://www.regexlab.com/zh/regref.htm" target="_blank" rel="external">揭开正则表达式的神秘面纱</a></li>
-<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5" target="_blank" rel="external">RegExLib.com(正则表达式库查询)</a></li>
-</ol>
-<hr>
-<a id="more"></a>
-<h2 id="1-_NSPredicate">1. NSPredicate</h2><blockquote>
-<p>简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。</p>
-</blockquote>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:(<span class="built_in">NSString</span> *), ...];</span><br></pre></td></tr></table></figure>
-<p>其中, 常见的<code>Format</code>有:</p>
-<p>(1) 比较运算符: &gt;, &lt;, ==, &gt;=, &lt;=, !=</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number &gt; 100&quot;</span><br></pre></td></tr></table></figure>
-<p>(2) 范围运算符: IN, BETWEEN</p>
-<p>​    </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number BETWEEN &#123;1,5&#125;&quot;</span><br><span class="line">   @&quot;address IN &#123;&apos;shanghai&apos;,&apos;beijing&apos;&#125;&quot;</span><br></pre></td></tr></table></figure>
-<p>(3) 字符串本身: SELF </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@“SELF == ‘APPLE’&quot;</span><br></pre></td></tr></table></figure>
-<p>(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name CONTAINS[cd] &apos;ang&apos;&quot;  //包含某个字符串</span><br><span class="line">   @&quot;name BEGINSWITH[c] &apos;sh&apos;&quot;  //以某个字符串开头</span><br><span class="line">   @&quot;name ENDSWITH[d] &apos;ang&apos;&quot;   //以某个字符串结束</span><br><span class="line"></span><br><span class="line">注:[c]不区分大小写</span><br><span class="line">   [d]不区分发音符号即没有重音符号</span><br><span class="line">   [cd]既不区分大小写，也不区分发音符号。</span><br></pre></td></tr></table></figure>
-<p>(5) 通配符: LIKE</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name LIKE[cd] &apos;*er*&apos;&quot;    //*代表通配符,Like也接受[cd].</span><br><span class="line">   @&quot;name LIKE[cd] &apos;???er*&apos;&quot;</span><br></pre></td></tr></table></figure>
-<p>(6) 正则表达式: MATCHES</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：NSString *regex = @&quot;^A.+e$&quot;;   //以A开头，e结尾</span><br><span class="line">  @&quot;name MATCHES %@&quot;,regex</span><br></pre></td></tr></table></figure>
-<p>至于如何使用呢? 下面举几个例子:</p>
-<p>(a) 对NSArray进行过滤, 帅选出包含”ang”的项</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSArray</span> *array = [[<span class="built_in">NSArray</span> alloc]initWithObjects:<span class="string">@"beijing"</span>, <span class="string">@"shanghai"</span>, <span class="string">@"guangzou"</span>, <span class="string">@"wuhan"</span>, <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *string = <span class="string">@"ang"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *pred = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF CONTAINS %@"</span>, string];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [array filteredArrayUsingPredicate:pred]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//    (</span></span><br><span class="line"><span class="comment">//     shanghai,</span></span><br><span class="line"><span class="comment">//     guangzou</span></span><br><span class="line"><span class="comment">//    )</span></span><br></pre></td></tr></table></figure>
-<p>(b) 对NSDate进行筛选</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//日期在十天之内:</span></span><br><span class="line"><span class="built_in">NSDate</span> *endDate = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="built_in">NSTimeInterval</span> timeInterval= [endDate timeIntervalSinceReferenceDate];</span><br><span class="line">timeInterval -=<span class="number">3600</span>*<span class="number">24</span>*<span class="number">10</span>;</span><br><span class="line"><span class="built_in">NSDate</span> *beginDate = [<span class="built_in">NSDate</span> dateWithTimeIntervalSinceReferenceDate:timeInterval];</span><br><span class="line"><span class="comment">//对coredata进行筛选(假设有fetchRequest)</span></span><br><span class="line"><span class="built_in">NSPredicate</span> *predicate_date = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"date &gt;= %@ AND date &lt;= %@"</span>, beginDate,endDate];</span><br><span class="line">[fetchRequest setPredicate:predicate_date];</span><br></pre></td></tr></table></figure>
-<p>OK, <code>NSPredicate</code>的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否是有效邮箱</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isValidateEmail:(<span class="built_in">NSString</span> *)email&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&#123;2,4&#125;"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:email];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断字符串首字母是否为字母</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isStartedWithWord:(<span class="built_in">NSString</span> *)aString&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Za-z]+"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:aString];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="2-_利用rangeOfString：option：直接查找">2. 利用rangeOfString：option：直接查找</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;</span><br><span class="line">    <span class="built_in">NSRange</span> range = [searchText rangeOfString:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br><span class="line">    <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [searchText substringWithRange:range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。</p>
-</blockquote>
-<hr>
-<h1 id="3-_使用正则表达式类">3. 使用正则表达式类</h1><p>详细了解:  <a href="http://blog.csdn.net/crayondeng/article/details/16991579" target="_blank" rel="external">iOS 正则表达式 NSRegularExpression</a></p>
-<p>上面那篇文章总结的很不错. 这里简单再举个例子:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error];</span><br><span class="line">    <span class="built_in">NSTextCheckingResult</span> *result = [regex firstMatchInString:searchText options:<span class="number">0</span> range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [searchText length])];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@\n"</span>, [searchText substringWithRange:result.range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。</p>
-</blockquote>
-<hr>
-<p>针对以上3种方式, 做一个小小总结</p>
-<blockquote>
-<p>第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；</p>
-</blockquote>
-<p>&gt;</p>
-<blockquote>
-<p>如果只关心第一个匹配的结果，第二种匹配较为简洁；</p>
-</blockquote>
-<p>&gt;</p>
-<blockquote>
-<p>如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。</p>
-</blockquote>
-<p>&gt;</p>
-<h2 id="常用正则表达式">常用正则表达式</h2><p>参考:  <a href="http://blog.csdn.net/chaoyuan899/article/details/38583759" target="_blank" rel="external">IOS常用正则表达式</a></p>
-<table>
-<thead>
-<tr>
-<th>表达式</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>[\u4e00-\u9fa5]</td>
-<td>匹配中文字符</td>
-</tr>
-<tr>
-<td>[^\x00-\xff]</td>
-<td>匹配双字节字符(包括汉字在内)</td>
-</tr>
-<tr>
-<td>\n\s*\r</td>
-<td>匹配空白行</td>
-</tr>
-<tr>
-<td>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;\</td>
-<td>&lt;.*? /&gt;</td>
-</tr>
-<tr>
-<td>^\s*\</td>
-<td>\s*$</td>
-</tr>
-<tr>
-<td>\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*</td>
-<td>匹配Email地</td>
-</tr>
-<tr>
-<td>[a-zA-z]+://[^\s]*</td>
-<td>匹配网址URL</td>
-</tr>
-<tr>
-<td>\d{3}-\d{8}\</td>
-<td>\d{4}-\d{7}</td>
-</tr>
-<tr>
-<td>[1-9]\d{5}(?!\d)</td>
-<td>匹配中国邮政编码</td>
-</tr>
-<tr>
-<td>\d+.\d+.\d+.\d+</td>
-<td>匹配ip地址</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-      
-        
-        <tags>
-            
-            <tag> iOS开发 </tag>
-            
-            <tag> 正则 </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
       <title><![CDATA[阿里, 网易, 腾讯]]></title>
       <url>/2015/07/11/interview-summary/</url>
       <content type="html"><![CDATA[<h1 id="一个多月来的面试总结(阿里,_网易,_腾讯)">一个多月来的面试总结(阿里, 网易, 腾讯)</h1><blockquote>
@@ -2610,6 +3513,143 @@
             <tag> 面试 </tag>
             
             <tag> 随笔 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[正则表达式]]></title>
+      <url>/2015/07/11/Regular-Expressions/</url>
+      <content type="html"><![CDATA[<blockquote>
+<p>正则表达式，又称正规表示法、常规表示法（英语：Regular Expression，在代码中常简写为regex、regexp或RE），计算机科学的一个概念。正则表达式使用单个字符串来描述、匹配一系列符合某个句法规则的字符串。在很多文本编辑器里，正则表达式通常被用来检索、替换那些符合某个模式的文本。</p>
+</blockquote>
+<ol>
+<li>系统自带的, 如: NSPredicate, rangeOfString：option, NSRegularExpression</li>
+<li><a href="http://regexkit.sourceforge.net/RegexKitLite/" target="_blank" rel="external">RegexKitLite</a> RegexKitLite 是一个轻量级的 Objective-C 的正则表达式库,支持 Mac OS X 和 iOS,使用 ICU 库开发。</li>
+</ol>
+<p>至于<code>RegexKitLite</code>, 这里不做介绍。着重介绍系统自带的那几个办法。</p>
+<blockquote>
+<p>PS: 阅读本文前提是您已经掌握了正则基本语法, 如果对正则还不太了解, 可以参考以下几个链接:</p>
+</blockquote>
+<p>正则表达式学习链接：</p>
+<ol>
+<li><a href="http://doslin.com/regular%20expressions/2014/03/11/learn-regular-expressions-in-about-55-minutes.html" target="_blank" rel="external">55分钟学会正则表达式</a></li>
+<li><a href="http://www.regexlab.com/zh/regref.htm" target="_blank" rel="external">揭开正则表达式的神秘面纱</a></li>
+<li><a href="http://www.regexplib.com/DisplayPatterns.aspx?cattabindex=4&amp;categoryId=5" target="_blank" rel="external">RegExLib.com(正则表达式库查询)</a></li>
+</ol>
+<hr>
+<a id="more"></a>
+<h2 id="1-_NSPredicate">1. NSPredicate</h2><blockquote>
+<p>简述：Cocoa框架中的NSPredicate用于查询，原理和用法都类似于SQL中的where，作用相当于数据库的过滤取。</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:(<span class="built_in">NSString</span> *), ...];</span><br></pre></td></tr></table></figure>
+<p>其中, 常见的<code>Format</code>有:</p>
+<p>(1) 比较运算符: &gt;, &lt;, ==, &gt;=, &lt;=, !=</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number &gt; 100&quot;</span><br></pre></td></tr></table></figure>
+<p>(2) 范围运算符: IN, BETWEEN</p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;number BETWEEN &#123;1,5&#125;&quot;</span><br><span class="line">   @&quot;address IN &#123;&apos;shanghai&apos;,&apos;beijing&apos;&#125;&quot;</span><br></pre></td></tr></table></figure>
+<p>(3) 字符串本身: SELF </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例：@“SELF == ‘APPLE’&quot;</span><br></pre></td></tr></table></figure>
+<p>(4) 字符串相关: BEGINSWITH, ENDSWITH, CONTAINS</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name CONTAINS[cd] &apos;ang&apos;&quot;  //包含某个字符串</span><br><span class="line">   @&quot;name BEGINSWITH[c] &apos;sh&apos;&quot;  //以某个字符串开头</span><br><span class="line">   @&quot;name ENDSWITH[d] &apos;ang&apos;&quot;   //以某个字符串结束</span><br><span class="line"></span><br><span class="line">注:[c]不区分大小写</span><br><span class="line">   [d]不区分发音符号即没有重音符号</span><br><span class="line">   [cd]既不区分大小写，也不区分发音符号。</span><br></pre></td></tr></table></figure>
+<p>(5) 通配符: LIKE</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：@&quot;name LIKE[cd] &apos;*er*&apos;&quot;    //*代表通配符,Like也接受[cd].</span><br><span class="line">   @&quot;name LIKE[cd] &apos;???er*&apos;&quot;</span><br></pre></td></tr></table></figure>
+<p>(6) 正则表达式: MATCHES</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">例：NSString *regex = @&quot;^A.+e$&quot;;   //以A开头，e结尾</span><br><span class="line">  @&quot;name MATCHES %@&quot;,regex</span><br></pre></td></tr></table></figure>
+<p>至于如何使用呢? 下面举几个例子:</p>
+<p>(a) 对NSArray进行过滤, 帅选出包含”ang”的项</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSArray</span> *array = [[<span class="built_in">NSArray</span> alloc]initWithObjects:<span class="string">@"beijing"</span>, <span class="string">@"shanghai"</span>, <span class="string">@"guangzou"</span>, <span class="string">@"wuhan"</span>, <span class="literal">nil</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *string = <span class="string">@"ang"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *pred = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF CONTAINS %@"</span>, string];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [array filteredArrayUsingPredicate:pred]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//    (</span></span><br><span class="line"><span class="comment">//     shanghai,</span></span><br><span class="line"><span class="comment">//     guangzou</span></span><br><span class="line"><span class="comment">//    )</span></span><br></pre></td></tr></table></figure>
+<p>(b) 对NSDate进行筛选</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//日期在十天之内:</span></span><br><span class="line"><span class="built_in">NSDate</span> *endDate = [<span class="built_in">NSDate</span> date];</span><br><span class="line"><span class="built_in">NSTimeInterval</span> timeInterval= [endDate timeIntervalSinceReferenceDate];</span><br><span class="line">timeInterval -=<span class="number">3600</span>*<span class="number">24</span>*<span class="number">10</span>;</span><br><span class="line"><span class="built_in">NSDate</span> *beginDate = [<span class="built_in">NSDate</span> dateWithTimeIntervalSinceReferenceDate:timeInterval];</span><br><span class="line"><span class="comment">//对coredata进行筛选(假设有fetchRequest)</span></span><br><span class="line"><span class="built_in">NSPredicate</span> *predicate_date = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"date &gt;= %@ AND date &lt;= %@"</span>, beginDate,endDate];</span><br><span class="line">[fetchRequest setPredicate:predicate_date];</span><br></pre></td></tr></table></figure>
+<p>OK, <code>NSPredicate</code>的功能很多, 也很强大。这里暂时就点到此, 感兴趣的可以自己一一试验。 下面举两个例子说明一下如何使用正则。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断是否是有效邮箱</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isValidateEmail:(<span class="built_in">NSString</span> *)email&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]&#123;2,4&#125;"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:email];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 判断字符串首字母是否为字母</span></span><br><span class="line">- (<span class="built_in">BOOL</span>)isStartedWithWord:(<span class="built_in">NSString</span> *)aString&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *regex = <span class="string">@"[A-Za-z]+"</span>;</span><br><span class="line">    <span class="built_in">NSPredicate</span> *predicate = [<span class="built_in">NSPredicate</span> predicateWithFormat:<span class="string">@"SELF MATCHES %@"</span>, regex];</span><br><span class="line">    <span class="keyword">return</span> [predicate evaluateWithObject:aString];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="2-_利用rangeOfString：option：直接查找">2. 利用rangeOfString：option：直接查找</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;</span><br><span class="line">    <span class="built_in">NSRange</span> range = [searchText rangeOfString:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionSearch</span>];</span><br><span class="line">    <span class="keyword">if</span> (range.location != <span class="built_in">NSNotFound</span>) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, [searchText substringWithRange:range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>options中设定NSRegularExpressionSearch就是表示利用正则表达式匹配，会返回第一个匹配结果的位置。</p>
+</blockquote>
+<hr>
+<h1 id="3-_使用正则表达式类">3. 使用正则表达式类</h1><p>详细了解:  <a href="http://blog.csdn.net/crayondeng/article/details/16991579" target="_blank" rel="external">iOS 正则表达式 NSRegularExpression</a></p>
+<p>上面那篇文章总结的很不错. 这里简单再举个例子:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSString</span> *searchText = <span class="string">@"// Do any additional setup after loading the view, typically from a nib."</span>;    </span><br><span class="line">    <span class="built_in">NSError</span> *error = <span class="literal">NULL</span>;</span><br><span class="line">    <span class="built_in">NSRegularExpression</span> *regex = [<span class="built_in">NSRegularExpression</span> regularExpressionWithPattern:<span class="string">@"(?:[^,])*\\."</span> options:<span class="built_in">NSRegularExpressionCaseInsensitive</span> error:&amp;error];</span><br><span class="line">    <span class="built_in">NSTextCheckingResult</span> *result = [regex firstMatchInString:searchText options:<span class="number">0</span> range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [searchText length])];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@\n"</span>, [searchText substringWithRange:result.range]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    打印结果:</span></span><br><span class="line"><span class="comment">//      typically from a nib.</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用系统的正则表达式类（NSRegularExpression）会返回匹配的多个结果。</p>
+</blockquote>
+<hr>
+<p>针对以上3种方式, 做一个小小总结</p>
+<blockquote>
+<p>第一种匹配需要学习NSPredicate的写法，需要查阅苹果相关技术文档；</p>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>如果只关心第一个匹配的结果，第二种匹配较为简洁；</p>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>如果需要匹配多个结果，同时匹配多次，第三种方式效率会更高。</p>
+</blockquote>
+<p>&gt;</p>
+<h2 id="常用正则表达式">常用正则表达式</h2><p>参考:  <a href="http://blog.csdn.net/chaoyuan899/article/details/38583759" target="_blank" rel="external">IOS常用正则表达式</a></p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[\u4e00-\u9fa5]</td>
+<td>匹配中文字符</td>
+</tr>
+<tr>
+<td>[^\x00-\xff]</td>
+<td>匹配双字节字符(包括汉字在内)</td>
+</tr>
+<tr>
+<td>\n\s*\r</td>
+<td>匹配空白行</td>
+</tr>
+<tr>
+<td>&lt;(\S*?)[^&gt;]*&gt;.*?&lt;/\1&gt;\</td>
+<td>&lt;.*? /&gt;</td>
+</tr>
+<tr>
+<td>^\s*\</td>
+<td>\s*$</td>
+</tr>
+<tr>
+<td>\w+([-+.]\w+)*@\w+([-.]\w+)*.\w+([-.]\w+)*</td>
+<td>匹配Email地</td>
+</tr>
+<tr>
+<td>[a-zA-z]+://[^\s]*</td>
+<td>匹配网址URL</td>
+</tr>
+<tr>
+<td>\d{3}-\d{8}\</td>
+<td>\d{4}-\d{7}</td>
+</tr>
+<tr>
+<td>[1-9]\d{5}(?!\d)</td>
+<td>匹配中国邮政编码</td>
+</tr>
+<tr>
+<td>\d+.\d+.\d+.\d+</td>
+<td>匹配ip地址</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> iOS开发 </tag>
+            
+            <tag> 正则 </tag>
             
         </tags>
         
