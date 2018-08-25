@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="iOS 单元测试"/>
+
+
+
+
+  <meta name="keywords" content="iOS开发,设计思想,测试," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2017/08/31/iOS-Unit-Testing/"/>
+
+
+<meta name="description" content="什么是单元测试形象版：
+
+工厂在组装一台机器之前，会对每个元件都进行测试。这，就是单元测试。
+
+官方版：
+
+单元测试是指对软件中的最小可测试单元进行检查和验证。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 单元测试">
+<meta property="og:url" content="http://http://colin1994.github.io/2017/08/31/iOS-Unit-Testing/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="什么是单元测试形象版：
+
+工厂在组装一台机器之前，会对每个元件都进行测试。这，就是单元测试。
+
+官方版：
+
+单元测试是指对软件中的最小可测试单元进行检查和验证。">
+<meta property="og:image" content="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-results-srceditor_2x.png">
+<meta property="og:image" content="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-runtst-10_2x.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/465386-6bfe56ab9062ffb9.gif?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170823150345694914363.jpg?imageView2/0/format/jpg">
+<meta property="og:updated_time" content="2017-08-31T12:18:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 单元测试">
+<meta name="twitter:description" content="什么是单元测试形象版：
+
+工厂在组装一台机器之前，会对每个元件都进行测试。这，就是单元测试。
+
+官方版：
+
+单元测试是指对软件中的最小可测试单元进行检查和验证。">
+<meta name="twitter:image" content="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-results-srceditor_2x.png">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+
+
+    <title> iOS 单元测试 · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          iOS 单元测试
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Aug 31, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是单元测试"><span class="toc-text">什么是单元测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#是否需要单元测试"><span class="toc-text">是否需要单元测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS_上的单元测试"><span class="toc-text">iOS 上的单元测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XCTest_能做什么"><span class="toc-text">XCTest 能做什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#应该测试什么"><span class="toc-text">应该测试什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可测试的代码（Swift)"><span class="toc-text">可测试的代码（Swift)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dependency_Injection"><span class="toc-text">Dependency Injection</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mock"><span class="toc-text">Mock</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自测"><span class="toc-text">自测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="什么是单元测试">什么是单元测试</h2><p><strong>形象版：</strong></p>
+<blockquote>
+<p>工厂在组装一台机器之前，会<strong>对每个元件都进行测试</strong>。这，就是单元测试。</p>
+</blockquote>
+<p><strong>官方版：</strong></p>
+<blockquote>
+<p>单元测试是指对软件中的<strong>最小可测试单元</strong>进行<strong>检查和验证</strong>。</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>特点：FIRST 原则</strong></p>
+<ul>
+<li><strong>Fast</strong>：测试的运行速度要快，这样就不介意运行它们。</li>
+<li><strong>Independent / Isolated</strong>：一个测试不应当依赖于另一个测试，不依赖外部环境。</li>
+<li><strong>Repeatable</strong>：同一个测试，每次都应当获得相同的结果。</li>
+<li><strong>Self-validating</strong>：测试应当是完全自动化的，输出结果要么是 pass 要么是 fail，而不是依靠程序员对日志文件的解释。</li>
+<li><strong>Timely</strong>：理想情况下，测试的编写，应当在编写要测试的产品代码之前。</li>
+</ul>
+<p><strong>Q：单元测试和其他的测试方法有什么不同呢？</strong></p>
+<p><strong>A：单元测试是在软件开发过程中要进行的最低级别的测试活动。</strong></p>
+<p>这里我们和常见的集成测试，系统测试做对比，如下：</p>
+<table>
+<thead>
+<tr>
+<th>测试方式</th>
+<th>类别</th>
+<th>察范围</th>
+<th>基准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单元测试</td>
+<td>白盒测试</td>
+<td>单元内部的数据结构、逻辑控制、异常处理..</td>
+<td>逻辑覆盖率</td>
+</tr>
+<tr>
+<td>集成测试</td>
+<td>灰盒测试</td>
+<td>模块之间的接口和接口数据传递的关系，以及模块组合后的整体功能..</td>
+<td>接口覆盖率</td>
+</tr>
+<tr>
+<td>系统测试</td>
+<td>黑盒测试</td>
+<td>整个系统相对于需求的符合度</td>
+<td>需求规格的覆盖率</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="是否需要单元测试">是否需要单元测试</h2><p>首先我们要知道，写代码的最终目标有两个：</p>
+<ul>
+<li><strong>实现需求</strong></li>
+<li><strong>提高代码质量和可维护性。</strong></li>
+</ul>
+<blockquote>
+<p>PS：代码的可维护性是指增加一个新功能，或改变现有功能的成本。<strong>成本越低，可维护性即越高</strong>。</p>
+</blockquote>
+<p>那，在保证完成需求的前提下，单元测试能否提高代码质量和可维护性，则关系到我们是否需要采用它。</p>
+<blockquote>
+<p>先划个重点，<strong>单元测试能提高代码质量和可维护性</strong>。</p>
+</blockquote>
+<p>如果要加入单元测试这个环节，那么前提就得保证，代码是”<strong>可测试</strong>“的。所谓可测试，就是要满足之前提到的那几个基本特性。</p>
+<p>单元测试，要求你能 mock 掉<strong>数据库</strong>、<strong>线程操作</strong>、<strong>文件操作</strong>、<strong>网络操作</strong>、<strong>UI</strong>等等，它是可以独立工作，不依赖其他单元。不难想象，一份能独立进行这种 mock 的代码，耦合程度肯定很低。</p>
+<p>所以单元测试其实本身最重要的不是测试的那个阶段，而是<strong>代码最初设计结构</strong>的那个阶段。不是为了发现 Bug，而是为了提高开发效率，为了我们的代码健康可持续发展。写单元测试会让你<strong>更好地去思考模块划分是否合理，解耦是否到位</strong>。</p>
+<p>总结来说，执行单元测试有如下好处：</p>
+<ul>
+<li>可以放心修改、重构业务代码，而不用担心修改某处代码后带来的副作用。（因为每次修改，都要保证测试用例能通过）</li>
+<li>帮助反思模块划分的合理性，解耦是否到位。（如果一个单元测试写得逻辑非常复杂、或者说一个函数复杂到无法写单测，那就说明模块的抽象有问题)</li>
+<li>使得软件具备更好的可维护性、具备更好的可读性。对于团队的新人来说，可以从单元测试入手，比文档更容易被程序员接受。</li>
+<li>保证代码被测试，更容易及早发现问题，降低风险。</li>
+</ul>
+<blockquote>
+<p>PS：单元测试不是万能的，它也是存在一些弊端的：</p>
+<ul>
+<li>不能减少研发的代码量，反而会花费很多精力在编写单元测试上，增加了开发成本，而且对开发人员的要求也会更高。</li>
+<li>对于小项目来说，是否执行单元测试意义不大。</li>
+<li>单元测试聚焦的是一个模块单元的功能完整性和鲁棒性，但是模块间互动可能带来的问题并不属于单元测试的范畴，同时也有很大部分的界面测试和功能测试仍旧离不开测试工程。</li>
+</ul>
+</blockquote>
+<p><strong>Q：为什么不用 UI 测试？</strong><br><strong>A：</strong></p>
+<ul>
+<li>耗时长。特别是需要运行多个 case 的时候</li>
+<li>无法测试内部的具体逻辑，比如 URL 是否正确</li>
+</ul>
+<hr>
+<h2 id="iOS_上的单元测试">iOS 上的单元测试</h2><h3 id="XCTest_能做什么">XCTest 能做什么</h3><p>XCTest 是 Apple 提供的测试框架，和 Xcode 无缝结合。使用它，可以很方便的进行 <strong>UI 测试，测试点录制，单元测试，性能测试，调试测试点，查看代码覆盖率，集成自动化测试..</strong></p>
+<p><img src="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-results-srceditor_2x.png" alt=""></p>
+<p><img src="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/Art/twx-runtst-10_2x.png" alt=""></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/465386-6bfe56ab9062ffb9.gif?imageMogr2/auto-orient/strip" alt=""></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png" alt="2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png"></p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png" alt="2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png"></p>
+<p>至于如何使用 XCTest，这不是本文要讨论的内容，直接对照官方文档 <a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1" target="_blank" rel="external">Testing with Xcode</a> 就能上手了。</p>
+<h3 id="应该测试什么">应该测试什么</h3><p>那么，讲了这么久的单元测试，在 iOS 上，我们到底应该要测哪些内容呢？</p>
+<p>单元测试侧重的是<strong>逻辑测试和接口测试</strong>。在我看来，以下几部分是可以进行测试的：</p>
+<ul>
+<li>公共类中的公开方法</li>
+<li>网络数据层</li>
+<li>业务逻辑层</li>
+<li>修复 Bug 的测试</li>
+</ul>
+<p>实际操作过程中，要<strong>自下而上</strong>进行。从最基础的 Base 层，往上写测试。确保基础的 Model，Manager 测试通过，才开始为 Controller 编写测试，因为这部分业务是最复杂的，也是最容易改变的。</p>
+<blockquote>
+<p>PS：编写单元测试需要注意的一点是<strong>责任分离</strong>。即你的测试<strong>只需要针对特定单元内部的逻辑</strong>，至于其他模块是否正确，是由该模块的编写者来负责测试的。</p>
+<p>把这一点应用到实际场景，就能看出 HTTP 通信的实现并不属于我们网络请求类的逻辑。不管是用第三方的 AFNetworking，还是用系统的 NSURLConnection，这些类本身的接口不需要我们来写单元测试。</p>
+</blockquote>
+<hr>
+<h2 id="可测试的代码（Swift)">可测试的代码（Swift)</h2><p>先来看一段基本的测试代码：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testArraySorting</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Given</span></span><br><span class="line">	<span class="keyword">let</span> input = [<span class="number">1</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">10</span>]</span><br><span class="line">	<span class="comment">// When</span></span><br><span class="line">	<span class="keyword">let</span> output = input.sorted()</span><br><span class="line">	<span class="comment">// Then</span></span><br><span class="line">	<span class="type">XCTAssertEqual</span>(output, [<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">10</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170823150345694914363.jpg?imageView2/0/format/jpg" alt="20170823150345694914363.jpg"></p>
+<p>总结来说，测试用例可以按以下三步执行：</p>
+<ol>
+<li><strong>Given</strong>：配置测试的初始状态</li>
+<li><strong>When</strong>：对要测试的目标执行代码</li>
+<li><strong>Then</strong>：对测试结果进行断言（成功 or 失败）</li>
+</ol>
+<p>这样我们一眼扫过去就可以清晰的看出一个 case 大体上都在干什么。</p>
+<blockquote>
+<p>PS：同样一个方法，要写多个测试用例，确保每一种，每一条路径都执行到，特别是边界值。另外 Bugfix 也需要补上对应的 case。确保验证通过。</p>
+<p>另外，确保一个 case 只测试一种情况。可能我们调用的一个 API 内部有一个 if…else…。建议 if 一个case，else 一个 case。分两个不同的 case 来作测试，这样每个 case 就很清晰自己在测试什么东西。当然，如果存在大量的 if…else…，那就要考虑下代码设计上，是否存在问题了。</p>
+</blockquote>
+<p>但是实际上，我们的项目中很少有这样单一，中规中矩的方法。很多时候，项目中难免发生多个类之间的交互处理，耦合度高，而这种操作非常的不好调试。单元测试的原则之一就在于我们用来<strong>测试的代码要求功能很单一</strong>，这其实与良好的代码设计的思想是非常相符的。</p>
+<p>那，如何保证每一个方法都是可测试的呢？</p>
+<p>下面通过一个例子，来介绍 Swift 应该如何让代码变的可测试：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to <span class="subst">\(number)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssitant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone = <span class="type">Phone</span>()</span><br><span class="line">    <span class="keyword">let</span> bossNumber = <span class="string">"12345678"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码也很简单，但是，我们要怎么进行测试呢？</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistantTestClass</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testCallingBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">let</span> assistant = <span class="type">PersonalAssistant</span>()</span><br><span class="line">        assistant.callBoss()</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Asset ？？</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里存在这么几个问题：</p>
+<ol>
+<li>phone，bossNumber 都是不可控的，由 PersonalAssitant 内部自己管理，他们的<strong>耦合度很高</strong>。</li>
+<li>我们没法验证 callBoss <strong>是否正确执行</strong>了。</li>
+<li>这只是测试用例，难道每次测试，都需要<strong>真正调用</strong> phone.call，给 boss 打电话？（小心人才网）</li>
+<li>没法<strong>快速执行</strong></li>
+</ol>
+<h4 id="Dependency_Injection">Dependency Injection</h4><p>为了降低代码本身的耦合，也为了让代码更好测试，这里我们需要引入 DI（Dependency Injection，依赖注入）。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span>: <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to <span class="subst">\(number)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone: <span class="type">PhoneProtocol</span></span><br><span class="line">    <span class="keyword">let</span> bossNumber: <span class="type">String</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span>, myBossNumber: <span class="type">String</span>) &#123;</span><br><span class="line">        phone = aPhone</span><br><span class="line">        bossNumber = myBossNumber</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>甚至可以<strong>提供默认值</strong>： </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span> = <span class="type">Phone</span>(), myBossNumber: <span class="type">String</span> = <span class="string">"12345678"</span>)</span><br></pre></td></tr></table></figure>
+<p>通过 DI，我们获得了对 phone 和 number 的完全控制，我们可以传人任意的号码，任意的通讯设备，这使得整个代码的扩展性更好了。同时，也解决了我们提到的第一个问题，降低耦合度。</p>
+<p><strong>Q：为什么说这降低了耦合度呢？</strong></p>
+<p>A：这里，依赖注入通过声明 phone 这个属性就可以获得对这个对象的控制权，而对该对象的依赖关系管理、加载、配置都由外部完成。</p>
+<p>更具体来说，依赖注入使得你不用关心对象的生命周期，什么时候被创建，怎么创建的，什么时候销毁。只需直接使用即可，对象的生命周期由提供依赖注入的框架来管理。</p>
+<p><strong>总之，依赖注入的意思是你需要的东西不是由你创建的，而是第三方，或者说容器提供给你的。这样的设计符合正交性，即所谓的松耦合。</strong></p>
+<p>上面的前后代码，可以这样比喻：<br>前：在原始社会里，几乎没有社会分工。需要斧子的人只能自己去磨一把斧子。</p>
+<p>后：进入工业社会，工厂出现了，斧子不再由普通人完成，而在工厂里被生产出来，此时需要斧子的人找到工厂，购买斧子，无须关心斧子的制造过程。</p>
+<h4 id="Mock">Mock</h4><p>至于剩下的三个问题，其实本质上是一个问题，归纳起来就是：如何快速的模拟 phone.call 这个操作，并验证它是否成功调用。</p>
+<blockquote>
+<p>有的人可能有疑惑，我们现在是在测 assistant.callBoss 这个方法，但是为什么变成验证 phone.call 是否调用成功？我们之前说过。当前模块的测试，只需要关注该模块本身，所以 phone.call 的测试，应该是 Phone 模块自己需要完成的。所以，如果 phone.call 被正常调用了。 那是不是就变相意味着，assistant.callBoss 这个方法测试通过？（至于调用后，是否拨打成功，这个应该是 Phone 模块应该关心的）</p>
+</blockquote>
+<p>所以，这里我们引入 Mock 这个概念，来完成这个操作。</p>
+<blockquote>
+<p>所谓 mock，即模拟出我们想要的内容。</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MockPhone</span>: <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> wasCalled = <span class="literal">false</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span> &#123;</span><br><span class="line">        wasCalled = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testCallingBoss</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mockPhone = <span class="type">MockPhone</span>()</span><br><span class="line">    <span class="keyword">let</span> assistant = <span class="type">PersonalAssistant</span>(aPhone: mockPhone, myBossNumber: <span class="string">"12345678"</span>) </span><br><span class="line">    assistant.callBoss()</span><br><span class="line">    <span class="type">XCTAssertTrue</span>(mockPhone.wasCalled, <span class="string">"Assistant should have called the boss"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们模拟出了一个专门用来测试的 “Phone”。（它应该声明在 test 文件里。test bundle 的内容，不会包含在正式包里头）。它也实现了 call 方法，但是并不是真正的拨打电话，而是标记已经调用了 call，拨打出去了。这使得，我们的 asset 得以书写。</p>
+<p>至此，这个简单的例子，就介绍完了。通过 Protocol 依赖注入，使得我们代码的耦合度更低，扩展性更好，可测试。所以，良好的代码设计是很有必要的。</p>
+<hr>
+<h2 id="自测">自测</h2><p>如果说，下面一个例子，能通过重构代码，写出对应的 case，那么，我这篇文章也就没白写..</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@IBAction</span> <span class="function"><span class="keyword">func</span> <span class="title">openTapped</span><span class="params">(<span class="number">_</span> sender: Any)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mode: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> segmentedControl.selectedSegmentIndex &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        mode = <span class="string">"view"</span></span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        mode = <span class="string">"edit"</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">fatalError</span>(<span class="string">"Impossible Case"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url = <span class="type">URL</span>(string: <span class="string">"myappscheme://open?id=<span class="subst">\(document!.identifier)</span>&amp;mode=<span class="subst">\(mode)</span>"</span>)!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="type">UIApplication</span>.shared.canOpenURL(url) &#123;</span><br><span class="line">        <span class="type">UIApplication</span>.shared.open(url, options: [:], completionHandler: <span class="literal">nil</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"url error"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Test</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testOpensDocumentURLWhenButtonIsTapped</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"Preview"</span>) <span class="keyword">as</span>! <span class="type">PreviewViewController</span></span><br><span class="line">    controller.loadViewIfNeeded()</span><br><span class="line">    controller.segmentedControl.selectedSegmentIndex = <span class="number">1</span></span><br><span class="line">    controller.document = <span class="type">Document</span>(identifier: <span class="string">"TheID"</span>)</span><br><span class="line"></span><br><span class="line">    controller.openTapped(controller.button)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Asset ??</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Enjoy it～</p>
+<hr>
+<h2 id="参考链接">参考链接</h2><p><a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1" target="_blank" rel="external">Testing with Xcode</a></p>
+<p><a href="https://medium.com/practical-ios-development/what-should-we-unit-test-in-our-ios-apps-769d55a2423b" target="_blank" rel="external">What should we Unit Test in our iOS apps?</a></p>
+<p><a href="http://masilotti.com/better-swift-unit-testing/" target="_blank" rel="external">Better Unit Testing with Swift</a></p>
+<p><a href="https://academy.realm.io/posts/appbuilders-natasha-muraschev-practical-protocol-oriented-programming/" target="_blank" rel="external">Practical Protocol-Oriented-Programming</a></p>
+<p><a href="https://github.com/yangyubo/zh-unit-testing-guidelines" target="_blank" rel="external">单元测试准则</a></p>
+<p><a href="https://www.oschina.net/translate/12-unit-testing-myths-and-practices" target="_blank" rel="external">12 个单元测试秘籍和实践</a></p>
+<p><a href="https://onevcat.com/2016/11/pop-cocoa-1/" target="_blank" rel="external">面向协议编程与 Cocoa 的邂逅</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/iOS开发/">iOS开发</a>
+            
+              <a href="/tags/设计思想/">设计思想</a>
+            
+              <a href="/tags/测试/">测试</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2017/11/11/OpenGLES-Lesson04/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">GLSL 详解（基础篇）</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2017/04/18/OpenGLES-Lesson03/">
+        <span class="next-text nav-default">OpenGL ES 渲染基本图元</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2017
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>

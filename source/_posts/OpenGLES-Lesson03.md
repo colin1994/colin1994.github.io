@@ -1,4 +1,4 @@
-title: 渲染基本图元
+title: OpenGL ES 渲染基本图元
 
 date: 2017-04-18 18:25:12
 
