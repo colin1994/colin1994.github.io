@@ -15,7 +15,7 @@ tags:
 
 效果图：
 
-![tailResult](http://7xkc7a.com1.z0.glb.clouddn.com/tailResult.png)
+![tailResult](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/Other/tailResult.png)
 
 
 

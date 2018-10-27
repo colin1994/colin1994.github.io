@@ -37,7 +37,7 @@ tags:
 
 理解了状态机这个概念，我们再来看 OpenGL ES 提供的 API，就会非常明了，因为OpenGL 当中很多 API，其实仅仅是向 OpenGL 这个状态机传数据或者读数据。
 
-![201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png](http://7xkc7a.com1.z0.glb.clouddn.com/201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png)
+![201701114141530D41464-66AF-4A71-80E5-9BF8AABC016F.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_1.png)
 
 100 来个接口，如果按照不同的数据类型（GLfloat，GLint，GLsize ...），不同的元素（Uniform，Color，Texture...）划分开来，再看各个分类的接口，（~~无法~~）无非就是围绕状态展开的。
 
@@ -69,13 +69,13 @@ tags:
 
 下图就是渲染管线：
 
-![20170112148420103614414.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420103614414.jpg?imageView2/0/format/jpg)
+![20170112148420103614414.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_2.jpg)
 
 
 
 > PS：OpenGL ES 采用**服务器/客户端编程模型**，客户端运行在 CPU 上，服务端运行在 GPU 上，调用 OpenGL ES 函数的时，由客户端发送至服务器端，并被服务端转换成底层图形硬件支持的绘制命令。
 >
-> ![20170111148411873373682.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg)
+> ![20170111148411873373682.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_3.jpg)
 
 
 
@@ -102,7 +102,7 @@ tags:
 
 当然，OpenGL ES 并不提供对 3D 模型的定义，在传入 OpenGL ES 之前应用程序应该首先将 3D 模型转换为一组图元的集合。每个模型是独立绘制的，修改其中一个模型的一些设置并不会影响其他模型。
 
-![20170112148420555397978.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420555397978.jpg?imageView2/0/format/jpg)
+![20170112148420555397978.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_4.jpg)
 
 
 
@@ -114,7 +114,7 @@ tags:
 
 ### 2. 顶点着色器
 
-![2017011229641BBC4CB30-3B94-4F28-8FAB-AF502E37E641.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017011229641BBC4CB30-3B94-4F28-8FAB-AF502E37E641.png)
+![2017011229641BBC4CB30-3B94-4F28-8FAB-AF502E37E641.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_5.png)
 
 
 
@@ -128,13 +128,13 @@ tags:
 
 ### 3. 图元装配
 
-![2017011250662FC720569-D123-4FC5-9F0D-C99287364AC7.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017011250662FC720569-D123-4FC5-9F0D-C99287364AC7.png)
+![2017011250662FC720569-D123-4FC5-9F0D-C99287364AC7.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_6.png)
 
 
 
 在顶点着色器程序输出顶点坐标之后，各个顶点被按照绘制命令中的图元类型参数，以及顶点索引数组被组装成一个个图元。
 
-![20170112148421538042641.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170112148421538042641.jpg?imageView2/0/format/jpg)
+![20170112148421538042641.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_7.jpg)
 
 
 
@@ -144,7 +144,7 @@ tags:
 
 视锥体在 3D 应用程序中通常表现为一个摄像机，其观察点为裁剪坐标系的原点，方向为穿过远近平面的中点。
 
-![20170112148421539517039.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170112148421539517039.jpg?imageView2/0/format/jpg)
+![20170112148421539517039.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_8.jpg)
 
 
 
@@ -156,7 +156,7 @@ tags:
 
 ### 4. 光栅化
 
-![20170112706113F85123B-6006-4633-9D8C-C4C4DB4BA3AC.png](http://7xkc7a.com1.z0.glb.clouddn.com/20170112706113F85123B-6006-4633-9D8C-C4C4DB4BA3AC.png)
+![20170112706113F85123B-6006-4633-9D8C-C4C4DB4BA3AC.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_9.png)
 
 
 
@@ -168,7 +168,7 @@ tags:
 
 ### 5. 片段着色器
 
-![20170112997054573CDB0-956C-4A00-837F-6BDA9BA4F550.png](http://7xkc7a.com1.z0.glb.clouddn.com/20170112997054573CDB0-956C-4A00-837F-6BDA9BA4F550.png)
+![20170112997054573CDB0-956C-4A00-837F-6BDA9BA4F550.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_10.png)
 
 
 
@@ -182,11 +182,11 @@ tags:
 
 ### 6. 片段测试
 
-![2017011371566F6C27776-D170-48EF-8877-E0E541F6F193.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017011371566F6C27776-D170-48EF-8877-E0E541F6F193.png)
+![2017011371566F6C27776-D170-48EF-8877-E0E541F6F193.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_11.png)
 
 片段着色器输出的颜色值，还要经过几个阶段的片段操作，这些操作可能会修改片段的颜色值，或者丢弃该片段，**最终的片段颜色值才会被写入到帧缓冲中。**
 
-![2017011214842168484373.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/2017011214842168484373.jpg?imageView2/0/format/jpg)
+![2017011214842168484373.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_12.jpg)
 
 像素所有权测试用来判断帧缓冲区中该位置的像素是否属于当前 OpenGL ES，例如在窗口系统中该位置可能会被其他应用程序窗口遮挡，此时该像素则不会被显示。
 
@@ -202,7 +202,7 @@ tags:
 
 总的来说，**帧缓存是接收渲染结果的缓冲区，为GPU指定存储渲染结果的区域**。它存储着 OpenGL ES 绘制每个像素点最终的所有信息：颜色，深度和模板值。更通俗点，可以理解成存储屏幕上最终显示的一帧画面的区域。
 
-![20170112148423006492580.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170112148423006492580.jpg?imageView2/0/format/jpg)
+![20170112148423006492580.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_13.jpg)
 
 而**渲染缓存则存储呈现在屏幕上的渲染图像，它也被称作颜色缓冲区**，因为它本质上是存储要显示的颜色。多个纹理对象或多个渲染缓存对象，可通过连接点（attachment points）连接到帧缓存对象上。
 
@@ -210,7 +210,7 @@ tags:
 
 前帧缓存决定了屏幕上显示的像素颜色。程序的渲染结果通常保存在后帧缓存在内的其他帧缓存，当渲染后的后帧缓存包含一个完成的图像时，前后帧缓存会立即互换，前帧缓存变成新的后帧缓存，后帧缓存变成新的前帧缓存。
 
-![20170113188548B1802A3-32BF-465F-A4E0-DDC1A4D6CFF2.png](http://7xkc7a.com1.z0.glb.clouddn.com/20170113188548B1802A3-32BF-465F-A4E0-DDC1A4D6CFF2.png)
+![20170113188548B1802A3-32BF-465F-A4E0-DDC1A4D6CFF2.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_14.png)
 
 
 
@@ -230,7 +230,7 @@ tags:
 
 ## 坐标系
 
-![20170116148453735421681.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453735421681.jpg?imageView2/0/format/jpg)
+![20170116148453735421681.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_15.jpg)
 
 
 
@@ -240,7 +240,7 @@ OpenGL 渲染管线整个流程中，涉及了多个坐标系变化，看起来�
 
 
 
-![20170116148453238386304.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453238386304.jpg?imageView2/0/format/jpg)
+![20170116148453238386304.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_16.jpg)
 
 
 
@@ -250,9 +250,9 @@ OpenGL 渲染管线整个流程中，涉及了多个坐标系变化，看起来�
 
 按照惯例，OpenGL 是一个右手坐标系。简单来说，就是正 x 轴在你的右手边，正 y 轴朝上，而正 z 轴是朝向后方的。想象你的屏幕处于三个轴的中心，则正 z 轴穿过你的屏幕朝向你。坐标系画起来如下：
 
-![20170116148453800669809.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453800669809.jpg?imageView2/0/format/jpg)
+![20170116148453800669809.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_17.jpg)
 
-![20170116148453810158450.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453810158450.jpg?imageView2/0/format/jpg)
+![20170116148453810158450.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_18.jpg)
 
 
 
@@ -262,5 +262,5 @@ OpenGL 渲染管线整个流程中，涉及了多个坐标系变化，看起来�
 
 纹理坐标在 x 和 y 轴上，范围为 0 到 1 之间（我们使用的是 2D 纹理图像）。使用纹理坐标获取纹理颜色叫做采样。纹理坐标起始于（0, 0），也就是纹理图片的左下角，终始于（1, 1），即纹理图片的右上角。下面的图片展示了我们是如何把纹理坐标映射到三角形上。
 
-![20170116148453793035367.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170116148453793035367.jpg?imageView2/0/format/jpg)
+![20170116148453793035367.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_2_19.jpg)
 

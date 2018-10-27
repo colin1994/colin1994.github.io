@@ -30,7 +30,7 @@ tags:
 
 在这个初始工程里面，已经实现了新建一个继承自 **UIView** 的 **GLView**，这个自定义的视图将用来显示 OpenGL ES 的渲染内容。然后在 Main.storyboard 中，将 ViewController 的 view 改成 **GLView** 类型，即可。
 
-![2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png)
+![2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_3_1.png)
 
 至此，我们的工作都将在 **GLView** 中展开。
 

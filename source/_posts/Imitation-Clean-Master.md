@@ -15,11 +15,11 @@ tags:
 
 效果图:
 
-<img src="http://7xkc7a.com1.z0.glb.clouddn.com/imageliebao_0.PNG">
+<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/Other/imageliebao_0.PNG">
 
 <!--more-->
 
-<img src="http://7xkc7a.com1.z0.glb.clouddn.com/imageliebao_1.PNG">
+<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/Other/imageliebao_1.PNG">
 
 
 

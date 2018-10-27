@@ -17,7 +17,7 @@ but, 到底有多方便呢 ?
 
 看看官方给出的一个demo效果:
 
-![Jazzhandsjazzhands-demo](http://7xkc7a.com1.z0.glb.clouddn.com/Jazzhandsjazzhands-demo.gif)
+![Jazzhandsjazzhands-demo](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/Jazzhandsjazzhands-demo.gif)
 
 <!--more-->
 
@@ -39,7 +39,7 @@ but, 到底有多方便呢 ?
 
 先看一下源工程目录: 
 
-![](http://7xkc7a.com1.z0.glb.clouddn.com/Jazzhands4F254DBC-408A-4073-A73C-8CBABBC6D580.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/Jazzhands_1.png)
 
 
 
@@ -261,7 +261,7 @@ but, 到底有多方便呢 ?
 
 比如可以仿照下美图秀秀的引导页, 写个简单demo, 效果如下:
 
-![MTXX_DEMO](http://7xkc7a.com1.z0.glb.clouddn.com/JazzhandsunityResult2.gif)
+![MTXX_DEMO](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/JazzhandsunityResult2.gif)
 
 
 

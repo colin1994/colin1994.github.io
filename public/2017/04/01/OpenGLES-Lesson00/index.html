@@ -46,16 +46,16 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
 Q &amp;amp; AQ：OpenGL 是什么 ?
 
 A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件行业协会，该协会主要关注图形和多媒体方面的开放标准）开发维护的一个规范，它是硬件无关的。它主要为我们定义了用来操作">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411700373589.jpg?imageView2/0/format/jpg">
-<meta property="og:updated_time" content="2017-04-18T12:58:18.000Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_1.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_2.jpg">
+<meta property="og:updated_time" content="2018-10-27T09:10:20.502Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenGL ES 开篇">
 <meta name="twitter:description" content="在学习 OpenGL ES 之前，总结下我自己接触 OpenGL ES 时的一些疑惑，我相信这也是初学者都会遇到的一些困惑。
 Q &amp;amp; AQ：OpenGL 是什么 ?
 
 A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件行业协会，该协会主要关注图形和多媒体方面的开放标准）开发维护的一个规范，它是硬件无关的。它主要为我们定义了用来操作">
-<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_1.jpg">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
@@ -151,7 +151,7 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -160,7 +160,7 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -169,7 +169,7 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -178,7 +178,7 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -213,7 +213,7 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Q_&_A"><span class="toc-text">Q & A</span></a></li></ol>
     </div>
@@ -234,14 +234,14 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
 <p>A：OpenGL ES（OpenGL for Embedded Systems）是 OpenGL 的子集，针对手机、PDA和游戏主机等嵌入式设备而设计。该规范也是由 Khronos Group 开发维护。</p>
 <p>OpenGL ES 是从 OpenGL 裁剪定制而来的，去除了 glBegin/glEnd，四边形（GL_QUADS）、多边形（GL_POLYGONS）等复杂图元等许多非绝对必要的特性，剩下最核心有用的部分。</p>
 <p>可以理解成是一个<strong>在移动平台上能够支持 OpenGL 最基本功能的精简规范</strong>。</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg" alt="20170111148411873373682.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_1.jpg" alt="20170111148411873373682.jpg"></p>
 <p>OpenGL ES 横跨在两个处理器之间，<strong>协调两个内存区域之间的数据交换</strong>。</p>
 </blockquote>
 <p><strong>Q：为什么要使用 OpenGL ES ?</strong></p>
 <blockquote>
 <p>A：通常来说，计算机系统中 CPU、GPU 是协同工作的。CPU 计算好显示内容提交到 GPU，GPU 渲染完成后将渲染结果放入帧缓冲区，随后视频控制器会按照 VSync 信号逐行读取帧缓冲区的数据，经过可能的数模转换传递给显示器显示。所以，尽可能让 CPU 和 GPU 各司其职发挥作用是提高渲染效率的关键。</p>
 <p>正如我们之前提到过，OpenGL 正是给我们提供了访问 GPU 的能力，不仅如此，它还引入了<strong>缓存</strong>（Buffer）这个概念，大大提高了处理效率。</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411700373589.jpg?imageView2/0/format/jpg" alt="20170111148411700373589.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_2.jpg" alt="20170111148411700373589.jpg"></p>
 <p>图中的剪头，代表着数据交换，也是主要的性能瓶颈。</p>
 <p><strong>从一个内存区域复制到另一个内存区域的速度是相对较慢的</strong>，并且在内存复制的过程中，CPU 和 GPU 都不能处理这区域内存，避免引起错误。此外，CPU / GPU 执行计算的速度是很快的，而内存的访问是相对较慢的，这也导致<strong>处理器的性能处于次优状态</strong>，这种状态叫做“<strong>数据饥饿</strong>”，简单来说就是<strong>空有一身本事却无用武之地</strong>。</p>
 <p>针对此，OpenGL 为了提升渲染的性能，为两个内存区域间的数据交换定义了<strong>缓存</strong>。缓存是指 <strong>GPU 能够控制和管理的连续 RAM</strong>。程序从 CPU 的内存复制数据到 OpenGL ES 的缓存。通过独占缓存，GPU 能够尽可能以有效的方式读写内存。 GPU 把它处理数据的能力异步地应用在缓存上，意味着 GPU 使用缓存中的数据工作的同时，运行在 CPU 中的程序可以继续执行。</p>
@@ -320,13 +320,13 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
       <a class="prev" href="/2017/04/01/OpenGLES-Lesson01/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">OpenGL ES 基础概念</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
       <a class="next" href="/2017/04/01/OpenGLES-Menu/">
         <span class="next-text nav-default">OpenGL ES， 初学者的自我总结</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -393,11 +393,11 @@ A：OpenGL（Open Graphics Library）是 Khronos Group （一个图形软硬件�
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 

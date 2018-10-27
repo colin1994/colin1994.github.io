@@ -40,18 +40,18 @@
 <meta property="og:url" content="http://http://colin1994.github.io/2016/06/03/TDD-With-Swift/index.html">
 <meta property="og:site_name" content="Colin's Nest">
 <meta property="og:description" content="花了几天时间，看完了 《Test-Driven iOS Development with Swift》 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 ToDo 应用展开，讲解了 Test-Driven Development （TDD，即测试驱动开发） 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_0.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_3.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_1.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_4.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_5.jpeg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_6.jpeg">
-<meta property="og:updated_time" content="2016-06-03T11:54:01.000Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDTDDFigure.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_0.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_3.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_1.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_4.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_5.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_6.jpeg">
+<meta property="og:updated_time" content="2018-10-27T09:23:56.006Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TDD 学习总结（Swift 实践）">
 <meta name="twitter:description" content="花了几天时间，看完了 《Test-Driven iOS Development with Swift》 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 ToDo 应用展开，讲解了 Test-Driven Development （TDD，即测试驱动开发） 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~">
-<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDTDDFigure.png">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
@@ -147,7 +147,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -156,7 +156,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -165,7 +165,7 @@
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -174,7 +174,7 @@
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -209,7 +209,7 @@
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是_TDD"><span class="toc-text">什么是 TDD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#是否该用_TDD"><span class="toc-text">是否该用 TDD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS_中如何使用_TDD"><span class="toc-text">iOS 中如何使用 TDD</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_创建工程"><span class="toc-text">1. 创建工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_编写测试用例"><span class="toc-text">2. 编写测试用例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-text">参考链接</span></a></li></ol>
     </div>
@@ -221,7 +221,7 @@
         <blockquote>
 <p>花了几天时间，看完了 <a href="https://www.packtpub.com/application-development/test-driven-ios-development-swift" target="_blank" rel="external">《Test-Driven iOS Development with Swift》</a> 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 <code>ToDo</code> 应用展开，讲解了 <code>Test-Driven Development （TDD，即测试驱动开发）</code> 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~</p>
 </blockquote>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png" alt="TDD"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDTDDFigure.png" alt="TDD"></p>
 <a id="more"></a>
 <h2 id="什么是_TDD">什么是 TDD</h2><p>测试驱动开发(TDD)是极限编程的重要特点，它以不断的测试推动代码的开发，既简化了代码，又保证了软件质量。</p>
 <p>测试驱动开发的基本思想就是在开发功能代码之前，先编写测试代码。也就是说在明确要开发某个功能后，首先思考如何对这个功能进行测试，并完成测试代码的编写，然后编写相关的代码满足这些测试用例。然后循环进行添加其他功能，直到完全部功能的开发。</p>
@@ -288,9 +288,9 @@
 <p>既然 Xcode 为我们内置了这么方便的 XCTest，我们没理由不好好使用阿~</p>
 <p>接下去通过实现一个简单的功能：把句子中每个单词的首字母转成大写字母，来走一遍 TDD 的流程。话不多说，开车了~</p>
 <h3 id="1-_创建工程">1. 创建工程</h3><p>这里创建一个常规的 iOS 工程，记得 <code>“ Include Unit Tests”</code> 即可，语言我们选择 <code>Swift</code>。</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_0.jpeg" alt="demo_0"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_0.jpeg" alt="demo_0"></p>
 <p>创建完毕后的工程目录如下：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_3.jpeg" alt="demo_1"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_3.jpeg" alt="demo_1"></p>
 <p>默认为我们创建了 <code>TDDDemoTests.swift</code> 文件，这里就是我们编写测试用例的地方。打开该文件，如下所示：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  TDDDemoTests.swift</span></span><br><span class="line"><span class="comment">//  TDDDemoTests</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Created by Colin on 16/6/3.</span></span><br><span class="line"><span class="comment">//  Copyright © 2016年 Colin. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> XCTest</span><br><span class="line"><span class="meta">@testable</span> <span class="keyword">import</span> TDDDemo</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TDDDemoTests</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">setUp</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.setUp()</span><br><span class="line">        <span class="comment">// Put setup code here. This method is called before the invocation of each test method in the class.</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">tearDown</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// Put teardown code here. This method is called after the invocation of each test method in the class.</span></span><br><span class="line">        <span class="keyword">super</span>.tearDown()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testExample</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// This is an example of a functional test case.</span></span><br><span class="line">        <span class="comment">// Use XCTAssert and related functions to verify your tests produce the correct results.</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testPerformanceExample</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="comment">// This is an example of a performance test case.</span></span><br><span class="line">        <span class="keyword">self</span>.measureBlock &#123;</span><br><span class="line">            <span class="comment">// Put the code you want to measure the time of here.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其中，有几个地方需要说明一下：</p>
@@ -300,16 +300,16 @@
 <p>另外，每一个测试方法都需要以 <code>test</code> 开头，这样 Xcode 才能自动识别出它。比如默认提供的 <code>testExample</code> 和 <code>testPerformanceExample</code> 。</p>
 <p>再有，这里建议在 Bulid 开始的时候，新建一个导航栏，并且打印 Build Log，这样我们能更直观知道发生了什么，哪里出错了。具体设置如下： <strong>Xcode | Preference | Behaviors</strong> </p>
 <p>如图所示：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_1.jpeg" alt="demo_2"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_1.jpeg" alt="demo_2"></p>
 <p>现在 <strong>Command + U</strong>，执行测试。毋庸置疑，测试通过（毕竟啥都还没开始写…）。你会看到如下界面：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_4.jpeg" alt="demo_3"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_4.jpeg" alt="demo_3"></p>
 <p>左边的  <strong>Test Navigation</strong> 列举了所有的测试用例以及对应的测试结果。中间的编辑区展示了 <strong>Bulid</strong> 过程中具体做了什么，以及 <strong>Build</strong> 结果。</p>
 <p>哦，对了。还有一处设置也很有用。</p>
 <p><strong>Edit Scheme | Test</strong> ，可以看到右边列举了所有参与测试的用例。当然我们知道，每个用例的测试都是需要时间的，如果想对某个用例单独测试，或者不想测试某个用例，相应的勾选和去选就可以了。</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_5.jpeg" alt="demo_4"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_5.jpeg" alt="demo_4"></p>
 <h3 id="2-_编写测试用例">2. 编写测试用例</h3><p>好了，万事俱备，是时候展示真正的技术了！</p>
 <p>删除默认的 <code>TDDDemoTests.swift</code> 文件，重新创建一个 <code>CapitalTest.swift</code> 文件。在 <code>TDDDemoTests</code> 分组中，<strong>File | New | File | iOS | Source | Unit Test Case Class</strong> ，创建一个名为 <strong>CapitalTest</strong> 并 继承自 <strong>XCTestCase</strong> 的类。如图所示：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_6.jpeg" alt="demo_5"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_6.jpeg" alt="demo_5"></p>
 <p>删掉无用的 <strong>testExample，testPerformanceExample</strong> 方法。</p>
 <p>引用 <strong>TDDDemo</strong> 类。</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@testable</span> <span class="keyword">import</span> TDDDemo</span><br></pre></td></tr></table></figure>
@@ -328,7 +328,7 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital2</span><span class="params">()</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> string = <span class="string">"Here is another Example"</span></span><br><span class="line">    <span class="keyword">let</span> headline = viewController.makeHeadline(string)</span><br><span class="line">    </span><br><span class="line">    <span class="type">XCTAssertEqual</span>(headline, <span class="string">"Here Is Another Example"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>再次 <strong>Command + U</strong>，不出意外，第一个还是通过，第二个则显示失败。原因大家都懂~</p>
 <p>接下去修改 <code>makeHeadline</code> 的具体实现：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 通过“ ”分割字符串, 存入数组</span></span><br><span class="line">    <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 遍历数组, 移除首字母, 并插入对应的大写字母</span></span><br><span class="line">    <span class="keyword">var</span> headline = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">var</span> word <span class="keyword">in</span> words &#123;</span><br><span class="line">        <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">        headline += <span class="string">"<span class="subst">\(String(firstCharacter)</span>.uppercaseString)<span class="subst">\(word)</span> "</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 移除最后的“ ”</span></span><br><span class="line">    headline.removeAtIndex(headline.endIndex.predecessor())</span><br><span class="line">    <span class="keyword">return</span> headline</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 通过“ ”分割字符串, 存入数组</span></span><br><span class="line">    <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 遍历数组, 移除首字母, 并插入对应的大写字母</span></span><br><span class="line">    <span class="keyword">var</span> headline = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">var</span> word <span class="keyword">in</span> words &#123;</span><br><span class="line">        <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">        headline += <span class="string">"\(String(firstCharacter).uppercaseString)\(word) "</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 移除最后的“ ”</span></span><br><span class="line">    headline.removeAtIndex(headline.endIndex.predecessor())</span><br><span class="line">    <span class="keyword">return</span> headline</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码很简单，注释也写的很清楚，这里就不累述了。再次 <strong>Command + U</strong>，bingo~ 通过了。</p>
 <p>接下去再看看，是否有优化的空间。</p>
 <ol>
@@ -336,7 +336,7 @@
 <li><strong>makeHeadline</strong> 函数的实现太 Objc 化了，没有用上 Swift 里的高级功能。</li>
 </ol>
 <p>OK，既然不好，那就优化一下呗~</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> inputString =       <span class="string">"this is A test headline"</span></span><br><span class="line">        <span class="keyword">let</span> expectedHeadline =  <span class="string">"This Is A Test Headline"</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> result = viewController.makeHeadline(inputString)</span><br><span class="line">        <span class="type">XCTAssertEqual</span>(result, expectedHeadline)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> headline = words.<span class="built_in">map</span> &#123; (<span class="keyword">var</span> word) -&gt; <span class="type">String</span> <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">          <span class="keyword">return</span> <span class="string">"<span class="subst">\(String(firstCharacter)</span>.uppercaseString)<span class="subst">\(word)</span>"</span></span><br><span class="line">          &#125;.joinWithSeparator(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> headline</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> inputString =       <span class="string">"this is A test headline"</span></span><br><span class="line">        <span class="keyword">let</span> expectedHeadline =  <span class="string">"This Is A Test Headline"</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> result = viewController.makeHeadline(inputString)</span><br><span class="line">        <span class="type">XCTAssertEqual</span>(result, expectedHeadline)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> headline = words.<span class="built_in">map</span> &#123; (<span class="keyword">var</span> word) -&gt; <span class="type">String</span> <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">          <span class="keyword">return</span> <span class="string">"\(String(firstCharacter).uppercaseString)\(word)"</span></span><br><span class="line">          &#125;.joinWithSeparator(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> headline</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>再次  <strong>Command + U</strong>，确保测试通过。至此，这个简单的例子算是介绍完了。</p>
 <p>虽然例子简单，只实现了一个功能，但是 TDD 相关的东西，具体流程也都涉及了，剩下的，只是重复这些操作直至完成所有需求。</p>
 <p>如果觉得这个例子太简单了，没学够，建议看下 <a href="https://www.packtpub.com/application-development/test-driven-ios-development-swift" target="_blank" rel="external">《Test-Driven iOS Development with Swift》</a>  一书中的 <a href="http://www.packtpub.com/code_download/23832" target="_blank" rel="external">ToDo 源码</a>，大篇幅介绍 TDD 的实际应用。</p>
@@ -398,13 +398,13 @@
       <a class="prev" href="/2016/06/14/What's_New_in_iOS_10.0_zh_0/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">What's New in iOS 10.0 中文版(上)</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
       <a class="next" href="/2016/06/02/hexo-copyright-and-donate/">
         <span class="next-text nav-default">为Hexo博客添加版权说明和打赏功能</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -471,11 +471,11 @@
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 

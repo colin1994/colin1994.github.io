@@ -44,16 +44,16 @@
 <meta property="og:description" content="在上篇文章中，已经介绍了 OpenGL ES 的基础环境搭建，并且实现了设置背景色功能。
 在本文中，我们将会在上文的基础上，渲染基本图元，三角形。在这个过程中，将会详细介绍可编程图形渲染管线是如何工作的。
 最终的效果如下：">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017013028167QQ20170130-174258@2x.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420103614414.jpg?imageView2/0/format/jpg">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png">
-<meta property="og:updated_time" content="2018-08-25T03:25:34.000Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_2.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_3.png">
+<meta property="og:updated_time" content="2018-10-27T09:21:44.425Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenGL ES 渲染基本图元">
 <meta name="twitter:description" content="在上篇文章中，已经介绍了 OpenGL ES 的基础环境搭建，并且实现了设置背景色功能。
 在本文中，我们将会在上文的基础上，渲染基本图元，三角形。在这个过程中，将会详细介绍可编程图形渲染管线是如何工作的。
 最终的效果如下：">
-<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017013028167QQ20170130-174258@2x.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_1.png">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
@@ -149,7 +149,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -158,7 +158,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -167,7 +167,7 @@
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -176,7 +176,7 @@
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -211,7 +211,7 @@
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-_初始工程"><span class="toc-text">0. 初始工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_顶点数据"><span class="toc-text">1. 顶点数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_顶点缓存对象（VBO）"><span class="toc-text">2. 顶点缓存对象（VBO）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_着色器编写"><span class="toc-text">3. 着色器编写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_编译着色器"><span class="toc-text">4. 编译着色器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-_着色器程序"><span class="toc-text">5. 着色器程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-_链接顶点属性"><span class="toc-text">6. 链接顶点属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-_测试，运行"><span class="toc-text">7. 测试，运行</span></a></li></ol>
     </div>
@@ -223,13 +223,13 @@
         <p>在<a href="http://colin1994.github.io/2017/04/09/OpenGLES-Lesson02/" target="_blank" rel="external">上篇文章</a>中，已经介绍了 OpenGL ES 的基础环境搭建，并且实现了设置背景色功能。</p>
 <p>在本文中，我们将会在上文的基础上，渲染基本图元，三角形。在这个过程中，将会详细介绍可编程图形渲染管线是如何工作的。</p>
 <p>最终的效果如下：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017013028167QQ20170130-174258@2x.png" alt="2017013028167QQ20170130-174258@2x.png"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_1.png" alt="2017013028167QQ20170130-174258@2x.png"></p>
 <a id="more"></a>
 <h2 id="0-_初始工程">0. 初始工程</h2><p>你可以从<a href="https://github.com/colin1994/OpenGLES/blob/master/Lesson02/OpenGLESDemo_1.zip" target="_blank" rel="external">这里</a>下载到初始工程，避免重复实现一些和本节内容不相干的事情。</p>
 <p>这是上一节的最终工程，包含了 OpenGL ES 的基础环境搭建。</p>
 <blockquote>
 <p>PS：</p>
-<p>在之后的步骤里，如果你细心观察对比，你会发现其实它就是围绕图形渲染管线展开的，把之前介绍的内容，用代码的方式实现出来，具体流程可以参照下图回顾：<img src="http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420103614414.jpg?imageView2/0/format/jpg" alt="20170112148420103614414.jpg"></p>
+<p>在之后的步骤里，如果你细心观察对比，你会发现其实它就是围绕图形渲染管线展开的，把之前介绍的内容，用代码的方式实现出来，具体流程可以参照下图回顾：<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_2.jpg" alt="20170112148420103614414.jpg"></p>
 </blockquote>
 <h2 id="1-_顶点数据">1. 顶点数据</h2><p>开始渲染图形之前，我们必须先给 OpenGL ES 输入一些顶点数据。</p>
 <p>为了渲染一个如图所示的三角形，我们需要以数组的形式传递3个 3D 坐标（之前提到过，在 OpenGL 中，任何事物都在 <strong>3D</strong> 空间中）作为图形渲染管线的输入，用来表示一个三角形，这个数组叫做顶点数据（Vertex Data），<strong>顶点数据是一系列顶点的集合</strong>。</p>
@@ -359,7 +359,7 @@
 </blockquote>
 <h2 id="6-_链接顶点属性">6. 链接顶点属性</h2><p>现在，我们已经把输入顶点数据发送给了 GPU，并指示了 GPU 如何在顶点和片段着色器中处理它。但是，OpenGL ES 还不知道它该如何解析内存中的顶点数据，以及它该如何将顶点数据链接到顶点着色器的属性上。我们需要告诉 OpenGL ES 怎么做。</p>
 <p>我们传入的顶点数据 <strong>vertices</strong>，是这样排布的：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png" alt="2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_3.png" alt="2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png"></p>
 <p>从这个图上，我们可以很清晰知道我们的顶点数据是如何排布，每个字节对应哪些内容，但是 OpenGL ES 本身并不知道，我们应该告诉它如何解析这些顶点数据。</p>
 <p>首先，我们需要定义与着色器脚本相对应的变量，为了方便，可以直接使用枚举。</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span></span><br><span class="line">&#123;</span><br><span class="line">    ATTRIBUTE_POSITION = <span class="number">0</span>,</span><br><span class="line">    ATTRIBUTE_COLOR,</span><br><span class="line">    NUM_ATTRIBUTES</span><br><span class="line">&#125;;</span><br><span class="line">GLint glViewAttributes[NUM_ATTRIBUTES];</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">  </span><br><span class="line">glViewAttributes[ATTRIBUTE_POSITION] = glGetAttribLocation(programHandle, <span class="string">"position"</span>);</span><br><span class="line">glViewAttributes[ATTRIBUTE_COLOR]  = glGetAttribLocation(programHandle, <span class="string">"color"</span>);</span><br><span class="line"></span><br><span class="line">glEnableVertexAttribArray(glViewAttributes[ATTRIBUTE_POSITION]);</span><br><span class="line">glEnableVertexAttribArray(glViewAttributes[ATTRIBUTE_COLOR]);</span><br></pre></td></tr></table></figure>
@@ -463,13 +463,13 @@
       <a class="prev" href="/2017/08/31/iOS-Unit-Testing/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">iOS 单元测试</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
       <a class="next" href="/2017/04/09/OpenGLES-Lesson02/">
         <span class="next-text nav-default">OpenGL ES 环境搭建</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -536,11 +536,11 @@
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 

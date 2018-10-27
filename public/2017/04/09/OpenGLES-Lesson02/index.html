@@ -47,8 +47,8 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
 
 PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽的特性，都是在此基础上完成的。所以理解它是很有必要的～">
 <meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017012639178QQ20170126-231448@2x.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png">
-<meta property="og:updated_time" content="2017-04-18T12:58:18.000Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_3_1.png">
+<meta property="og:updated_time" content="2018-10-27T09:19:57.472Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenGL ES 环境搭建">
 <meta name="twitter:description" content="在上篇文章中，已经介绍了 OpenGL ES 的一些基础概念以及大致工作流程。
@@ -151,7 +151,7 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -160,7 +160,7 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -169,7 +169,7 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -178,7 +178,7 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -213,7 +213,7 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-_初始工程"><span class="toc-text">0. 初始工程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_CAEAGLLayer"><span class="toc-text">1. CAEAGLLayer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_EAGLContext"><span class="toc-text">2. EAGLContext</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_Renderbuffer"><span class="toc-text">3. Renderbuffer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_Framebuffer"><span class="toc-text">4. Framebuffer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-_最简单的渲染，设置背景色"><span class="toc-text">5. 最简单的渲染，设置背景色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-_收工，检验"><span class="toc-text">6. 收工，检验</span></a></li></ol>
     </div>
@@ -232,7 +232,7 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
 <a id="more"></a>
 <h2 id="0-_初始工程">0. 初始工程</h2><p>你可以从<a href="https://github.com/colin1994/OpenGLES/blob/master/Lesson02/OpenGLESDemo_1.zip" target="_blank" rel="external">这里</a>下载到初始工程，避免重复实现一些和本节内容不相干的事情。</p>
 <p>在这个初始工程里面，已经实现了新建一个继承自 <strong>UIView</strong> 的 <strong>GLView</strong>，这个自定义的视图将用来显示 OpenGL ES 的渲染内容。然后在 Main.storyboard 中，将 ViewController 的 view 改成 <strong>GLView</strong> 类型，即可。</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png" alt="2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_3_1.png" alt="2017012663829D0A3C5CE-818A-4C93-8D3E-1C302E29220F.png"></p>
 <p>至此，我们的工作都将在 <strong>GLView</strong> 中展开。</p>
 <p>在 <strong>GLView.h</strong> 中，先声明一些将要用到的成员变量：</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">GLView</span> : <span class="title">UIView</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">CAEAGLLayer</span> *_eaglLayer;</span><br><span class="line">    EAGLContext *_context;</span><br><span class="line">    GLuint       _framebuffer;</span><br><span class="line">    GLuint       _renderbuffer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -382,13 +382,13 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
       <a class="prev" href="/2017/04/18/OpenGLES-Lesson03/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">OpenGL ES 渲染基本图元</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
       <a class="next" href="/2017/04/01/OpenGLES-Lesson01/">
         <span class="next-text nav-default">OpenGL ES 基础概念</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -455,11 +455,11 @@ PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽�
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 

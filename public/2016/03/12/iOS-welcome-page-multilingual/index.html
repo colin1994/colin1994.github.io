@@ -40,21 +40,21 @@
 <meta property="og:url" content="http://http://colin1994.github.io/2016/03/12/iOS-welcome-page-multilingual/index.html">
 <meta property="og:site_name" content="Colin's Nest">
 <meta property="og:description" content="启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 UILaunchImages ~ 下文将详细描述如何实现启动页多语言。">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_0.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_1.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_2.png">
 <meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/181/original/%E5%BC%80%E5%BF%8309.png">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/262538-a84f9bece1aa8b37.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg">
 <meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/283/original/%E7%94%9F%E6%B0%9411.png">
 <meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-03-12%20%E4%B8%8B%E5%8D%884.44.06.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesF9E4E70D-B3D3-46E6-ADCE-E789F50491B3.png">
-<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages863C1341-C42D-47C3-9FC7-B0F85EE78DA7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_3.png">
 <meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/270/original/%E5%BE%97%E7%91%9F10.png">
-<meta property="og:updated_time" content="2016-03-16T09:17:48.000Z">
+<meta property="og:updated_time" content="2018-10-27T09:06:22.597Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS启动页多语言">
 <meta name="twitter:description" content="启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 UILaunchImages ~ 下文将详细描述如何实现启动页多语言。">
-<meta name="twitter:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_0.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
@@ -150,7 +150,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -159,7 +159,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -168,7 +168,7 @@
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -177,7 +177,7 @@
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -212,7 +212,7 @@
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#传统多语言设置"><span class="toc-text">传统多语言设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动页设置"><span class="toc-text">启动页设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UILaunchImages"><span class="toc-text">UILaunchImages</span></a></li></ol>
     </div>
@@ -227,11 +227,11 @@
 <a id="more"></a>
 <h2 id="传统多语言设置">传统多语言设置</h2><p>说起多语言, 我们无非这样实现:</p>
 <ol>
-<li><p>为 App 添加多语言支持。<img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_0.png" alt="LaunchImages_0"></p>
+<li><p>为 App 添加多语言支持。<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png" alt="LaunchImages_0"></p>
 </li>
 <li><p>添加对应的配置, 资源。 比如：</p>
-<p>文本: <img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_1.png" alt="LaunchImages_1"></p>
-<p>图片:<img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_2.png" alt="LaunchImages_2"></p>
+<p>文本: <img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_1.png" alt="LaunchImages_1"></p>
+<p>图片:<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_2.png" alt="LaunchImages_2"></p>
 </li>
 <li><p>使用对应资源, 比如:</p>
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label.text = <span class="built_in">NSLocalizedString</span>(<span class="string">@"多语言"</span>, <span class="literal">nil</span>);</span><br></pre></td></tr></table></figure>
@@ -279,10 +279,10 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImages<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>7.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;320, 480&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage-568h<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>7.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;320, 568&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage-667h<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>8.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;375, 667&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage-736h<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>8.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;414, 736&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>   <img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesF9E4E70D-B3D3-46E6-ADCE-E789F50491B3.png" alt=""></p>
+<p>   <img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_4.png" alt=""></p>
 <ol>
 <li><p>添加对应的启动页资源</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages863C1341-C42D-47C3-9FC7-B0F85EE78DA7.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_3.png" alt=""></p>
 <p>​</p>
 </li>
 </ol>
@@ -345,13 +345,13 @@
       <a class="prev" href="/2016/03/12/Photo-Editing-Extension/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">Photo Editing Extension 详解 (附带应用滤镜Demo)</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
       <a class="next" href="/2015/07/13/Imitation-Clean-Master/">
         <span class="next-text nav-default">仿猎豹垃圾清理</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -418,11 +418,11 @@
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 

@@ -62,7 +62,7 @@ Core Image 系列，目前的文章如下：
 
 拿一个图片翻转效果举例，效果如下：
 
-![2016101449356mirrorX.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101449356mirrorX.png)
+![2016101449356mirrorX.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/mirrorX.png)
 
 ### 1. 编写 CIKernel
 
@@ -346,7 +346,7 @@ CIKernelROICallback 在 Core Image 内部进行处理的时候，会多次调用
 
 先看一个旋转的例子。
 
-![2016101449433roi_1.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101449433roi_1.png)
+![2016101449433roi_1.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/roi_1.png)
 
 这里就是进行了 x，y 互换操作。很容易得到我们的 DOD：
 
@@ -474,11 +474,11 @@ CIKL 的语法和大多数 C 阵营一样，变量，运算符，控制结构，
 
 它的效果如下所示：
 
-![2016101796011vignette_demo.gif](http://7xkc7a.com1.z0.glb.clouddn.com/2016101796011vignette_demo.gif)
+![2016101796011vignette_demo.gif](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/vignette_demo.gif)
 
 不难看出，Vignette 滤镜，它实际上就是一个FOV（Field of View） 的效果，即视野中央看的最清楚，清晰程度与到中心距离呈反比，与人类的视觉是类似的。
 
-![2016101524815vignette.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101524815vignette.png)
+![2016101524815vignette.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/vignette.png)
 
 所以针对图片上的每个像素点 A，经过 Vignette 滤镜处理后得到的 B，应该满足：
 
@@ -594,7 +594,7 @@ NS_CLASS_AVAILABLE(10_11, 8_0)
 
 下面以一个马赛克，像素化（Pixellate）的例子来讲解。它的效果如下：
 
-![2016101762677pixellate_demo.gif](http://7xkc7a.com1.z0.glb.clouddn.com/2016101762677pixellate_demo.gif)
+![2016101762677pixellate_demo.gif](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/pixellate_demo.gif)
 
 马赛克，比较简单的一种算法是按照固定的间隔取像素点，将图片分割成一些小块，然后每个小块内选择一个像素点，然后把这个区域全部用这个像素点填充即可。这里的每个小块，称作晶格，晶格越大，马赛克效果越好。
 
@@ -647,7 +647,7 @@ centerPoint.y = positionOfDestPixel.y - mod(positionOfDestPixel.y, radius * 2.0)
 
 比如说，美图秀秀里面的一些简单马赛克，效果如下：
 
-![2016101864134mosaic_demo.gif](http://7xkc7a.com1.z0.glb.clouddn.com/2016101864134mosaic_demo.gif)
+![2016101864134mosaic_demo.gif](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/mosaic_demo.gif)
 
 
 
@@ -742,7 +742,7 @@ pixel（R, G, B, A） —— (premultiply) ——> (R＊A, G＊A, B＊A, A)
 
 比如一个反相滤镜，
 
-![2016101643860rever_1.gif](http://7xkc7a.com1.z0.glb.clouddn.com/2016101643860rever_1.gif)![20161016903rever_2.gif](http://7xkc7a.com1.z0.glb.clouddn.com/20161016903rever_2.gif)
+![2016101643860rever_1.gif](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/rever_1.gif)![20161016903rever_2.gif](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/rever_2.gif)
 
 
 
@@ -788,7 +788,7 @@ kernel vec4 _invertColor(sampler source_image)
 
 下面是官方 Session 中翻转对应的 kernel 脚本，这里用到了 input 关键字，导致整个 kernel 错误。
 
-![2016101638470session_error.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101638470session_error.png)
+![2016101638470session_error.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/session_error.png)
 
 
 
@@ -796,9 +796,9 @@ kernel vec4 _invertColor(sampler source_image)
 
 下面是在 Github 上引起的灾难..
 
-![2016101685335error_1.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101685335error_1.png)
+![2016101685335error_1.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/error_1.png)
 
-![2016101697866error_2.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101697866error_2.png)
+![2016101697866error_2.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/error_2.png)
 
 
 
@@ -932,7 +932,7 @@ B 包括：
 
 使用上，比如简单的查看 initial graph 做了什么，即我们添加这个 Filter 的时候，初始化过程执行了什么，传入了哪些参数。当然，这个过程它并没有真正得到渲染，只是一个操作流程列表。设置 CI_PRINT_TREE ＝ 1，如下：
 
-![2016101786999ci_print_tree.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101786999ci_print_tree.png)
+![2016101786999ci_print_tree.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/ci_print_tree.png)
 
 它的结果如下：
 
@@ -972,7 +972,7 @@ programs graph render_to_display (opengles2 context 1 frame 4 tile 1) format=RGB
 
 比如上面 Log 对应绘制得到的图形如下：
 
-![201610186930programs_graph.png](http://7xkc7a.com1.z0.glb.clouddn.com/201610186930programs_graph.png)
+![201610186930programs_graph.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/programs_graph.png)
 
 同样是从下往上看，各个操作的层级关系就很明显了。除了我们提供的 vignetteKernel，Core Image 内部还做了其他的操作，比如 **linear_to_srgb，clamp_to_alpha** 等。它们的具体实现如下：
 
@@ -1051,7 +1051,7 @@ Quartz Composer 是一款图形化的编程工具，专门用来生成各种动�
 
 另外，在 QC 上编写 Kernel，除了代码高亮，实时调整效果也很棒。
 
-![2016101158579quartz_2.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101158579quartz_2.png)
+![2016101158579quartz_2.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/quartz_2.png)
 
 
 
@@ -1063,7 +1063,7 @@ Quartz Composer 是一款图形化的编程工具，专门用来生成各种动�
 
 
 
-![2016092059430download_Graphic_Tools_for_XCode.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016092059430download_Graphic_Tools_for_XCode.png)
+![2016092059430download_Graphic_Tools_for_XCode.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/download_Graphic_Tools_for_XCode.png)
 
 
 
@@ -1091,21 +1091,21 @@ Patch 可以理解成 Kernel。
 
 **编辑区：** 这是主面板，主要衔接各个 Patch，以及它们的输入，输出。
 
-![2016101175676panel_1.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101175676panel_1.png)
+![2016101175676panel_1.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/panel_1.png)
 
 
 
 **Library：** 这里陈列了 QC 内置的所有 Patch（也可以添加自定义的 Patch 进来），以及它们的详细使用介绍。(通过点击主面板左上角的 Patch Library 打开)
 
-![2016101159731panel_2.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101159731panel_2.png)
+![2016101159731panel_2.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/panel_2.png)
 
 **参数区：** 这里设置各个 Patch 需要的输入参数。(通过点击主面板工具栏上的 Parameters 打开)
 
-![2016101163517panel_3.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101163517panel_3.png)
+![2016101163517panel_3.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/panel_3.png)
 
 **Viewer：** 显示窗口，这里可以对 Layer 做处理，也可以响应用户操作。比如鼠标点击，移动，滑动等。
 
-![2016101121147panel_4.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101121147panel_4.png)
+![2016101121147panel_4.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/panel_4.png)
 
 
 
@@ -1113,7 +1113,7 @@ Patch 可以理解成 Kernel。
 
 首先，点击 Patch Library，添加一个 Core Image Filter。
 
-![2016101898471qc_demo_1.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101898471qc_demo_1.png)
+![2016101898471qc_demo_1.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/qc_demo_1.png)
 
 
 
@@ -1145,7 +1145,7 @@ kernel vec4 coreImageKernel(sampler image, vec2 centerPostion, float radius, flo
 }
 ```
 
-![201610185070qc_demo_2.png](http://7xkc7a.com1.z0.glb.clouddn.com/201610185070qc_demo_2.png)
+![201610185070qc_demo_2.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/qc_demo_2.png)
 
 > PS：这里不再讲解这个眼睛放大 kernel 的实现原理。
 >
@@ -1169,13 +1169,13 @@ function __image main(__image image, __vec2 centerPostion, __number radius, __nu
 
 这个时候，主面板应该长这样：
 
-![201610184625qc_demo_3.png](http://7xkc7a.com1.z0.glb.clouddn.com/201610184625qc_demo_3.png)
+![201610184625qc_demo_3.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/qc_demo_3.png)
 
 然后拖拽一张图片到主面板中，把图片的 Output Image 与 Filter 的 Input Image 想连接。
 
 再从 Patch Library 中选择 Billboard。把 Filter 的 Output Image 与 Billboard 的 Input Image 相连接。
 
-![2016101846779qc_demo_4.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101846779qc_demo_4.png)
+![2016101846779qc_demo_4.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/qc_demo_4.png)
 
 然后选中 Filter，打开 Parameters 面板，输入参数值，即可。
 
@@ -1183,7 +1183,7 @@ function __image main(__image image, __vec2 centerPostion, __number radius, __nu
 
 最终的效果应该是这样的：
 
-![201610184575enlargeEyes_demo.gif](http://7xkc7a.com1.z0.glb.clouddn.com/201610184575enlargeEyes_demo.gif)
+![201610184575enlargeEyes_demo.gif](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/enlargeEyes_demo.gif)
 
 
 

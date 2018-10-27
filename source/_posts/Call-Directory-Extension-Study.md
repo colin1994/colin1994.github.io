@@ -80,7 +80,7 @@ public class CXCallDirectoryExtensionContext : NSExtensionContext {
 
 **Xcode —> File —> New —> Target**。创建一个 **Call Directory Extension**，如下图所示：
 
-![Extension_1](http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_1.jpeg?imageView2/2/w/600)
+![Extension_1](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_1.jpeg)
 
 
 
@@ -88,7 +88,7 @@ public class CXCallDirectoryExtensionContext : NSExtensionContext {
 
 创建好 Extension，会弹出这样的提示框：
 
-![Extension_2](http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_2.jpeg?imageView2/2/w/500)
+![Extension_2](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_2.jpeg)
 
 询问我们是否激活这个 scheme，当然选择激活咯，继续~
 
@@ -168,13 +168,13 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
 之后我们运行该 App到设备中，然后进入设备的设置 —> 电话 —> Call Blocking & Identification，开启我们的 App即可。如下图所示：
 
-![Extension_3](http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_3.png?imageView2/2/h/500)
+![Extension_3](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_3.png)
 
 
 
 至此，相关的工作就都完成了，我们的来电黑名单也已经实现了，可以用添加到列表中的号码来测试啦，如下所示：
 
-![Extension_4](http://7xkc7a.com1.z0.glb.clouddn.com/callExtension_4.png?imageView2/2/h/500)
+![Extension_4](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_4.png)
 
 
 

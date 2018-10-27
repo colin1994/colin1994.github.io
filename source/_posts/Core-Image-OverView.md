@@ -32,7 +32,7 @@ Core Image 系列，目前的文章如下：
 
 ## Core Image 概述
 
-![2016100195437core_image.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100195437core_image.png)
+![2016100195437core_image.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/core_image.png)
 
 
 
@@ -72,7 +72,7 @@ So，它真的值得学习！
 
 ## 使用方式
 
-![2016100259378process.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100259378process.png)
+![2016100259378process.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/process.png)
 
 这里我们从它的基础 API 介绍起。
 
@@ -117,7 +117,7 @@ Core Image 的 API 主要就是三类：
 
 效果如下：
 
-![2016100243119blurCompre.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100243119blurCompre.png)
+![2016100243119blurCompre.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/blurCompre.png)
 
 
 
@@ -261,7 +261,7 @@ context = [CIContext contextWithEAGLContext:eaglctx];
 
 它的渲染过程大致如下：
 
-![2016100325659cpu.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100325659cpu.png)
+![2016100325659cpu.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/cpu.png)
 
 当使用 Core Image 在 GPU 上渲染图片的时候，先是把图像传递到 GPU 上，然后执行滤镜相关操作。但是当需要生成  CGImage 对象的时候，图像又被复制回 CPU 上。最后要在视图上显示的时候，又返回 GPU 进行渲染。这样在 GPU 和 CPU 之前来回切换，会造成很严重的性能损耗。
 
@@ -290,7 +290,7 @@ self.context = [CIContext contextWithEAGLContext:eaglContext];
 
 它的渲染过程大致如下：
 
-![2016100328506gpu.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100328506gpu.png)
+![2016100328506gpu.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/gpu.png)
 
 
 
@@ -370,7 +370,7 @@ context = [CIContext contextWithOptions: nil];
 
 > if you chain together a sequence of filters, Core Image will automatically concatenate these subroutines into a single program.The idea behind this is to improve performance and quality, by reducing the number of intermediate buffers.
 
-![2016100749763filters.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100749763filters.png)
+![2016100749763filters.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/filters.png)
 
 Core Image 会自动把多个滤镜组合成一个新的程序（program），通过减少中间缓冲区的数量，来提高性能和质量。
 
@@ -399,7 +399,7 @@ Core Image 会自动把多个滤镜组合成一个新的程序（program），�
 
 如果按序讲每个区域进行拼凑，就是原图的实际区域了。
 
-![2016101313942automatic_tiling.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016101313942automatic_tiling.png)
+![2016101313942automatic_tiling.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/automatic_tiling.png)
 
 
 
@@ -413,17 +413,17 @@ Core Image 会自动把多个滤镜组合成一个新的程序（program），�
 
 **4000 * 4000，小图：**
 
-![20161005272964000_memory.png](http://7xkc7a.com1.z0.glb.clouddn.com/20161005272964000_memory.png)
+![20161005272964000_memory.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4000_memory.png)
 
-![20161005205644000_decode.png](http://7xkc7a.com1.z0.glb.clouddn.com/20161005205644000_decode.png)
+![20161005205644000_decode.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4000_decode.png)
 
 很明显的，**Memory 占有率高**，并且调用了 **decode** 相关操作。
 
 **4100 * 4100，大图：**
 
-![20161005838734100_memory.png](http://7xkc7a.com1.z0.glb.clouddn.com/20161005838734100_memory.png)
+![20161005838734100_memory.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4100_memory.png)
 
-![20161005840444100.png](http://7xkc7a.com1.z0.glb.clouddn.com/20161005840444100.png)
+![20161005840444100.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4100.png)
 
 这里的 **Memory 占用较低**，并且没有看到 **decode** 相关操作。
 
@@ -441,7 +441,7 @@ Core Image 会自动把多个滤镜组合成一个新的程序（program），�
 
 经过这样的优化处理后，对于大图，[Session 514](https://developer.apple.com/videos/play/wwdc2014/514/) 给出了直观的数据对比：
 
-![2016100518100largeCompare.png](http://7xkc7a.com1.z0.glb.clouddn.com/2016100518100largeCompare.png)
+![2016100518100largeCompare.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/largeCompare.png)
 
 
 

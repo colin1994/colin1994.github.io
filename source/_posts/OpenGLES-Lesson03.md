@@ -16,7 +16,7 @@ tags:
 
 最终的效果如下：
 
-![2017013028167QQ20170130-174258@2x.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017013028167QQ20170130-174258@2x.png)
+![2017013028167QQ20170130-174258@2x.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_1.png)
 
 <!--more-->
 
@@ -28,7 +28,7 @@ tags:
 
 > PS：
 >
-> 在之后的步骤里，如果你细心观察对比，你会发现其实它就是围绕图形渲染管线展开的，把之前介绍的内容，用代码的方式实现出来，具体流程可以参照下图回顾：![20170112148420103614414.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170112148420103614414.jpg?imageView2/0/format/jpg)
+> 在之后的步骤里，如果你细心观察对比，你会发现其实它就是围绕图形渲染管线展开的，把之前介绍的内容，用代码的方式实现出来，具体流程可以参照下图回顾：![20170112148420103614414.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_2.jpg)
 
 
 
@@ -349,7 +349,7 @@ glDeleteShader(fragmentShader);
 
 我们传入的顶点数据 **vertices**，是这样排布的：
 
-![2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png)
+![2017020171966DA004F9B-C0A7-44FE-B747-AA5BEC0ABCF5.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_3.png)
 
 
 

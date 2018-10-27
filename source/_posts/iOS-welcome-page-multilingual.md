@@ -19,13 +19,13 @@ tags:
 
 说起多语言, 我们无非这样实现:
 
-1. 为 App 添加多语言支持。![LaunchImages_0](http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_0.png)
+1. 为 App 添加多语言支持。![LaunchImages_0](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png)
    
 2. 添加对应的配置, 资源。 比如：
    
-   文本: ![LaunchImages_1](http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_1.png)
+   文本: ![LaunchImages_1](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_1.png)
    
-   图片:![LaunchImages_2](http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesLaunchImages_2.png)
+   图片:![LaunchImages_2](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_2.png)
    
 3. 使用对应资源, 比如:
    
@@ -153,11 +153,11 @@ tags:
            </array>
    ```
    
-   ![](http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImagesF9E4E70D-B3D3-46E6-ADCE-E789F50491B3.png)
+   ![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_4.png)
    
 3. 添加对应的启动页资源
    
-   ![](http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages863C1341-C42D-47C3-9FC7-B0F85EE78DA7.png)
+   ![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_3.png)
    
    ​
 

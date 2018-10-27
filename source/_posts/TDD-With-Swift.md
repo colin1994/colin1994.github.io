@@ -11,7 +11,7 @@ tags:
 
 > 花了几天时间，看完了 [《Test-Driven iOS Development with Swift》](https://www.packtpub.com/application-development/test-driven-ios-development-swift) 这本书，虽然只有短短 500页的 epub，但是讲解的很生动透彻，全书围绕一个 `ToDo` 应用展开，讲解了 `Test-Driven Development （TDD，即测试驱动开发）` 的实际应用，让我对 TDD 有了更全面的认识。故此，开坑记录之~
 
-![TDD](http://7xkc7a.com1.z0.glb.clouddn.com/TDDTDDFigure.png)
+![TDD](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDTDDFigure.png)
 
 <!--more-->
 
@@ -104,13 +104,13 @@ OK，概括来说，TDD 的开发过程可以用上图来描述：Red，Green，
 
 这里创建一个常规的 iOS 工程，记得 `“ Include Unit Tests” ` 即可，语言我们选择 `Swift`。
 
-![demo_0](http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_0.jpeg)
+![demo_0](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_0.jpeg)
 
 
 
 创建完毕后的工程目录如下：
 
-![demo_1](http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_3.jpeg)
+![demo_1](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_3.jpeg)
 
 默认为我们创建了 `TDDDemoTests.swift` 文件，这里就是我们编写测试用例的地方。打开该文件，如下所示：
 
@@ -171,11 +171,11 @@ import XCTest
 
 如图所示：
 
-![demo_2](http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_1.jpeg)
+![demo_2](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_1.jpeg)
 
 现在 **Command + U**，执行测试。毋庸置疑，测试通过（毕竟啥都还没开始写…）。你会看到如下界面：
 
-![demo_3](http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_4.jpeg)
+![demo_3](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_4.jpeg)
 
 左边的  **Test Navigation** 列举了所有的测试用例以及对应的测试结果。中间的编辑区展示了 **Bulid** 过程中具体做了什么，以及 **Build** 结果。
 
@@ -185,7 +185,7 @@ import XCTest
 
 **Edit Scheme | Test** ，可以看到右边列举了所有参与测试的用例。当然我们知道，每个用例的测试都是需要时间的，如果想对某个用例单独测试，或者不想测试某个用例，相应的勾选和去选就可以了。
 
-![demo_4](http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_5.jpeg)
+![demo_4](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_5.jpeg)
 
 
 
@@ -195,7 +195,7 @@ import XCTest
 
 删除默认的 `TDDDemoTests.swift` 文件，重新创建一个 `CapitalTest.swift` 文件。在 `TDDDemoTests` 分组中，**File | New | File | iOS | Source | Unit Test Case Class** ，创建一个名为 **CapitalTest** 并 继承自 **XCTestCase** 的类。如图所示：
 
-![demo_5](http://7xkc7a.com1.z0.glb.clouddn.com/TDDdemo_6.jpeg)
+![demo_5](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/TDD/TDDdemo_6.jpeg)
 
 
 

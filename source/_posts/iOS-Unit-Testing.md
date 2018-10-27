@@ -120,9 +120,9 @@ XCTest 是 Apple 提供的测试框架，和 Xcode 无缝结合。使用它，�
 
 
 
-![2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png)
+![2017081632121A35A7F5A-553B-48B0-9608-CD12A98D4CED.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/UnitTest/unitTest_1.png)
 
-![2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png](http://7xkc7a.com1.z0.glb.clouddn.com/2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png)
+![2017081627419EC435EE6-6007-4FD4-BA3C-73C12435D254.png](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/UnitTest/unitTest_2.png)
 
 至于如何使用 XCTest，这不是本文要讨论的内容，直接对照官方文档 [Testing with Xcode](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1) 就能上手了。
 
@@ -170,7 +170,7 @@ func testArraySorting() {
 
 
 
-![20170823150345694914363.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170823150345694914363.jpg?imageView2/0/format/jpg)
+![20170823150345694914363.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/UnitTest/unitTest_3.png)
 
 
 

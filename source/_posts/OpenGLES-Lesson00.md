@@ -32,7 +32,7 @@ tags:
 >
 > 可以理解成是一个**在移动平台上能够支持 OpenGL 最基本功能的精简规范**。
 >
-> ![20170111148411873373682.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411873373682.jpg?imageView2/0/format/jpg)
+> ![20170111148411873373682.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_1.jpg)
 >
 > OpenGL ES 横跨在两个处理器之间，**协调两个内存区域之间的数据交换**。
 
@@ -44,7 +44,7 @@ tags:
 >
 > 正如我们之前提到过，OpenGL 正是给我们提供了访问 GPU 的能力，不仅如此，它还引入了**缓存**（Buffer）这个概念，大大提高了处理效率。
 >
-> ![20170111148411700373589.jpg](http://7xkc7a.com1.z0.glb.clouddn.com/20170111148411700373589.jpg?imageView2/0/format/jpg)
+> ![20170111148411700373589.jpg](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_1_2.jpg)
 >
 > 图中的剪头，代表着数据交换，也是主要的性能瓶颈。
 >
