@@ -98,7 +98,8 @@ deploy:
   repository: git@github.com:colin1994/colin1994.github.io.git
   branch: master
 
-
+# Google Analytics
+google_analytics: UA-131205955-1
 
 
 # # Next 主题配置

@@ -124,6 +124,17 @@ Core Image【4】—— 2018 新特性
 
   
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
 
 
     <title> Core Image 之自定义 Filter~ · Colin's Nest </title>
@@ -195,7 +206,7 @@ Core Image【4】—— 2018 新特性
           <a class="menu-item-link" href="/">
             
             
-              首页
+              Home
             
           </a>
         </li>
@@ -204,7 +215,7 @@ Core Image【4】—— 2018 新特性
           <a class="menu-item-link" href="/archives/">
             
             
-              归档
+              Archives
             
           </a>
         </li>
@@ -213,7 +224,7 @@ Core Image【4】—— 2018 新特性
           <a class="menu-item-link" href="/tags">
             
             
-              标签
+              Tags
             
           </a>
         </li>
@@ -222,7 +233,7 @@ Core Image【4】—— 2018 新特性
           <a class="menu-item-link" href="/about">
             
             
-              关于
+              About
             
           </a>
         </li>
@@ -257,7 +268,7 @@ Core Image【4】—— 2018 新特性
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">文章目录</h2>
+    <h2 class="post-toc-title">Contents</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义_Filter_流程"><span class="toc-text">自定义 Filter 流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_编写_CIKernel"><span class="toc-text">1. 编写 CIKernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_加载_CIKernel"><span class="toc-text">2. 加载 CIKernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_设置参数"><span class="toc-text">3. 设置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_使用"><span class="toc-text">4. 使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_更多"><span class="toc-text">5. 更多</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DOD_&_ROI"><span class="toc-text">DOD & ROI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_DOD"><span class="toc-text">1. DOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_ROI"><span class="toc-text">2. ROI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CIKernel_介绍"><span class="toc-text">CIKernel 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_CIColorKernel"><span class="toc-text">1. CIColorKernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_CIWarpKernel"><span class="toc-text">2. CIWarpKernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_CIKernel"><span class="toc-text">3. CIKernel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意点"><span class="toc-text">注意点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_premultiply"><span class="toc-text">1. premultiply</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_关键字"><span class="toc-text">2. 关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_GLSL"><span class="toc-text">3. GLSL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_Array,_Mat"><span class="toc-text">4. Array, Mat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_坐标系"><span class="toc-text">5. 坐标系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-_局限"><span class="toc-text">6. 局限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-_性能优化"><span class="toc-text">7. 性能优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开发技巧"><span class="toc-text">开发技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_Log"><span class="toc-text">1. Log</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_CI_PRINT_TREE"><span class="toc-text">2. CI_PRINT_TREE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工具介绍"><span class="toc-text">工具介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0-_概念介绍"><span class="toc-text">0. 概念介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_工作区介绍"><span class="toc-text">1.  工作区介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_Filter_编辑_&_放大眼睛实战"><span class="toc-text">2. Filter 编辑 & 放大眼睛实战</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#延伸阅读"><span class="toc-text">延伸阅读</span></a></li></ol>
     </div>
@@ -763,13 +774,13 @@ Core Image【4】—— 2018 新特性
       <a class="prev" href="/2017/04/01/OpenGLES-Menu/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">OpenGL ES， 初学者的自我总结</span>
-        <span class="prev-text nav-mobile">上一篇</span>
+        <span class="prev-text nav-mobile">Prev</span>
       </a>
     
     
       <a class="next" href="/2016/10/21/Core-Image-OverView/">
         <span class="next-text nav-default">Core Image 你需要了解的那些事~</span>
-        <span class="prev-text nav-mobile">下一篇</span>
+        <span class="prev-text nav-mobile">Next</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -836,11 +847,11 @@ Core Image【4】—— 2018 新特性
 
 <div class="copyright">
   <span class="power-by">
-    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
   </span>
   
   <span class="theme-info">
-    主题 - 
+    Theme - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 

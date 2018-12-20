@@ -69,3 +69,6 @@ donate:
   wechat: http://7xkc7a.com1.z0.glb.clouddn.com/wechatImage.png
   alipay: http://7xkc7a.com1.z0.glb.clouddn.com/alipayImage.png
   web: false
+
+# Google Analytics
+google_analytics: UA-131205955-1
