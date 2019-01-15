@@ -49,7 +49,16 @@ Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is dep
 <meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/de088c47205fd04fc8d9e11748813b10.jpeg">
 <meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/4677bca4a9633908b463e670646d434c.png">
 <meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/68788a0103eac111ea445b0dcf02fa58.png">
-<meta property="og:updated_time" content="2018-10-27T07:15:59.221Z">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/ac2b226808a57f0acb725a46dde09759.png">
+<meta property="og:image" content="https://camo.githubusercontent.com/68ce8767f20b6a40f2a695c56396d30234363431/687474703a2f2f73756e7365746c616b65736f6674776172652e636f6d2f73697465732f64656661756c742f66696c65732f475055496d6167654c6f676f2e706e67">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2019/f794ad7337d2885699c4d189694e7cf2.gif">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/5d29ead45b570276f7bda57e2fb755df.gif">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/20c51bfbfaaf5e981a0e77e89a121c45.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/93697319b46e0592ea443d7ecea200de.gif">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/e0c8acd368f9b02b24ad6e506dce3298.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2019/1a826064d70d1c2ae4d9862a50f9e0ce.gif">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2019/e8cd0d3fccd096ff5b6403a1319657e3.gif">
+<meta property="og:updated_time" content="2019-01-15T13:20:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Metal 系列教程">
 <meta name="twitter:description" content="从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。
@@ -227,7 +236,7 @@ Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is dep
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">Contents</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#目录"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础概念："><span class="toc-text">基础概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础实践："><span class="toc-text">基础实践：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#案例实战："><span class="toc-text">案例实战：</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#目录"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础概念："><span class="toc-text">基础概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基础实践："><span class="toc-text">基础实践：</span></a></li></ol></li></ol>
     </div>
   </div>
 
@@ -277,36 +286,52 @@ Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is dep
 <p>最最最最简单的一个基础工程。介绍整体的显示渲染流程。</p>
 </blockquote>
 <p><img src="https://diycode.b0.upaiyun.com/photo/2018/4677bca4a9633908b463e670646d434c.png" alt=""></p>
-<p><a href="https://xiaozhuanlan.com/topic/6503719284" target="_blank" rel="external"><strong>四。绘制一个三角形</strong></a></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/6503719284" target="_blank" rel="external">四。绘制一个三角形</a></strong></p>
 <blockquote>
-<p>堪称图形界的 Hello World。会较为完整的过一遍渲染管线。麻雀虽小，五脏俱全。</p>
+<p>堪称图形界的 Hello World。会较为完整的过一遍渲染管线。</p>
+<p>涉及的内容包括：<strong>渲染管线的配置，着色器的编写，顶点数据的提交，图元的绘制</strong>。</p>
+<p>麻雀虽小，五脏俱全。</p>
 </blockquote>
 <p><img src="https://diycode.b0.upaiyun.com/photo/2018/68788a0103eac111ea445b0dcf02fa58.png" alt=""></p>
-<p><strong>五。MSL 介绍</strong></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/0459813726" target="_blank" rel="external">五。Buffer &amp; Texture</a></strong></p>
 <blockquote>
-<p>介绍如何编写 Metal 着色器。以及它们是如何被加载工作的。</p>
+<p>实现基础图像的渲染，即在屏幕上，显示一张我们指定的图片。主要关心非基础图元的绘制，Metal 里面的数据、资源的管理方式，图像解码的一些基础知识。介绍 MTLBuffer 以及 MTLTexture 相关内容。</p>
 </blockquote>
-<p><strong>六。显示图片</strong></p>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/ac2b226808a57f0acb725a46dde09759.png" alt=""></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/2514387096" target="_blank" rel="external">六。GPUImage 3 浅析、基础框架搭建</a></strong></p>
 <blockquote>
-<p>还在纠结绘制三角形有什么用吗？</p>
-<p>这节会教你如何加载纹理，如何显示相册导入的图片。</p>
+<p>浅析一下 GPUImage 3 的设计，然后基于此，剥离出一些代码，形成基础框架，实现视图封装，也为之后的效果处理提供支持。</p>
 </blockquote>
-<p><strong>七。视图封装</strong></p>
+<p><img src="https://camo.githubusercontent.com/68ce8767f20b6a40f2a695c56396d30234363431/687474703a2f2f73756e7365746c616b65736f6674776172652e636f6d2f73697465732f64656661756c742f66696c65732f475055496d6167654c6f676f2e706e67" alt="GPUImage"></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/3654810792" target="_blank" rel="external">七。颜色滤镜</a></strong></p>
 <blockquote>
-<p>封装一个通用的控件。支持不同 contentMode，支持缩放，最大显示像素格，长按对比。</p>
+<p>介绍颜色滤镜常见的两种实现方式：<strong>shader</strong> 和 <strong>lookup table</strong>，并实现饱和度、亮度滤镜，以及常见的阿宝色滤镜。</p>
+<p>同时会分析对应算法的原理。</p>
 </blockquote>
-<h3 id="案例实战：">案例实战：</h3><p><strong>八。色温滤镜</strong></p>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2019/f794ad7337d2885699c4d189694e7cf2.gif" alt=""></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/3105827964" target="_blank" rel="external">八。风格化滤镜(上)</a></strong></p>
 <blockquote>
-<p>基础的颜色滤镜，以及如何使用 CLUT（Color Lookup Table）实现效果。</p>
+<p>上篇我们介绍了简单的颜色滤镜，即独立像素点变换，按照一定规律，修改当前像素点的色值。每个像素点都是独立的，不相互依赖。相对的，其他几类，我们可以统一归类为风格化滤镜，这类滤镜有一个显著的特点：当前点的最终色值，需要依赖其他位置点的色值，来共同决定。<br>这一篇中，会介绍这么两个滤镜 Zoom Blur 和 Toon 的具体实现。</p>
+<p>以及<strong>系统提供的景深信息</strong>等。</p>
 </blockquote>
-<p><strong>九。多重滤镜</strong></p>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/5d29ead45b570276f7bda57e2fb755df.gif" alt=""></p>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/20c51bfbfaaf5e981a0e77e89a121c45.png" alt=""></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/5823149607" target="_blank" rel="external">九。风格化滤镜(下)</a></strong></p>
 <blockquote>
-<p>滤镜链的实现，多个滤镜组合。</p>
+<p>介绍 Toon 效果的具体实现。<br>介绍下更复杂的滤镜，比如之前很火的风格转换，以及借助 Core ML 模型的一些方式。</p>
 </blockquote>
-<p><strong>十。增高</strong></p>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/93697319b46e0592ea443d7ecea200de.gif" alt=""></p>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/e0c8acd368f9b02b24ad6e506dce3298.png" alt=""></p>
+<p><strong><a href="https://xiaozhuanlan.com/topic/4896073512" target="_blank" rel="external">十。增高 &amp; MTLHeap</a></strong></p>
 <blockquote>
-<p>不再是逐像素的简单处理，涉及形变。</p>
+<p>MTLHeap：An abstract memory pool from which you can create resources.<br>就是一块预先分配好的内存区域，然后这块区域用来干什么，完全是由开发者来控制的，可以随意复用。<br>这次，我们同样是实现一个新的效果，增高。并分析使用 MTLHeap 带来的优势。</p>
 </blockquote>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2019/1a826064d70d1c2ae4d9862a50f9e0ce.gif" alt=""></p>
+<p><strong>十一。抠图换背景 &amp; Mask</strong></p>
+<blockquote>
+<p>Mask 的使用场景，以及抠图换背景的具体实现。</p>
+</blockquote>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2019/e8cd0d3fccd096ff5b6403a1319657e3.gif" alt=""></p>
 <p>…<br><strong>To be continued ~</strong></p>
 <hr>
 <blockquote>
@@ -447,7 +472,7 @@ Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is dep
      
       2015 - 
     
-    2018
+    2019
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>
