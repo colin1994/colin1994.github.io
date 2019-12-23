@@ -27,18 +27,78 @@
 
 
 
-<link rel="canonical" href="http://http://colin1994.github.io/"/>
+<link rel="canonical" href="http://http://colin1994.github.io/2019/04/16/Core-Image-2018/"/>
 
 
-<meta name="description">
-<meta property="og:type" content="website">
+<meta name="description" content="Core Image【4】—— 2018 新特性Core Image 系列，目前的文章如下：
+
+Core Image【1】—— 概述
+Core Image【2】—— 自定义 Filter
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
+
+
+概述2018，Core Image">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Colin's Nest">
-<meta property="og:url" content="http://http://colin1994.github.io/index.html">
+<meta property="og:url" content="http://http://colin1994.github.io/2019/04/16/Core-Image-2018/index.html">
 <meta property="og:site_name" content="Colin's Nest">
-<meta property="og:description">
+<meta property="og:description" content="Core Image【4】—— 2018 新特性Core Image 系列，目前的文章如下：
+
+Core Image【1】—— 概述
+Core Image【2】—— 自定义 Filter
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
+
+
+概述2018，Core Image">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/ad4e8443efe38ee5a38d5603c4e6d9b9.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/8174b09eb717d3a6e27c836268621af0.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/d747924125e7bb677ab67dc2b964aca7.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/24617819ec01e5faa2d859d6b973201f.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/8315f8c92ed68db55e7c8f626914cccf.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/7417769c610a8b77aec8c523ab21333c.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/8fba62d2ddfc97a040be3856fab51d2f.png">
+<meta property="og:image" content="http://dataunion.org/wp-content/uploads/2015/03/6.gif">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/956d80d5c7b2cd60af05100db38bf59f.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/e5091894c8d8cd79f6e9e513f52a263f.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/986c910b79d01b16243733aa509d0da1.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/35de101cc86080eeb705fe86dffba2fb.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/9cdc0d32222f99e64e8f4dc5e9483a78.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/6f75ea97bce31c1f3583f53236a0edba.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/6d31d0cde0cc10f6ae6904c8cf808374.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/1f60d7db46d202a75a7c565de98b3a91.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/a6c5ee7aca6b0128da518cf2273a4e2e.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/520e9259123a89b57904efa8225be7a0.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/c0b518b8dc68e00b780994c71262c308.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/bb6efbe96c4b43c89ff4201d85f2ccc8.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/4bb2a0a17af53277611da8ada541dc05.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/9aa47e880bd8c47618449e1d00d28de2.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/41b67e67f039708afa127dffb5fee528.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/45d9cb192ff6c84f40ae25c1d2bacaed.png">
+<meta property="og:image" content="https://diycode.b0.upaiyun.com/photo/2018/5444a7aa0d60df9eabe6a3135943fb44.png">
+<meta property="og:updated_time" content="2019-04-16T06:11:29.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Colin's Nest">
-<meta name="twitter:description">
+<meta name="twitter:description" content="Core Image【4】—— 2018 新特性Core Image 系列，目前的文章如下：
+
+Core Image【1】—— 概述
+Core Image【2】—— 自定义 Filter
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
+
+
+概述2018，Core Image">
+<meta name="twitter:image" content="https://diycode.b0.upaiyun.com/photo/2018/ad4e8443efe38ee5a38d5603c4e6d9b9.png">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
@@ -76,7 +136,7 @@
 
 
 
-    <title> Colin's Nest </title>
+    <title>  · Colin's Nest </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -188,75 +248,12 @@
         <div class="content-wrapper">
           <div id="content" class="content">
             
-  <section id="posts" class="posts">
-    
-      
+  
   <article class="post">
     <header class="post-header">
       <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/12/22/Core-Image-2017/">Core Image【3】—— 2017 新特性</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Dec 22, 2019
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
         
           
-        
-
-        
-          <p>Core Image 系列，目前的文章如下：</p>
-<ul>
-<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/">Core Image 你需要了解的那些事~</a></li>
-<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/">Core Image 之自定义 Filter~</a></li>
-<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2017/">Core Image【3】—— 2017 新特性</a></li>
-<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2018/">Core Image【4】—— 2018 新特性</a></li>
-</ul>
-<blockquote>
-<p>如果想了解 Core Image 相关，建议按序阅读，前后有依赖。</p>
-<p>对应源码，见最末链接。</p>
-</blockquote>
-<hr>
-<h2 id="概述">概述</h2><p>先回顾一下 Core Image 目前强大的功能。</p>
-<ul>
-<li>A simple, high-performance API to apply filters to images，提供简单使用，性能优秀的 API，以及内置各种 CIFiter，方便处理图片</li>
-<li>Automatically tiles if images are large or graph is complex，大图处理优化</li>
-<li>Automatically tiles if only a region of the output is rendered，只处理部分区域</li>
-<li>Each CIFilter has one or more CIKernel functions，自定义 CIFliter</li>
-<li>Multiple CIKernels are concatenated to improve performance，滤镜链延迟处理，合并成一个</li>
-</ul>
-          <div class="read-more">
-            <a href="/2019/12/22/Core-Image-2017/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/04/16/Core-Image-2018/"></a>
         
       </h1>
 
@@ -269,14 +266,17 @@
 
     
     
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Core_Image【4】——_2018_新特性"><span class="toc-text">Core Image【4】—— 2018 新特性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Performance"><span class="toc-text">Performance</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#intermediate_buffers"><span class="toc-text">intermediate buffers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#new_CIKernel_Language_features"><span class="toc-text">new CIKernel Language features</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prototyping"><span class="toc-text">Prototyping</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Machine_Learning"><span class="toc-text">Machine Learning</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#延伸阅读"><span class="toc-text">延伸阅读</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
 
     <div class="post-content">
       
-        
-        
-
-        
-          <h1 id="Core_Image【4】——_2018_新特性">Core Image【4】—— 2018 新特性</h1><p>Core Image 系列，目前的文章如下：</p>
+        <h1 id="Core_Image【4】——_2018_新特性">Core Image【4】—— 2018 新特性</h1><p>Core Image 系列，目前的文章如下：</p>
 <ul>
 <li>Core Image【1】—— 概述</li>
 <li>Core Image【2】—— 自定义 Filter</li>
@@ -448,406 +448,71 @@
 <h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/videos/play/wwdc2018/719/" target="_blank" rel="external">Core Image: Performance, Prototyping, and Python</a></p>
 <p><a href="https://developer.apple.com/documentation/coreimage/prototyping_your_app_s_core_image_pipeline_with_python" target="_blank" rel="external">Prototyping Your App’s Core Image Pipeline with Python</a></p>
 
-        
       
     </div>
 
     
-
-    
-
-  </article>
-
-    
       
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/08/25/metal-tutorial/">Metal 系列教程</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Aug 25, 2018
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
       
-        
-        
-          
-        
 
-        
-          <p>从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。</p>
-<p>直到 <strong>WWDC 2018，Apple 宣布 iOS 12 将弃用 OpenGL / CL</strong>，我想，这或许是个机会。</p>
-<blockquote>
-<p>Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is deprecated in iOS 12. Games and graphics-intensive apps that previously used OpenGL ES should now adopt Metal.</p>
-</blockquote>
-<p><img src="https://diycode.b0.upaiyun.com/photo/2018/de088c47205fd04fc8d9e11748813b10.jpeg" alt=""></p>
-<p>这个系列会回顾整理之前学习的内容，有序输出。算是对自己的一个交代，同时也希望，能帮助到那些想要学习 Metal 却不知道怎么下手的朋友。</p>
-          <div class="read-more">
-            <a href="/2018/08/25/metal-tutorial/" class="read-more-link">Read more..</a>
-          </div>
-        
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
       
     </div>
+  </div>
 
     
 
     
-
-  </article>
-
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/11/12/OpenGLES-Lesson05/">GLSL 详解（高级篇）</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Nov 12, 2017
-        </span>
-      </div>
-    </header>
-
+      <a class="prev" href="/2019/12/22/Core-Image-2017/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Core Image【3】—— 2017 新特性</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
     
     
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <blockquote>
-<p>PS：<br>无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。</p>
-</blockquote>
-          <div class="read-more">
-            <a href="/2017/11/12/OpenGLES-Lesson05/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/11/11/OpenGLES-Lesson04/">GLSL 详解（基础篇）</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Nov 11, 2017
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>上节在绘制三角形的时候，简单讲解了一些着色器，GLSL 的相关概念，可能看的云里雾里的。不要担心，在本节中，我将详细讲解着色语言 GL Shader Language（GLSL）的一些基本的概念。</p>
-<blockquote>
-<p>PS：<br>无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。</p>
-</blockquote>
-          <div class="read-more">
-            <a href="/2017/11/11/OpenGLES-Lesson04/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/08/31/iOS-Unit-Testing/">iOS 单元测试</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Aug 31, 2017
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="什么是单元测试">什么是单元测试</h2><p><strong>形象版：</strong></p>
-<blockquote>
-<p>工厂在组装一台机器之前，会<strong>对每个元件都进行测试</strong>。这，就是单元测试。</p>
-</blockquote>
-<p><strong>官方版：</strong></p>
-<blockquote>
-<p>单元测试是指对软件中的<strong>最小可测试单元</strong>进行<strong>检查和验证</strong>。</p>
-</blockquote>
-          <div class="read-more">
-            <a href="/2017/08/31/iOS-Unit-Testing/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/04/18/OpenGLES-Lesson03/">OpenGL ES 渲染基本图元</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Apr 18, 2017
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>在<a href="http://colin1994.github.io/2017/04/09/OpenGLES-Lesson02/">上篇文章</a>中，已经介绍了 OpenGL ES 的基础环境搭建，并且实现了设置背景色功能。</p>
-<p>在本文中，我们将会在上文的基础上，渲染基本图元，三角形。在这个过程中，将会详细介绍可编程图形渲染管线是如何工作的。</p>
-<p>最终的效果如下：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_1.png" alt="2017013028167QQ20170130-174258@2x.png"></p>
-          <div class="read-more">
-            <a href="/2017/04/18/OpenGLES-Lesson03/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/04/09/OpenGLES-Lesson02/">OpenGL ES 环境搭建</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Apr 9, 2017
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>在<a href="http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/">上篇文章</a>中，已经介绍了 OpenGL ES 的一些基础概念以及大致工作流程。</p>
-<p>在本文中，我们将会介绍在 iOS 平台上如何接入 OpenGL ES，并搭建好基础环境，实现设置背景色功能。它是之后任何实战的基础模版。在搭建过程中，会针对之前介绍的一些概念，再结合代码讲解。</p>
-<blockquote>
-<p>PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽的特性，都是在此基础上完成的。所以理解它是很有必要的～</p>
-</blockquote>
-<p>设置蓝色背景后，效果如下：</p>
-<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017012639178QQ20170126-231448@2x.png" alt="2017012639178QQ20170126-231448@2x.png"></p>
-          <div class="read-more">
-            <a href="/2017/04/09/OpenGLES-Lesson02/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/04/01/OpenGLES-Lesson01/">OpenGL ES 基础概念</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Apr 1, 2017
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>这里主要描述一些 OpenGL ES 必须先了解的一些概念，为之后的实战铺路。</p>
-<h2 id="状态机">状态机</h2><blockquote>
-<p>OpenGL 是一个状态机，它维持自己的状态，并根据用户调用的函数来改变自己的状态。</p>
-<p>根据状态的不同，调用同样的函数也可能产生不同的效果。</p>
-</blockquote>
-<p>在 OpenGL 的世界里，<strong>大多数元素都可以用状态来描述</strong>，比如：</p>
-          <div class="read-more">
-            <a href="/2017/04/01/OpenGLES-Lesson01/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/04/01/OpenGLES-Lesson00/">OpenGL ES 开篇</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          Apr 1, 2017
-        </span>
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>在学习 OpenGL ES 之前，总结下我自己接触 OpenGL ES 时的一些疑惑，我相信这也是初学者都会遇到的一些困惑。</p>
-<h2 id="Q_&amp;_A">Q &amp; A</h2><p><strong>Q：OpenGL 是什么 ?</strong></p>
-<blockquote>
-<p>A：<strong>OpenGL</strong>（Open Graphics Library）是 Khronos Group （一个图形软硬件行业协会，该协会主要关注图形和多媒体方面的开放标准）开发维护的一个规范，它是硬件无关的。它主要为我们定义了用来操作图形和图片的一系列函数的 API，需要注意的是 <strong>OpenGL 本身并非 API</strong>。</p>
-<p>而 GPU 的硬件开发商则需要提供满足 OpenGL 规范的实现，这些实现通常被称为”驱动“，它们负责将 OpenGL 定义的 API 命令翻译为 GPU 指令。<strong>所以你可以用同样的 OpenGL 代码在不同的显卡上跑</strong>，因为它们实现了同一套规范，尽管内部实现可能存在差异。</p>
-</blockquote>
-          <div class="read-more">
-            <a href="/2017/04/01/OpenGLES-Lesson00/" class="read-more-link">Read more..</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-  </section>
-
-  
-  <nav class="pagination">
-    
-    
-      <a class="next" href="/page/2/">
-        <span class="next-text">Next</span>
+      <a class="next" href="/2018/08/25/metal-tutorial/">
+        <span class="next-text nav-default">Metal 系列教程</span>
+        <span class="prev-text nav-mobile">Next</span>
         <i class="iconfont icon-right"></i>
       </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
+
 
           </div>
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>  
       </main>
@@ -927,6 +592,12 @@
     </div>
 
     
+  
+
+  
+  
+
+
 
 
     
