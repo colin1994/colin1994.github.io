@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Core Image【3】—— 2017 新特性"/>
+
+
+
+
+  <meta name="keywords" content="Core Image," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2019/12/22/Core-Image-2017/"/>
+
+
+<meta name="description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
+对应源码，见最末链接。
+
+
+概述先回顾一下 Core Image 目前强大的功能。
+
+A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Core Image【3】—— 2017 新特性">
+<meta property="og:url" content="http://http://colin1994.github.io/2019/12/22/Core-Image-2017/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
+对应源码，见最末链接。
+
+
+概述先回顾一下 Core Image 目前强大的功能。
+
+A">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_12.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_13.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_14.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_15.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_16.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_17.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_18.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_19.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_20.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_21.png">
+<meta property="og:updated_time" content="2019-12-23T01:27:15.374Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Core Image【3】—— 2017 新特性">
+<meta name="twitter:description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
+对应源码，见最末链接。
+
+
+概述先回顾一下 Core Image 目前强大的功能。
+
+A">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_1.png">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
+
+
+    <title> Core Image【3】—— 2017 新特性 · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Core Image【3】—— 2017 新特性
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Dec 22, 2019
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能"><span class="toc-text">性能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Metal"><span class="toc-text">Metal</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Write_CIKernel_in_Metal_shader_file"><span class="toc-text">Write CIKernel in Metal shader file</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Compile_and_link_Metal_shader_file"><span class="toc-text">Compile and link Metal shader file</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Initialize_CIKernel"><span class="toc-text">Initialize CIKernel</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CIRenderDestination"><span class="toc-text">CIRenderDestination</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#调试信息"><span class="toc-text">调试信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CIRenderInfo"><span class="toc-text">CIRenderInfo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quick_Look"><span class="toc-text">Quick Look</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#新功能"><span class="toc-text">新功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#New_Filter"><span class="toc-text">New Filter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CIBarcodeDescriptor"><span class="toc-text">CIBarcodeDescriptor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Using_Core_Image_with_Vision"><span class="toc-text">Using Core Image with Vision</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#延伸阅读"><span class="toc-text">延伸阅读</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>Core Image 系列，目前的文章如下：</p>
+<ul>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/" target="_blank" rel="external">Core Image 你需要了解的那些事~</a></li>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/" target="_blank" rel="external">Core Image 之自定义 Filter~</a></li>
+<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2017/" target="_blank" rel="external">Core Image【3】—— 2017 新特性</a></li>
+<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2018/" target="_blank" rel="external">Core Image【4】—— 2018 新特性</a></li>
+</ul>
+<blockquote>
+<p>如果想了解 Core Image 相关，建议按序阅读，前后有依赖。</p>
+<p>对应源码，见最末链接。</p>
+</blockquote>
+<hr>
+<h2 id="概述">概述</h2><p>先回顾一下 Core Image 目前强大的功能。</p>
+<ul>
+<li>A simple, high-performance API to apply filters to images，提供简单使用，性能优秀的 API，以及内置各种 CIFiter，方便处理图片</li>
+<li>Automatically tiles if images are large or graph is complex，大图处理优化</li>
+<li>Automatically tiles if only a region of the output is rendered，只处理部分区域</li>
+<li>Each CIFilter has one or more CIKernel functions，自定义 CIFliter</li>
+<li>Multiple CIKernels are concatenated to improve performance，滤镜链延迟处理，合并成一个</li>
+</ul>
+<a id="more"></a>
+<p>这几点之前的文章都详细描述过了，这里不再说明。</p>
+<p>2017 年，额外引入了一些新的东西，具体如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_1.png" alt=""></p>
+<p>从三个方面讨论，<strong>性能，调试信息，新功能。</strong></p>
+<p><strong>性能：</strong></p>
+<ul>
+<li>支持使用 <strong>Metal</strong> 直接自定义 CIKernel，提高效率</li>
+<li>引入 <strong>CIRenderDestination</strong>，更方便，性能更好的渲染到指定目的地</li>
+</ul>
+<p><strong>信息：</strong></p>
+<ul>
+<li><strong>CIRenderInfo</strong>，包含更多的信息</li>
+<li><strong>Quick Looks</strong>，支持 Core Image 多个对象直观调试</li>
+</ul>
+<p><strong>新功能：</strong></p>
+<ul>
+<li>更多内置滤镜</li>
+<li>条码扫描支持</li>
+<li>与不同框架的协同处理</li>
+</ul>
+<p>下面逐一展开说明。</p>
+<h2 id="性能">性能</h2><h3 id="Metal">Metal</h3><p>先回顾旧的 CIKernel 编写方式，之前的文章也提到过，Core Image 支持自定义 CIFilter，它们的脚本是通过  CIKernel Language 编写的， CIKernel Language 又基于 GLSL。</p>
+<p>所以，当我们运行 App 时候，要用到这个 Filter，那么<strong>系统会自动帮我们把对应的 kernel，翻译成 GLSL 或者 Metal 规范的 kernel。然后再编译得到的 kernel。</strong></p>
+<p>所以之前的方式，存在两个问题：</p>
+<ul>
+<li>编写 kernel 的时候，没有报错提示，哪怕是参数名错误都无法检查处理。效率极低。</li>
+<li>翻译转换，编译，都是发生到运行时，导致第一次使用滤镜的时候，耗时较久。</li>
+</ul>
+<p>关于耗时这点，具体如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_3.png" alt=""></p>
+<p>这里的各个阶段分别指：</p>
+<ul>
+<li>Translate CIKernels，转换 kernel，转成其他格式的。</li>
+<li>Concatenate CIKernels，按序连接 kernel，滤镜链里头提到过</li>
+<li>Compile CIKernels to Intermediate Representation，编译 CIKernel，这里的 IR（中间代码）我们无需关心，也干预不到</li>
+<li>Compile to GPU Code，将 IR 转成 GPU 识别的代码</li>
+<li>Render，在 GPU 上渲染</li>
+</ul>
+<p>在旧的模式里面，这五步都是<strong>发生在运行时，且无法避免。</strong></p>
+<p>CIKernel 编译后会有缓存机制，所以耗时<strong>第一次</strong>较为明显。</p>
+<p>这就导致了一个问题，你可能只需要渲染一次，显示带效果的图片。但是哪怕你的图片很小，也需要相当久的等待，因为需要对 CIKernel 进行转换编译。</p>
+<p>进一步拆分，必须发生在运行时的，包含 Concatenate CIKernels，Compile to GPU Code 以及 Render，因为拼接滤镜可能是动态的，没法一开始就确定下来。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4.png" alt=""></p>
+<p>而占大头的前两部，并不是一定需要在运行时才能处理的。Metal 恰恰能解决。</p>
+<p><strong>将 Kernel 的编译时间，提前到 App 编译阶段，并且有语法错误检查，大大提高效率。</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_5.png" alt=""></p>
+<p>那么，具体怎么用 Metal 编写 CIKernel 呢，对比旧的流程，有什么差异呢？下面举个实际例子。将上一篇文章里面实现的 Vignette， 改用 Metal 处理，便于参照。</p>
+<h4 id="Write_CIKernel_in_Metal_shader_file">Write CIKernel in Metal shader file</h4><p>CIKL（CIKernel Language） 和 Metal 本质上是很相似的，基础语法都是一样的。</p>
+<blockquote>
+<p> 关于语法类的东西，这里不细说，具体可以参照官方说明来。<a href="https://developer.apple.com/metal/MetalCIKLReference6.pdf" target="_blank" rel="external">MetalCIKLReference</a></p>
+</blockquote>
+<p>这里提一点。CIKL 之前为了特性，扩展的那些支持， Metal 也同样支持。具体的转换规则如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_6.png" alt=""></p>
+<p>所以不同类型的 CIKernel，它们的简单转换应该是这样：</p>
+<p><strong>CIWarpKernel</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_7.png" alt=""></p>
+<p><strong>CIColorKernel</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_8.png" alt=""></p>
+<p><strong>CIKernel</strong>:<br><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_9.png" alt=""></p>
+<p>基本上，差异都体现在额外扩展的这些内容。实际的算法编写，基本不变。</p>
+<p>我们以之前实现的 <strong>vignetteKernel</strong> 为例，<strong>Vignette.cikernel</strong> 白板代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kernel vec4 vignetteKernel(__sample image, vec2 center, float radius, float alpha)</span><br><span class="line">&#123;</span><br><span class="line">	// 计算出当前点与中心的距离</span><br><span class="line">	float distance = distance(destCoord(), center) ;</span><br><span class="line">	// 根据距离计算出暗淡程度</span><br><span class="line">	float darken = 1.0 - (distance / radius * alpha);</span><br><span class="line">	// 返回该像素点最终的色值</span><br><span class="line">	image.rgb *= darken;</span><br><span class="line">	return image.rgba;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>转换成 <strong>Metal</strong> 应该是：<strong>Vignette.metal</strong> ：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;metal_stdlib&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> metal;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;CoreImage/CoreImage.h&gt;</span> // includes CIKernelMetalLib.h</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123; <span class="keyword">namespace</span> coreimage &#123;</span><br><span class="line">    <span class="function">float4 <span class="title">vignetteMetal</span><span class="params">(sample_t image, float2 center, <span class="keyword">float</span> radius, <span class="keyword">float</span> alpha, destination dest)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 计算出当前点与中心的距离</span></span><br><span class="line">        <span class="keyword">float</span> distance2 = distance(dest.coord(), center);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 根据距离计算出暗淡程度</span></span><br><span class="line">        <span class="keyword">float</span> darken = <span class="number">1.0</span> - (distance2 / radius * alpha);</span><br><span class="line">        <span class="comment">// 返回该像素点最终的色值</span></span><br><span class="line">        image.rgb *= darken;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> image.rgba;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有几个改变点逐一说下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;metal_stdlib&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> metal;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;CoreImage/CoreImage.h&gt;</span> // includes CIKernelMetalLib.h</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123; <span class="keyword">namespace</span> coreimage &#123;</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要引入对应的库，以及命名空间。因为系统内部的实现大致是这样的：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_10.png" alt=""></p>
+<p>这基本是固定的格式，保持就好。</p>
+<p>然后就是特定的修改：</p>
+<ul>
+<li>__sample —&gt; sample_t</li>
+<li>vec2 — &gt; float2</li>
+<li>destCoord() —&gt; dest.coord()</li>
+<li>vec4 —&gt; float4</li>
+</ul>
+<p>这里注意，Metal 不支持 vec 类型，参数类型都需要转成浮点值类型。</p>
+<p>另外，入参这里，多了一个 <strong>destination dest</strong>，这个对应 CIColorKernel 是可选的，因为并不一定要获取当前的坐标，正常像素值就够了。</p>
+<p>如果要带的话，<strong>它是隐式的，必须放在参数列表最后一个</strong>，无须我们传参，系统自动赋值。这点需要额外注意！</p>
+<p>至此，shader 的编写就结束了，也是很好理解。</p>
+<h4 id="Compile_and_link_Metal_shader_file">Compile and link Metal shader file</h4><p>至于编译，Xcode 默认是不会帮我们编译 CIKernel 对应的 Metal 文件，需要我们显示的去设置。</p>
+<p>具体步骤如下：</p>
+<p>Build Settings 里头找到 <strong>Other Metal Compiler Flags</strong>，添加值：<strong>-fcikernel</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_11.png" alt=""></p>
+<p>然后新增一个自定义配置</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_12.png" alt=""></p>
+<p>对应的 Key 为： <strong>MTLLINKER_FLAGS</strong>，value 为：<strong>-cikernel</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_13.png" alt=""></p>
+<blockquote>
+<p>PS：</p>
+<p>如果没添加对应的编译选项，下一步初始化 CIKernel 的时候，会失败。</p>
+</blockquote>
+<h4 id="Initialize_CIKernel">Initialize CIKernel</h4><p>这里同样对比旧的创建方式，</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSBundle</span> *bundle = [<span class="built_in">NSBundle</span> bundleForClass: [<span class="keyword">self</span> class]];</span><br><span class="line"><span class="built_in">NSURL</span> *kernelURL = [bundle URLForResource:<span class="string">@"Vignette"</span> withExtension:<span class="string">@"cikernel"</span>];</span><br><span class="line"></span><br><span class="line"><span class="built_in">NSError</span> *error;</span><br><span class="line"><span class="built_in">NSString</span> *kernelCode = [<span class="built_in">NSString</span> stringWithContentsOfURL:kernelURL</span><br><span class="line">                                                encoding:<span class="built_in">NSUTF8StringEncoding</span></span><br><span class="line">                                                   error:&amp;error];</span><br><span class="line"><span class="built_in">NSArray</span> *kernels = [<span class="built_in">CIColorKernel</span> kernelsWithString:kernelCode];</span><br><span class="line">customKernel = [kernels objectAtIndex:<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+<p>只需要改为：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> *kernelURL = [[<span class="built_in">NSBundle</span> mainBundle] URLForResource:<span class="string">@"default"</span> withExtension:<span class="string">@"metallib"</span>];</span><br><span class="line"><span class="built_in">NSError</span> *error;</span><br><span class="line"><span class="built_in">NSData</span> *data = [<span class="built_in">NSData</span> dataWithContentsOfURL:kernelURL];</span><br><span class="line">customKernel = [<span class="built_in">CIColorKernel</span> kernelWithFunctionName:<span class="string">@"vignetteMetal"</span></span><br><span class="line">                                fromMetalLibraryData:data</span><br><span class="line">                                               error:&amp;error];</span><br></pre></td></tr></table></figure>
+<p>初始化方法不一样，在使用上是一致的。</p>
+<p>至此，通过 Metal 自定义 CIFilter 的流程，已经全部走通了。对旧有的修改很小。<br>这里额外提一点，UIImageView 针对 CIImage 有做优化，如果一个 UIImage 是通过 UIImage.init(ciImage:) 这种方式创建的，</p>
+<p><strong>设置到 UIImageView 上的时候，UIImageView 会在 GPU 上执行 Core Image 相关操作。GPU 处理很高效，并且能释放 CPU 压力。</strong></p>
+<p>所以，实时调整 Filter 的时候，也可以借助 UIImageView 来直接显示，效率很高：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">MetalKernelViewController</span> ()</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) MetalKernelFilter *vignetteFilter;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">CIImage</span> *inputImage;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="keyword">IBOutlet</span> <span class="built_in">UIImageView</span> *imageView;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">MetalKernelViewController</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view.</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 初始化 Filter</span></span><br><span class="line">    <span class="keyword">self</span>.vignetteFilter = [[MetalKernelFilter alloc] init];</span><br><span class="line">    <span class="built_in">NSURL</span> *imageURL = [[<span class="built_in">NSBundle</span> mainBundle] URLForResource:<span class="string">@"vignetteImage"</span> withExtension:<span class="string">@"jpg"</span>];</span><br><span class="line">    <span class="keyword">self</span>.inputImage = [<span class="built_in">CIImage</span> imageWithContentsOfURL:imageURL];</span><br><span class="line">    [<span class="keyword">self</span>.vignetteFilter setValue:_inputImage forKey:<span class="string">@"inputImage"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">self</span>.imageView.image = [<span class="built_in">UIImage</span> imageWith<span class="built_in">CIImage</span>:<span class="keyword">self</span>.inputImage];</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#pragma mark - Action</span></span><br><span class="line">- (<span class="keyword">IBAction</span>)alphaChanged:(<span class="built_in">UISlider</span> *)sender &#123;</span><br><span class="line">    [<span class="keyword">self</span>.vignetteFilter setValue:@(sender.value) forKey:<span class="string">@"inputAlpha"</span>];</span><br><span class="line">    <span class="built_in">CIImage</span> *result = _vignetteFilter.outputImage;</span><br><span class="line">    <span class="keyword">self</span>.imageView.image = [<span class="built_in">UIImage</span> imageWith<span class="built_in">CIImage</span>:result];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<h3 id="CIRenderDestination">CIRenderDestination</h3><p>这是一个新增的 API，iOS 11 之后支持，方便渲染到指定的目的地。</p>
+<p>目前支持：</p>
+<ul>
+<li>IOSurface</li>
+<li>CVPixelBuffer</li>
+<li>Metal Texture</li>
+<li>OpenGL Texture</li>
+<li>Memory buffer</li>
+</ul>
+<p>基本涵盖了所有我们需要用来显示的对象。</p>
+<p>比如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (instancetype) initWithMTLTexture:(<span class="keyword">id</span>&lt;MTLTexture&gt;)texture</span><br><span class="line">                      commandBuffer:(nullable <span class="keyword">id</span>&lt;MTLCommandBuffer&gt;)commandBuffer;</span><br></pre></td></tr></table></figure>
+<p>当我们需要执行渲染的时候，就可以使用：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (nullable <span class="built_in">CIRenderTask</span>*) startTaskToRender:(<span class="built_in">CIImage</span>*)image</span><br><span class="line">                               toDestination:(<span class="built_in">CIRenderDestination</span>*)destination</span><br><span class="line">                                       error:(<span class="built_in">NSError</span>**)error <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_13, <span class="number">11</span>_0);</span><br></pre></td></tr></table></figure>
+<p>当然，你可能有发现，旧的 API 也是支持渲染到指定目的地的，比如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)render:(<span class="built_in">CIImage</span> *)image </span><br><span class="line">toCVPixelBuffer:(CVPixelBufferRef)buffer <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_11,<span class="number">5</span>_0);</span><br></pre></td></tr></table></figure>
+<p>那么，新的 API 有什么优势呢？我具体罗列了以下几点：</p>
+<ul>
+<li>如果渲染失败，会立即返回错误信息，便于排查问题，旧的是不支持。</li>
+<li>另外，渲染时，可以额外指定结果的一些属性，比如是否翻转，颜色空间，alpha 混合模式等。不需要额外的操作，性能高。</li>
+<li>另外，支持这些属性后，不需要额外创建多个 CIContext。之前处理的话，有的属性和具体的 CIContext 关联，导致配置不同参数的时候，需要依赖多个。现在只要一个就可以了。</li>
+<li>性能更好，速度快。旧的 API，需要等到所有提交到 GPU 的渲染命令，执行完毕后，才执行新的渲染操作。新的 API，当 CPU 提交完所有命令到 GPU 后，就可以开始执行新的，不需要等到 GPU 处理完。CPU 和 GPU 之间的协同工作更加高效。</li>
+</ul>
+<blockquote>
+<p>They used to return after all the render on the GPU is completed.</p>
+<p>But now with this new API, it will return as soon as the CPU has finished issuing all the work for the GPU.</p>
+<p>And without having to wait for the GPU work to finish.</p>
+<p>So we think this new flexibility will now allow you to pipeline all your CPU and GPU work much more efficiently.</p>
+</blockquote>
+<p>额外支持的属性：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> <span class="built_in">CIRenderDestinationAlphaMode</span> alphaMode;</span><br><span class="line"><span class="keyword">@property</span> (getter=isFlipped) <span class="built_in">BOOL</span> flipped;</span><br><span class="line"><span class="keyword">@property</span> (getter=isDithered) <span class="built_in">BOOL</span> dithered;</span><br><span class="line"><span class="keyword">@property</span> (getter=isClamped) <span class="built_in">BOOL</span> clamped;</span><br><span class="line"><span class="keyword">@property</span> (nullable, <span class="keyword">nonatomic</span>) <span class="built_in">CGColorSpaceRef</span> colorSpace;</span><br><span class="line"><span class="keyword">@property</span> (nullable, <span class="keyword">nonatomic</span>, retain) <span class="built_in">CIBlendKernel</span>* blendKernel;</span><br><span class="line"><span class="keyword">@property</span> <span class="built_in">BOOL</span> blendsInDestinationColorSpace;</span><br></pre></td></tr></table></figure>
+<h2 id="调试信息">调试信息</h2><p>这里主要包含两点：</p>
+<ul>
+<li>CIRenderInfo</li>
+<li>Quick Look</li>
+</ul>
+<h3 id="CIRenderInfo">CIRenderInfo</h3><p>CIRenderInfo 是新增的对象，它里面包含了一些有用的信息，比如 kernel 执行耗时，当前有多少数量的像素参与处理等。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// An Xcode quicklook of this object will show a graph visualization of the render</span></span><br><span class="line"><span class="comment">// with detailed timing information.</span></span><br><span class="line"><span class="built_in">NS_CLASS_AVAILABLE</span>(<span class="number">10</span>_13, <span class="number">11</span>_0)</span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">CIRenderInfo</span> : <span class="title">NSObject</span></span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">void</span> *_priv;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// This property will return how much time a render spent executing kernels.</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>) <span class="built_in">NSTimeInterval</span> kernelExecutionTime;</span><br><span class="line"></span><br><span class="line"><span class="comment">// This property will return how many passes the render requires.</span></span><br><span class="line"><span class="comment">// If passCount is 1 than the render can be fully concatinated and no</span></span><br><span class="line"><span class="comment">// intermediate buffers will be required.</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>) <span class="built_in">NSInteger</span> passCount;</span><br><span class="line"></span><br><span class="line"><span class="comment">// This property will return how many pixels a render produced executing kernels.</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">readonly</span>) <span class="built_in">NSInteger</span> pixelsProcessed;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<h3 id="Quick_Look">Quick Look</h3><p>Core Image 对很对对象新增了 Quick Look 支持，方便调试查看效果。</p>
+<p>关于调试信息这点，前两篇文章其实有提到其他方式，只是都没有 Quick Look 来得方便。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_14.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_15.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_16.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_17.png" alt=""></p>
+<p>图表都支持放大查阅，具体的大家可以实际查阅。信息还是很有用的，包含多个滤镜是怎么组合的等等细节。</p>
+<h2 id="新功能">新功能</h2><h3 id="New_Filter">New Filter</h3><p>现在内置了 196 个 filters</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_2.png" alt=""></p>
+<p>内置的滤镜，有新增，也有性能优化。这里不展开讲。</p>
+<p>一般都是用到的时候，去查找是否有合适的内置滤镜，而不是一开始就把这近 200 个滤镜都掌握下来。</p>
+<p>具体的可以查阅： <a href="https://developer.apple.com/library/archive/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html#//apple_ref/doc/uid/TP40004346" target="_blank" rel="external">Core Image Filter Reference</a> </p>
+<h3 id="CIBarcodeDescriptor">CIBarcodeDescriptor</h3><p>App 现在支持各种各样的条码扫描，识别。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_18.png" alt=""></p>
+<p>并且，各个不同的框架，通过新引入的 CIBarcodeDescriptor，能够协调工作。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_19.png" alt=""></p>
+<p>这里，可以通过 AVFoundation 框架，实时获取图像，并检测识别得到 CIBarcodeDescriptor 对象。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Get a CIBarcodeDescriptor from AVFoundation.framework</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyMetadataOutputObjectsDelegate</span>: <span class="title">NSObject</span>, <span class="title">AVCaptureMetadataOutputObjectsDelegate</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">metadataOutput</span><span class="params">(<span class="number">_</span> output: AVCaptureMetadataOutput,</span><br><span class="line">                        didOutput metadataObjects: [AVMetadataObject],</span><br><span class="line">                        from connection: AVCaptureConnection)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> mrc = metadataObjects.first <span class="keyword">as</span>? <span class="type">AVMetadataMachineReadableCodeObject</span>,</span><br><span class="line">          <span class="keyword">let</span> descriptor = mrc.descriptor &#123;</span><br><span class="line">              <span class="built_in">print</span>(descriptor)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，对于静态图片，或者录制好的视频文件，也可以通过 Vision 框架检测识别得到 CIBarcodeDescriptor 对象。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Detect a CIBarcodeDescriptor using Vision.framework</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">descriptorFromImage</span><span class="params">(<span class="number">_</span> image: CIImage)</span></span> -&gt; <span class="type">CIBarcodeDescriptor</span>?</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Create the request and request handler</span></span><br><span class="line">    <span class="keyword">let</span> requestHandler = <span class="type">VNImageRequestHandler</span>(ciImage: image, options: [:])</span><br><span class="line">    <span class="keyword">let</span> request = <span class="type">VNDetectBarcodesRequest</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Send the request to the handler</span></span><br><span class="line">    <span class="keyword">try</span>? requestHandler.perform([request])</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get the observation</span></span><br><span class="line">    <span class="keyword">let</span> firstResult = request.results?.first </span><br><span class="line">    <span class="keyword">return</span> firstResult?.barcodeDescriptor</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而获取到的 CIBarcodeDescriptor，则可以通过 Core Image 进行渲染，得到对应的条码图像。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create an image for a CIBarcodeDescriptor using CoreImage.framework</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">imageFromBarcodeCodeDescriptor</span><span class="params">(<span class="number">_</span> descriptor: CIBarcodeDescriptor)</span></span> -&gt; <span class="type">CIImage</span>? </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">CIFilter</span>(name: <span class="string">"CIBarcodeGenerator"</span>, </span><br><span class="line">                    withInputParameters: [<span class="string">"inputBarcodeDescriptor"</span> : descriptor])</span><br><span class="line">                      ?.outputImage </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>PS：</p>
+<p>另外，CIBarcodeDescriptor 提供了许多有用的属性，比如 errorCorrectedPayload，maskPattern 等，便于获取条码的各种信息。</p>
+</blockquote>
+<p>通过这几个框架的无缝结合，可以做一些有趣的事情。</p>
+<p>官方展示了这么一个 Demo，它可以从视频帧中，提取出条码，然后重新渲染到条码上，加上红色遮罩，突出效果。这里有两点很惊艳。</p>
+<ul>
+<li>识别到的条码已经重新渲染的位置都很准确。</li>
+<li>注意看手指遮挡的部分，也能渲染出来。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_20.png" alt=""></p>
+<h3 id="Using_Core_Image_with_Vision">Using Core Image with Vision</h3><p>这个部分，有种捆绑销售的感觉～强行推一波新加入的 Vision。</p>
+<p>我们知道 Core Image 可以对图像进行处理，比如裁剪，旋转，灰度等等。</p>
+<p>而 Apple 新推出的 Vision 框架，在分析图像方面十分擅长，能提取出很多有用的信息。</p>
+<p>所以它们配合在一起能做一些很棒的事情，比如这里介绍了一个，从一组图片中，生成一张不包含某个对象的图片。</p>
+<blockquote>
+<p>Photo from Video with Removal of Unwanted Objects</p>
+</blockquote>
+<p>具体如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_21.png" alt=""></p>
+<p>从五张同个场景的图片，通过 Vision 和 Core Image 结合，实现去除图片上移动的人物。</p>
+<p>实现这个功能的具体步骤如下：</p>
+<p>从视频中提取序列帧。这里简单的使用 AVFoundation 就能实现，我们可以得到几个对应的 CIImage。</p>
+<p>图像对齐校正。提取出来的几张图片，可能因为拍摄设备的抖动，导致画面并不是完全一致，这时候就需要后期的调整。Vision 为我们提供了一个类 VNHomographicImageRegistrationRequest，专门用来做图像配准的。通过对比两张图片，能得到一个“对齐矩阵”，这样一张图片就能向另一张图片对齐。</p>
+<blockquote>
+<p>An image analysis request that determines the perspective warp matrix needed to align the content of two images.</p>
+<p>Create and perform a homographic image registration request to align content in two images through a homography. A homography is an isomorphism of projected spaces, a bijection that maps lines to lines.</p>
+</blockquote>
+<p>具体代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">homographicTransform</span><span class="params">(from image: CIImage, to reference: CIImage)</span></span> -&gt; matrix_float3x3? &#123;</span><br><span class="line">  <span class="comment">// Create the request and request handler</span></span><br><span class="line">  <span class="keyword">let</span> request = <span class="type">VNHomographicImageRegistrationRequest</span>(targetedCIImage: image); </span><br><span class="line">  <span class="keyword">let</span> requestHandler = <span class="type">VNImageRequestHandler</span>(ciImage: reference, options: [:]);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Send the request to the handler</span></span><br><span class="line">  <span class="keyword">try</span>? requestHandler.perform([request]);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Get the observation</span></span><br><span class="line">  <span class="keyword">guard</span> <span class="keyword">let</span> results = request.results,</span><br><span class="line">        <span class="keyword">let</span> observation = results.first <span class="keyword">as</span>? <span class="type">VNImageHomographicAlignmentObservation</span></span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">  &#125; </span><br><span class="line">  <span class="keyword">return</span> observation.warpTransform</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到的矩阵，再传入 CIFilter 中，做对齐，对应的 kernel 脚本如下 ：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Core Image Metal kernel to apply a homography matrix</span></span><br><span class="line"><span class="function">float2 <span class="title">warpHomography</span><span class="params">(float3x3 h, destination dest)</span> </span><br><span class="line"></span>&#123;</span><br><span class="line">  	float3 homogeneousDestCoord = float3(dest.coord(), <span class="number">1.0</span>);</span><br><span class="line">  	float3 homogeneousSrcCoord = h * homogeneousDestCoord;</span><br><span class="line">  	float2 srcCoord = homogeneousSrcCoord.xy / max(homogeneousSrcCoord.z, <span class="number">0.000001</span>);</span><br><span class="line">  	<span class="keyword">return</span> srcCoord; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过这个操作后，得到的 5 张图片，都是对齐过的，场景都是一致的。</p>
+<p>但是画面上，人物的位置是不均匀分布的，所以要使用中位算法，取出最终的画面。</p>
+<p>也就是每个像素点，都是5个图片一起分析，取出相同占比最高的那个像素值，结合成一个新的画面，就能剔除额外的人物。具体脚本如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Core Image Metal kernel to return the median of 5 images</span></span><br><span class="line">inline void <span class="built_in">swap</span>(thread float4 &amp;a, thread float4 &amp;b) </span><br><span class="line">&#123;</span><br><span class="line">	float4 tmp = a; a = <span class="built_in">min</span>(a,b); b = <span class="built_in">max</span>(tmp, b); <span class="comment">// swap sort of two elements </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">float4 medianReduction5(sample_t v0, sample_t v1, sample_t v2, sample_t v3, sample_t v4) </span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// using a Bose-Nelson sorting network</span></span><br><span class="line">	<span class="built_in">swap</span>(v0, v1); <span class="built_in">swap</span>(v3, v4); <span class="built_in">swap</span>(v2, v4); <span class="built_in">swap</span>(v2, v3); <span class="built_in">swap</span>(v0, v3); <span class="built_in">swap</span>(v0, v2); 	<span class="built_in">swap</span>(v1, v4); <span class="built_in">swap</span>(v1, v3); <span class="built_in">swap</span>(v1, v2); </span><br><span class="line">	<span class="keyword">return</span> v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/videos/play/wwdc2017/510/" target="_blank" rel="external">Advances in Core Image: Filters, Metal, Vision, and More</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/Core-Image/">Core Image</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/04/16/Core-Image-2018/">
+        <span class="next-text nav-default"></span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>
