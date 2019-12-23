@@ -3,191 +3,6 @@
   
     
     <entry>
-      <title><![CDATA[Core Image【4】—— 2018 新特性]]></title>
-      <url>/2019/12/22/Core-Image-2018/</url>
-      <content type="html"><![CDATA[<p>Core Image 系列，目前的文章如下：</p>
-<ul>
-<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/" target="_blank" rel="external">Core Image 你需要了解的那些事~</a></li>
-<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/" target="_blank" rel="external">Core Image 之自定义 Filter~</a></li>
-<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2017/" target="_blank" rel="external">Core Image【3】—— 2017 新特性</a></li>
-<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2018/" target="_blank" rel="external">Core Image【4】—— 2018 新特性</a></li>
-</ul>
-<blockquote>
-<p>如果想了解 Core Image 相关，建议按序阅读，前后有依赖。</p>
-</blockquote>
-<h2 id="概述">概述</h2><p>2018，Core Image 主要更新了三个点：<strong>性能优化</strong>，<strong>原型开发</strong>，<strong>以及与 CoreML 的结合</strong>。</p>
-<p>整体更新的不多，但都比较有意思。下面逐一详细阐述。</p>
-<a id="more"></a>
-<h2 id="Performance">Performance</h2><p> 性能方面，2018 主要更新了两点：</p>
-<ul>
-<li>intermediate buffers，中间缓存</li>
-<li>new CIKernel Language features，CIKernel 新特性，按组读写</li>
-</ul>
-<h3 id="intermediate_buffers">intermediate buffers</h3><p>首先，回顾下 Core Image 滤镜链现有的工作方式：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_1.png" alt=""></p>
-<p>我们可以通过这样首尾相连的方式，组合不同的 Filter，达到我们想要的效果，各个 Filter 又对应着各自的 Kernel，我们也可以自定义 Kernel。</p>
-<blockquote>
-<p>PS：</p>
-<p>关于如何使用滤镜链，以及如何自定义 Filter，如果有不了解的，可以翻看前两篇文章。</p>
-<p>这里不再阐述。</p>
-</blockquote>
-<p>Core Image 为了性能，包括处理速度，以及降低内存，会自动把整个滤镜链，优化成一个 Filter 处理，如下：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_2.png" alt=""></p>
-<p>这可以说是 Core Image 很厉害的地方，也正因为这个特性，Core Image 在处理滤镜链上，性能比 GPUImage 要好得多。</p>
-<blockquote>
-<p>PS：</p>
-<p>GPUImage 的做法，和我们平时的处理方式一致，是按序处理的，没有优化，即 <strong>原图— Filter1 —&gt; 结果图1 — Filter2 —&gt; 结果图2 —&gt; Filter3 —&gt; 结果图</strong> 这样的一个过程。这期间产生了两个中间缓存，即 <strong>结果图1</strong> 和 <strong>结果图2</strong>。</p>
-</blockquote>
-<p>当然，Core Image 减少中间缓存，提高性能，绝大多数情况下，都是非常棒的，但也有一些情况下，需要额外去修改，扩展。</p>
-<p>比如这样一个场景：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_3.png" alt=""></p>
-<p>滤镜链里面的三个滤镜，Sharpen，Hue，Contrast。</p>
-<p>其中，<strong>Sharpen 操作是比较耗时的，并且，用户能动态修改的，只有 Contrast。</strong></p>
-<p>所以如果按照常规的做法，每次修改 Contrast 程度值的时候，都重新跑一遍滤镜链，毫无疑问，会造成不必要的性能损耗。因为 Sharpen + Hue 这两个效果，任何情况下，出来的结果图都是一样的（因为没改变这两个 Filter 的程度值），并且它们本身也是比较耗时的。</p>
-<p>当然，在介绍 Core Image 新功能之前，我们之前遇到类似的问题，是怎么解决的呢？</p>
-<p>很明显，要引入一个临时的 CIImage，接收 Sharpen + Hue 处理出来的 outputImage。然后作为 inputImage，输入给 Contrast Filter。接下去的操作，都只处理 Contrast，它的 inputImage 暂存，固定不变。也就是将原有的一个滤镜链，拆分成两个。</p>
-<p>当然，这种做法是可行的，也是目前的通用方式。只是在代码逻辑维护上，需要额外的成本。</p>
-<p>那么，Core Image 会如何优化这个问题呢？</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_4.png" alt=""></p>
-<p>它的做法，其实和我们之前提到的一样，iOS 12 之后，CIImage 新增了一个方法，<strong>insertingIntermediate</strong>。</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertingIntermediate</span><span class="params">()</span></span> -&gt; <span class="type">CIImage</span></span><br><span class="line"><span class="comment">// Returns a new image created by inserting an intermediate.</span></span><br></pre></td></tr></table></figure>
-<p>Hue 得到的 outputImage，调用 insertingIntermediate() 方法，再作为 inputImage 传入 Contrast，优化后的流程如下：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_5.png" alt=""></p>
-<p>自动组合的逻辑，会根据 insertingIntermediate 做调整。这里，前两个 Filter 自动组合了。</p>
-<p>对比我们自己维护多个滤镜链和系统提供的 insertingIntermediate，效率上应该是没什么差异，只是系统的使用起来更加方便罢了。</p>
-<p>另外，使用上还要注意什么时候需要缓存，什么时候不需要缓存。Core Image 给我们提供了相关的属性，方便我们控制。</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">let</span> cacheIntermediates: <span class="type">CIContextOption</span></span><br><span class="line"><span class="comment">// The value for this key is an NSNumber object containing a Boolean value. If this value is false, the context empties such buffers during and after renders. The default value is true.</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertingIntermediate</span><span class="params">(cache: Bool)</span></span> -&gt; <span class="type">CIImage</span></span><br><span class="line"><span class="comment">// Intermediate buffers created through setting cache to true have a higher priority than others. This setting is independent of of CIContext's cacheIntermediates option.</span></span><br></pre></td></tr></table></figure>
-<p>默认是缓存所有的 Intermediates，如果不需要，可以强制关闭。</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> context = <span class="type">CIContext</span>(options: [.cacheIntermediates: <span class="literal">false</span>] );</span><br></pre></td></tr></table></figure>
-<p>当然，CIContext 整体设置不缓存后，也可以针对个别 Intermediates 单独开启，下面的优先级更高</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image.insertingIntermediate(cache: <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
-<p>总之，决定权在你自己。</p>
-<h3 id="new_CIKernel_Language_features">new CIKernel Language features</h3><p>在 2017 新特性中，我们提到过，CIKernel 支持 Metal 直接编写。所以目前自定义 Filter 有这么两种方式：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_6.png" alt=""></p>
-<blockquote>
-<p>PS：<br>这两种之前的文章中都已经详细阐述了，这里不再说明，有疑惑的可以翻看之前的。</p>
-</blockquote>
-<p>但是 iOS 12 之后，主推 Metal，不仅 OpenGL ES 被弃用，这里的 CIKernel Language 编写方式，也被弃用。当然，Metal 的性能优势还是很明显的，所以尽可能的使用 Metal，也是合理的。</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_7.png" alt=""></p>
-<p>另外，CIKernel 还有两点比较重要的性能优化：</p>
-<ul>
-<li>Half float support</li>
-<li>Group reads</li>
-</ul>
-<p><strong>Half float support，支持半精度浮点数。</strong></p>
-<p>很多时候，half float 精度处理出来的效果，是足够好的，比如处理 RGB 的时候。</p>
-<p>通过降低精度，使得运行速度变得更快，尤其是在 A11 芯片上。<br>另外，half float 的另一个优点是它可以使用更小的寄存器，从而能更充分的利用 GPU，进而提升效率。</p>
-<p>接下去，重点分析下按组读写。</p>
-<p>给 shader 提供了新的接口，实现单通道每次读取 4 个像素点，已经每次写入 4 个目标像素值。</p>
-<p>这里举了一个卷积操作为例说明。</p>
-<blockquote>
-<p>PS：</p>
-<p>在图像处理中，卷积操作指的是使用一个卷积核对图像中的每个像素进行一系列操作。 </p>
-<p>卷积核（算子）是用来做图像处理时的矩阵,图像处理时也称为掩膜，是与原图像做运算的参数。</p>
-<p>卷积核通常是一个四方形的网格结构（例如3x3的矩阵或像素区域），该区域上每个方格都有一个权重值。 </p>
-<p>使用卷积进行计算时，需要将卷积核的中心放置在要计算的像素上，一次计算核中每个元素和其覆盖的图像像素值的乘积并求和，得到的结构就是该位置的新像素值。 </p>
-<p>这里不细说，感兴趣的可以了解下 Convolutional Neural Networks。</p>
-<p>如下图所示，展示了一个 3x3 的卷积核在 5x5 的图像上做卷积的过程。每个卷积都是一种特征提取方式，就像一个筛子，将图像中符合条件（激活值越大越符合条件）的部分筛选出来。<img src="http://dataunion.org/wp-content/uploads/2015/03/6.gif" alt="卷积神经网络"></p>
-<p>卷积在图像处理中最常见的应用为锐化和边缘提取。 感兴趣可以查阅下 kGPUImageSharpenFragmentShaderString，锐化算法就是根据周围区域像素值，计算得到中心区域最终像素值。</p>
-</blockquote>
-<p>想象一下，我们有一个 3x3 的单通道卷积运算。按照上图的描述，我们每计算一次目标位置的像素值，就需要 9 次读操作，和 1 次写操作，如下：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_8.png" alt=""></p>
-<p>再复杂点，如果需要获取 4 个位置的像素值，按照之前逐个读写的方式，那么就需要 36 次的读操作，和 4 次的写操作。但是仔细观察最终读的区域，其实是有很大一部分重复的。如果能一次写入 4 个像素值，那么实际上只有 16 个位置的像素值需要读取。<br><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_9.png" alt=""></p>
-<p>而 CIkernel 的一个新特性就是，支持按组写，优化这部分性能，所以上述操作，可以同时进行 16 次读操作，4 次写操作。</p>
-<p>再进一步，CIKernel 还支持按组读，所以 16 次读操作，可以细分成 4 组来完成。最终，一次操作会完成：4 组 读，4 次写。</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_10.png" alt=""></p>
-<p>具体实践起来，kernel 代码如下：（这里是 r 通道的处理）</p>
-<p>先把 float 换成 half，这是之前提到的一个优化点，如下是常规的读 9 次，写 1次。</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_11.png" alt=""></p>
-<p>按组读写优化后，代码如下：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_13.png" alt=""></p>
-<p>这里说明下。</p>
-<p>如果需要按照写，那么需要对 dest 添加 group 修饰符。<strong>group::destination_h dest</strong></p>
-<p>蓝色区域，是当前处理的位置，即 dest.coord()。每个格子代表一个像素点。</p>
-<p>dc + float2(-0.5, -0.5) 即 g1 的中心。同理可得 g1，g2，g3，g4。这里通过 <code>s.gatherX</code>  来实现分组。</p>
-<p>然后 r1，即蓝色区域 r 通道值，则是通过周围 9 个像素点计算出来的，即</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">half r1 = (g1.x + g1.y + g1.z + g1.w + g2.x + g2.w + g3.x + g3.y + g4.x) / <span class="number">9.0</span>h;</span><br></pre></td></tr></table></figure>
-<p>同理可得，r1，r2，r3，r4。<br>最后，按照写入即可。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dest.write(half4(r1, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>), half4(r2, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>), half4(r3, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>), half4(r4, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>));</span><br></pre></td></tr></table></figure></p>
-<p>在这个简单的例子里，可以得到 2倍的性能提升。</p>
-<p>所以其他类似的操作，尤其是卷积运算上，按组读写是一个提高性能的好办法。</p>
-<h2 id="Prototyping">Prototyping</h2><p>回顾我们平时实现自研效果的流程：</p>
-<p>特效同学，在电脑上模拟出最终的效果，然后我们（客户端开发）依照算法规则，在 iOS 平台上实现。</p>
-<p>在这个过程中，经常会因为平台差异，或者工具差异，导致最终的效果不一致。比如颜色空间，技术可行性等等。</p>
-<p>比如，我们想得到一个 人形区域 mask，可以通过 NumPy，OpenCV，TensorFlow，Python 等进行原型开发。但是在 iOS 平台上具体实现的时候，可以使用的只有 Core Image，Metal，MPS 等完全不同的东西。</p>
-<p>这就可能出现因为工具的不完全一致，导致效果错误。</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_14.png" alt=""></p>
-<p>还有一个问题，就是性能。</p>
-<p>在进行原型开发的时候，平台和工具不同，对内存和CPU／GPU 占用等，都没有具体的参考价值，这导致很多性能问题，会在最终实际开发过程中，才暴露出来。</p>
-<p>为了解决上述提到的问题，Apple 引入了 <strong>PyCoreImage</strong>。</p>
-<blockquote>
-<p><strong>Python bindings for Core Image.</strong></p>
-<p>把 Core Image 强大的图像处理能力，和 Python 语言的灵活结合起来。</p>
-</blockquote>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_15.png" alt=""></p>
-<p>使用 PyCoreImage，可以最大程度的模拟真实环境，并且无需额外的学习成本。如果习惯用 Swift 的话，可以直接在 Playground 中模拟效果。</p>
-<p>要使用 PyCoreImage，需要借助 Mac OS X 10.5 就引入的 PyObjC，它实现了在 Python 中调用 Objective-C 代码。</p>
-<p>下面是一个简单的转换示例：</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Objc</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;CoreImage/CoreImage.h&gt;</span></span></span><br><span class="line"><span class="built_in">CIVector</span> *v = [<span class="built_in">CIVector</span> vectorWithX:<span class="number">0</span> Y:<span class="number">1</span> Z:<span class="number">2</span> W:<span class="number">3</span>];</span><br><span class="line"><span class="comment">// Python</span></span><br><span class="line">from Quartz import <span class="built_in">CIVector</span></span><br><span class="line">v = <span class="built_in">CIVector</span>.vectorWithX_Y_Z_W_(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_16.png" alt=""></p>
-<p>至于 PyCoreImage 的整体架构，如下：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_17.png" alt=""></p>
-<p><strong>可以通过 NumPy 加载图片，获取二维图像数据数组，转为 CIImage 传入 PyCoreImage 中使用，PyCoreImage 通过 PyObjC，与 Core Image 进行交互，下发指令进行处理。</strong></p>
-<blockquote>
-<p>PS：</p>
-<p>NumPy 是一个为 Python 提供高性能向量、矩阵和高维数据结构的科学计算库。它通过 C 和 Fortran 实现，因此用向量和矩阵建立方程并实现数值计算有非常好的性能。NumPy 基本上是所有使用 Python 进行数值计算的框架和包的基础，例如 TensorFlow 和 PyTorch，构建机器学习模型最基础的内容就是学会使用 NumPy 搭建计算过程。</p>
-<p>NumPy 主要的运算对象为同质的多维数组，即由同一类型元素（一般是数字）组成的表格，且所有元素通过正整数元组进行索引。</p>
-</blockquote>
-<p>下面是一个高斯模糊的具体例子：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_18.png" alt=""></p>
-<p>代码很简单，这里不具体说明。</p>
-<p>另外，为了降低学习成本，PyCoreImage 对比 Core Image 做了一些简化，比如颜色空间统一为 sRGB 等。绿色标注即差异项：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_19.png" alt=""></p>
-<p>下面是一个备忘录，列举了常用的一些操作：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_20.png" alt=""></p>
-<p>这里额外提一个，Kernel 的加载方式。</p>
-<p>自定义 Filter，可以通过如下方式加载并应用效果。这里可以留意到，kernel 和我们在 iOS 上用的完全一致，真正的减少了移植的成本。</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_21.png" alt=""></p>
-<p>如果想了解这部分的更多知识，包括安装方式，其他 API 等，可以查阅官方文档：</p>
-<p><a href="https://developer.apple.com/documentation/coreimage/prototyping_your_app_s_core_image_pipeline_with_python" target="_blank" rel="external">Prototyping Your App’s Core Image Pipeline with Python</a></p>
-<h2 id="Machine_Learning">Machine Learning</h2><p>新加入了一个内置 Filter，CICoreMLModelFilter，可以和方便的与 CoreML 结合起来，实现效果。</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_25.png" alt=""></p>
-<p>参数十分简洁，就两个，inputImage 和 inputModel。如下：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> result = image.applyingFilter(<span class="string">"CICoreMLModelFilter"</span>, parameters: [<span class="string">"inputModel"</span>: model])!</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>PS：</p>
-<p>不过目前在官方文档上，还搜不到 CICoreMLModelFilter 的任何内容，内置的 CIFilter 也找不到，估计还没开放。</p>
-</blockquote>
-<p>关于与 CoreML 的配合，这里还提了一点。</p>
-<p>当我们在训练模型的时候，其实就是我们调参的过程，这样模型能将具体的输入（比如说图像）映射为输出（标签）。我们的优化目标就是尽力让模型的损失调低，当然需要往正确的方向调整模型参数才行。成功的神经网络拥有数以百万计的参数！自然而然，如果你有很多参数，就需要为模型展示大量的样本，才能让模型获得良好的性能。</p>
-<p>所以说，训练集和模型的准确性成正比。不同类型的大量数据，对神经网络的鲁棒性起着至关重要的作用。</p>
-<p>但不得不提到，真实数据的采集是十分困难的。这种情况下，我们一般会借助  <strong>Data Augmentation</strong> 来模拟，填充数据。</p>
-<blockquote>
-<p>PS：</p>
-<p>在深度学习中，有的时候训练集不够多，或者某一类数据较少，或者为了防止过拟合，让模型更加鲁棒性， Data Augmentation 是一个不错的选择。</p>
-<p>普通的图像增强方法包括：<strong>翻转、旋转、平移、裁剪、缩放和高斯噪声</strong>；高级版图像增强方法还有<strong>常数填充、反射、边缘延伸、对称和包裹模式</strong>等。</p>
-<p>更多的，可以查阅：<a href="https://www.zhihu.com/question/35339639" target="_blank" rel="external">使用深度学习(CNN)算法进行图像识别工作时，有哪些data augmentation 的奇技淫巧？</a></p>
-</blockquote>
-<p>借助 Core Image 内置滤镜，可以十分方便实现图像增强。</p>
-<p>如下是几个具体例子：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_22.png" alt=""></p>
-<p>另外，结合 PyCoreImage，在电脑上可以快速生成样本数据。如下是具体的实践代码：</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_23.png" alt=""></p>
-<p>运行后，就可以得到大量样本啦～</p>
-<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_24.png" alt=""></p>
-<h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/videos/play/wwdc2018/719/" target="_blank" rel="external">Core Image: Performance, Prototyping, and Python</a></p>
-<p><a href="https://developer.apple.com/documentation/coreimage/prototyping_your_app_s_core_image_pipeline_with_python" target="_blank" rel="external">Prototyping Your App’s Core Image Pipeline with Python</a></p>
-]]></content>
-      
-        
-        <tags>
-            
-            <tag> Core Image </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
       <title><![CDATA[Core Image【3】—— 2017 新特性]]></title>
       <url>/2019/12/22/Core-Image-2017/</url>
       <content type="html"><![CDATA[<p>Core Image 系列，目前的文章如下：</p>
@@ -409,6 +224,191 @@
 <p>也就是每个像素点，都是5个图片一起分析，取出相同占比最高的那个像素值，结合成一个新的画面，就能剔除额外的人物。具体脚本如下：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Core Image Metal kernel to return the median of 5 images</span></span><br><span class="line">inline void <span class="built_in">swap</span>(thread float4 &amp;a, thread float4 &amp;b) </span><br><span class="line">&#123;</span><br><span class="line">	float4 tmp = a; a = <span class="built_in">min</span>(a,b); b = <span class="built_in">max</span>(tmp, b); <span class="comment">// swap sort of two elements </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">float4 medianReduction5(sample_t v0, sample_t v1, sample_t v2, sample_t v3, sample_t v4) </span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// using a Bose-Nelson sorting network</span></span><br><span class="line">	<span class="built_in">swap</span>(v0, v1); <span class="built_in">swap</span>(v3, v4); <span class="built_in">swap</span>(v2, v4); <span class="built_in">swap</span>(v2, v3); <span class="built_in">swap</span>(v0, v3); <span class="built_in">swap</span>(v0, v2); 	<span class="built_in">swap</span>(v1, v4); <span class="built_in">swap</span>(v1, v3); <span class="built_in">swap</span>(v1, v2); </span><br><span class="line">	<span class="keyword">return</span> v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/videos/play/wwdc2017/510/" target="_blank" rel="external">Advances in Core Image: Filters, Metal, Vision, and More</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> Core Image </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Core Image【4】—— 2018 新特性]]></title>
+      <url>/2019/12/22/Core-Image-2018/</url>
+      <content type="html"><![CDATA[<p>Core Image 系列，目前的文章如下：</p>
+<ul>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/" target="_blank" rel="external">Core Image 你需要了解的那些事~</a></li>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/" target="_blank" rel="external">Core Image 之自定义 Filter~</a></li>
+<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2017/" target="_blank" rel="external">Core Image【3】—— 2017 新特性</a></li>
+<li><a href="http://colin1994.github.io/2019/12/22/Core-Image-2018/" target="_blank" rel="external">Core Image【4】—— 2018 新特性</a></li>
+</ul>
+<blockquote>
+<p>如果想了解 Core Image 相关，建议按序阅读，前后有依赖。</p>
+</blockquote>
+<h2 id="概述">概述</h2><p>2018，Core Image 主要更新了三个点：<strong>性能优化</strong>，<strong>原型开发</strong>，<strong>以及与 CoreML 的结合</strong>。</p>
+<p>整体更新的不多，但都比较有意思。下面逐一详细阐述。</p>
+<a id="more"></a>
+<h2 id="Performance">Performance</h2><p> 性能方面，2018 主要更新了两点：</p>
+<ul>
+<li>intermediate buffers，中间缓存</li>
+<li>new CIKernel Language features，CIKernel 新特性，按组读写</li>
+</ul>
+<h3 id="intermediate_buffers">intermediate buffers</h3><p>首先，回顾下 Core Image 滤镜链现有的工作方式：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_1.png" alt=""></p>
+<p>我们可以通过这样首尾相连的方式，组合不同的 Filter，达到我们想要的效果，各个 Filter 又对应着各自的 Kernel，我们也可以自定义 Kernel。</p>
+<blockquote>
+<p>PS：</p>
+<p>关于如何使用滤镜链，以及如何自定义 Filter，如果有不了解的，可以翻看前两篇文章。</p>
+<p>这里不再阐述。</p>
+</blockquote>
+<p>Core Image 为了性能，包括处理速度，以及降低内存，会自动把整个滤镜链，优化成一个 Filter 处理，如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_2.png" alt=""></p>
+<p>这可以说是 Core Image 很厉害的地方，也正因为这个特性，Core Image 在处理滤镜链上，性能比 GPUImage 要好得多。</p>
+<blockquote>
+<p>PS：</p>
+<p>GPUImage 的做法，和我们平时的处理方式一致，是按序处理的，没有优化，即 <strong>原图— Filter1 —&gt; 结果图1 — Filter2 —&gt; 结果图2 —&gt; Filter3 —&gt; 结果图</strong> 这样的一个过程。这期间产生了两个中间缓存，即 <strong>结果图1</strong> 和 <strong>结果图2</strong>。</p>
+</blockquote>
+<p>当然，Core Image 减少中间缓存，提高性能，绝大多数情况下，都是非常棒的，但也有一些情况下，需要额外去修改，扩展。</p>
+<p>比如这样一个场景：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_3.png" alt=""></p>
+<p>滤镜链里面的三个滤镜，Sharpen，Hue，Contrast。</p>
+<p>其中，<strong>Sharpen 操作是比较耗时的，并且，用户能动态修改的，只有 Contrast。</strong></p>
+<p>所以如果按照常规的做法，每次修改 Contrast 程度值的时候，都重新跑一遍滤镜链，毫无疑问，会造成不必要的性能损耗。因为 Sharpen + Hue 这两个效果，任何情况下，出来的结果图都是一样的（因为没改变这两个 Filter 的程度值），并且它们本身也是比较耗时的。</p>
+<p>当然，在介绍 Core Image 新功能之前，我们之前遇到类似的问题，是怎么解决的呢？</p>
+<p>很明显，要引入一个临时的 CIImage，接收 Sharpen + Hue 处理出来的 outputImage。然后作为 inputImage，输入给 Contrast Filter。接下去的操作，都只处理 Contrast，它的 inputImage 暂存，固定不变。也就是将原有的一个滤镜链，拆分成两个。</p>
+<p>当然，这种做法是可行的，也是目前的通用方式。只是在代码逻辑维护上，需要额外的成本。</p>
+<p>那么，Core Image 会如何优化这个问题呢？</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_4.png" alt=""></p>
+<p>它的做法，其实和我们之前提到的一样，iOS 12 之后，CIImage 新增了一个方法，<strong>insertingIntermediate</strong>。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertingIntermediate</span><span class="params">()</span></span> -&gt; <span class="type">CIImage</span></span><br><span class="line"><span class="comment">// Returns a new image created by inserting an intermediate.</span></span><br></pre></td></tr></table></figure>
+<p>Hue 得到的 outputImage，调用 insertingIntermediate() 方法，再作为 inputImage 传入 Contrast，优化后的流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_5.png" alt=""></p>
+<p>自动组合的逻辑，会根据 insertingIntermediate 做调整。这里，前两个 Filter 自动组合了。</p>
+<p>对比我们自己维护多个滤镜链和系统提供的 insertingIntermediate，效率上应该是没什么差异，只是系统的使用起来更加方便罢了。</p>
+<p>另外，使用上还要注意什么时候需要缓存，什么时候不需要缓存。Core Image 给我们提供了相关的属性，方便我们控制。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">let</span> cacheIntermediates: <span class="type">CIContextOption</span></span><br><span class="line"><span class="comment">// The value for this key is an NSNumber object containing a Boolean value. If this value is false, the context empties such buffers during and after renders. The default value is true.</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">insertingIntermediate</span><span class="params">(cache: Bool)</span></span> -&gt; <span class="type">CIImage</span></span><br><span class="line"><span class="comment">// Intermediate buffers created through setting cache to true have a higher priority than others. This setting is independent of of CIContext's cacheIntermediates option.</span></span><br></pre></td></tr></table></figure>
+<p>默认是缓存所有的 Intermediates，如果不需要，可以强制关闭。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> context = <span class="type">CIContext</span>(options: [.cacheIntermediates: <span class="literal">false</span>] );</span><br></pre></td></tr></table></figure>
+<p>当然，CIContext 整体设置不缓存后，也可以针对个别 Intermediates 单独开启，下面的优先级更高</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image.insertingIntermediate(cache: <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+<p>总之，决定权在你自己。</p>
+<h3 id="new_CIKernel_Language_features">new CIKernel Language features</h3><p>在 2017 新特性中，我们提到过，CIKernel 支持 Metal 直接编写。所以目前自定义 Filter 有这么两种方式：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_6.png" alt=""></p>
+<blockquote>
+<p>PS：<br>这两种之前的文章中都已经详细阐述了，这里不再说明，有疑惑的可以翻看之前的。</p>
+</blockquote>
+<p>但是 iOS 12 之后，主推 Metal，不仅 OpenGL ES 被弃用，这里的 CIKernel Language 编写方式，也被弃用。当然，Metal 的性能优势还是很明显的，所以尽可能的使用 Metal，也是合理的。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_7.png" alt=""></p>
+<p>另外，CIKernel 还有两点比较重要的性能优化：</p>
+<ul>
+<li>Half float support</li>
+<li>Group reads</li>
+</ul>
+<p><strong>Half float support，支持半精度浮点数。</strong></p>
+<p>很多时候，half float 精度处理出来的效果，是足够好的，比如处理 RGB 的时候。</p>
+<p>通过降低精度，使得运行速度变得更快，尤其是在 A11 芯片上。<br>另外，half float 的另一个优点是它可以使用更小的寄存器，从而能更充分的利用 GPU，进而提升效率。</p>
+<p>接下去，重点分析下按组读写。</p>
+<p>给 shader 提供了新的接口，实现单通道每次读取 4 个像素点，已经每次写入 4 个目标像素值。</p>
+<p>这里举了一个卷积操作为例说明。</p>
+<blockquote>
+<p>PS：</p>
+<p>在图像处理中，卷积操作指的是使用一个卷积核对图像中的每个像素进行一系列操作。 </p>
+<p>卷积核（算子）是用来做图像处理时的矩阵,图像处理时也称为掩膜，是与原图像做运算的参数。</p>
+<p>卷积核通常是一个四方形的网格结构（例如3x3的矩阵或像素区域），该区域上每个方格都有一个权重值。 </p>
+<p>使用卷积进行计算时，需要将卷积核的中心放置在要计算的像素上，一次计算核中每个元素和其覆盖的图像像素值的乘积并求和，得到的结构就是该位置的新像素值。 </p>
+<p>这里不细说，感兴趣的可以了解下 Convolutional Neural Networks。</p>
+<p>如下图所示，展示了一个 3x3 的卷积核在 5x5 的图像上做卷积的过程。每个卷积都是一种特征提取方式，就像一个筛子，将图像中符合条件（激活值越大越符合条件）的部分筛选出来。<img src="http://dataunion.org/wp-content/uploads/2015/03/6.gif" alt="卷积神经网络"></p>
+<p>卷积在图像处理中最常见的应用为锐化和边缘提取。 感兴趣可以查阅下 kGPUImageSharpenFragmentShaderString，锐化算法就是根据周围区域像素值，计算得到中心区域最终像素值。</p>
+</blockquote>
+<p>想象一下，我们有一个 3x3 的单通道卷积运算。按照上图的描述，我们每计算一次目标位置的像素值，就需要 9 次读操作，和 1 次写操作，如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_8.png" alt=""></p>
+<p>再复杂点，如果需要获取 4 个位置的像素值，按照之前逐个读写的方式，那么就需要 36 次的读操作，和 4 次的写操作。但是仔细观察最终读的区域，其实是有很大一部分重复的。如果能一次写入 4 个像素值，那么实际上只有 16 个位置的像素值需要读取。<br><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_9.png" alt=""></p>
+<p>而 CIkernel 的一个新特性就是，支持按组写，优化这部分性能，所以上述操作，可以同时进行 16 次读操作，4 次写操作。</p>
+<p>再进一步，CIKernel 还支持按组读，所以 16 次读操作，可以细分成 4 组来完成。最终，一次操作会完成：4 组 读，4 次写。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_10.png" alt=""></p>
+<p>具体实践起来，kernel 代码如下：（这里是 r 通道的处理）</p>
+<p>先把 float 换成 half，这是之前提到的一个优化点，如下是常规的读 9 次，写 1次。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_11.png" alt=""></p>
+<p>按组读写优化后，代码如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_13.png" alt=""></p>
+<p>这里说明下。</p>
+<p>如果需要按照写，那么需要对 dest 添加 group 修饰符。<strong>group::destination_h dest</strong></p>
+<p>蓝色区域，是当前处理的位置，即 dest.coord()。每个格子代表一个像素点。</p>
+<p>dc + float2(-0.5, -0.5) 即 g1 的中心。同理可得 g1，g2，g3，g4。这里通过 <code>s.gatherX</code>  来实现分组。</p>
+<p>然后 r1，即蓝色区域 r 通道值，则是通过周围 9 个像素点计算出来的，即</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">half r1 = (g1.x + g1.y + g1.z + g1.w + g2.x + g2.w + g3.x + g3.y + g4.x) / <span class="number">9.0</span>h;</span><br></pre></td></tr></table></figure>
+<p>同理可得，r1，r2，r3，r4。<br>最后，按照写入即可。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dest.write(half4(r1, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>), half4(r2, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>), half4(r3, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>), half4(r4, <span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>));</span><br></pre></td></tr></table></figure></p>
+<p>在这个简单的例子里，可以得到 2倍的性能提升。</p>
+<p>所以其他类似的操作，尤其是卷积运算上，按组读写是一个提高性能的好办法。</p>
+<h2 id="Prototyping">Prototyping</h2><p>回顾我们平时实现自研效果的流程：</p>
+<p>特效同学，在电脑上模拟出最终的效果，然后我们（客户端开发）依照算法规则，在 iOS 平台上实现。</p>
+<p>在这个过程中，经常会因为平台差异，或者工具差异，导致最终的效果不一致。比如颜色空间，技术可行性等等。</p>
+<p>比如，我们想得到一个 人形区域 mask，可以通过 NumPy，OpenCV，TensorFlow，Python 等进行原型开发。但是在 iOS 平台上具体实现的时候，可以使用的只有 Core Image，Metal，MPS 等完全不同的东西。</p>
+<p>这就可能出现因为工具的不完全一致，导致效果错误。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_14.png" alt=""></p>
+<p>还有一个问题，就是性能。</p>
+<p>在进行原型开发的时候，平台和工具不同，对内存和CPU／GPU 占用等，都没有具体的参考价值，这导致很多性能问题，会在最终实际开发过程中，才暴露出来。</p>
+<p>为了解决上述提到的问题，Apple 引入了 <strong>PyCoreImage</strong>。</p>
+<blockquote>
+<p><strong>Python bindings for Core Image.</strong></p>
+<p>把 Core Image 强大的图像处理能力，和 Python 语言的灵活结合起来。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_15.png" alt=""></p>
+<p>使用 PyCoreImage，可以最大程度的模拟真实环境，并且无需额外的学习成本。如果习惯用 Swift 的话，可以直接在 Playground 中模拟效果。</p>
+<p>要使用 PyCoreImage，需要借助 Mac OS X 10.5 就引入的 PyObjC，它实现了在 Python 中调用 Objective-C 代码。</p>
+<p>下面是一个简单的转换示例：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Objc</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;CoreImage/CoreImage.h&gt;</span></span></span><br><span class="line"><span class="built_in">CIVector</span> *v = [<span class="built_in">CIVector</span> vectorWithX:<span class="number">0</span> Y:<span class="number">1</span> Z:<span class="number">2</span> W:<span class="number">3</span>];</span><br><span class="line"><span class="comment">// Python</span></span><br><span class="line">from Quartz import <span class="built_in">CIVector</span></span><br><span class="line">v = <span class="built_in">CIVector</span>.vectorWithX_Y_Z_W_(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_16.png" alt=""></p>
+<p>至于 PyCoreImage 的整体架构，如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_17.png" alt=""></p>
+<p><strong>可以通过 NumPy 加载图片，获取二维图像数据数组，转为 CIImage 传入 PyCoreImage 中使用，PyCoreImage 通过 PyObjC，与 Core Image 进行交互，下发指令进行处理。</strong></p>
+<blockquote>
+<p>PS：</p>
+<p>NumPy 是一个为 Python 提供高性能向量、矩阵和高维数据结构的科学计算库。它通过 C 和 Fortran 实现，因此用向量和矩阵建立方程并实现数值计算有非常好的性能。NumPy 基本上是所有使用 Python 进行数值计算的框架和包的基础，例如 TensorFlow 和 PyTorch，构建机器学习模型最基础的内容就是学会使用 NumPy 搭建计算过程。</p>
+<p>NumPy 主要的运算对象为同质的多维数组，即由同一类型元素（一般是数字）组成的表格，且所有元素通过正整数元组进行索引。</p>
+</blockquote>
+<p>下面是一个高斯模糊的具体例子：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_18.png" alt=""></p>
+<p>代码很简单，这里不具体说明。</p>
+<p>另外，为了降低学习成本，PyCoreImage 对比 Core Image 做了一些简化，比如颜色空间统一为 sRGB 等。绿色标注即差异项：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_19.png" alt=""></p>
+<p>下面是一个备忘录，列举了常用的一些操作：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_20.png" alt=""></p>
+<p>这里额外提一个，Kernel 的加载方式。</p>
+<p>自定义 Filter，可以通过如下方式加载并应用效果。这里可以留意到，kernel 和我们在 iOS 上用的完全一致，真正的减少了移植的成本。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_21.png" alt=""></p>
+<p>如果想了解这部分的更多知识，包括安装方式，其他 API 等，可以查阅官方文档：</p>
+<p><a href="https://developer.apple.com/documentation/coreimage/prototyping_your_app_s_core_image_pipeline_with_python" target="_blank" rel="external">Prototyping Your App’s Core Image Pipeline with Python</a></p>
+<h2 id="Machine_Learning">Machine Learning</h2><p>新加入了一个内置 Filter，CICoreMLModelFilter，可以和方便的与 CoreML 结合起来，实现效果。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_25.png" alt=""></p>
+<p>参数十分简洁，就两个，inputImage 和 inputModel。如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> result = image.applyingFilter(<span class="string">"CICoreMLModelFilter"</span>, parameters: [<span class="string">"inputModel"</span>: model])!</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>PS：</p>
+<p>不过目前在官方文档上，还搜不到 CICoreMLModelFilter 的任何内容，内置的 CIFilter 也找不到，估计还没开放。</p>
+</blockquote>
+<p>关于与 CoreML 的配合，这里还提了一点。</p>
+<p>当我们在训练模型的时候，其实就是我们调参的过程，这样模型能将具体的输入（比如说图像）映射为输出（标签）。我们的优化目标就是尽力让模型的损失调低，当然需要往正确的方向调整模型参数才行。成功的神经网络拥有数以百万计的参数！自然而然，如果你有很多参数，就需要为模型展示大量的样本，才能让模型获得良好的性能。</p>
+<p>所以说，训练集和模型的准确性成正比。不同类型的大量数据，对神经网络的鲁棒性起着至关重要的作用。</p>
+<p>但不得不提到，真实数据的采集是十分困难的。这种情况下，我们一般会借助  <strong>Data Augmentation</strong> 来模拟，填充数据。</p>
+<blockquote>
+<p>PS：</p>
+<p>在深度学习中，有的时候训练集不够多，或者某一类数据较少，或者为了防止过拟合，让模型更加鲁棒性， Data Augmentation 是一个不错的选择。</p>
+<p>普通的图像增强方法包括：<strong>翻转、旋转、平移、裁剪、缩放和高斯噪声</strong>；高级版图像增强方法还有<strong>常数填充、反射、边缘延伸、对称和包裹模式</strong>等。</p>
+<p>更多的，可以查阅：<a href="https://www.zhihu.com/question/35339639" target="_blank" rel="external">使用深度学习(CNN)算法进行图像识别工作时，有哪些data augmentation 的奇技淫巧？</a></p>
+</blockquote>
+<p>借助 Core Image 内置滤镜，可以十分方便实现图像增强。</p>
+<p>如下是几个具体例子：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_22.png" alt=""></p>
+<p>另外，结合 PyCoreImage，在电脑上可以快速生成样本数据。如下是具体的实践代码：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_23.png" alt=""></p>
+<p>运行后，就可以得到大量样本啦～</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_24.png" alt=""></p>
+<h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/videos/play/wwdc2018/719/" target="_blank" rel="external">Core Image: Performance, Prototyping, and Python</a></p>
+<p><a href="https://developer.apple.com/documentation/coreimage/prototyping_your_app_s_core_image_pipeline_with_python" target="_blank" rel="external">Prototyping Your App’s Core Image Pipeline with Python</a></p>
 ]]></content>
       
         
@@ -1513,7 +1513,7 @@
 <p>但是实际上，我们的项目中很少有这样单一，中规中矩的方法。很多时候，项目中难免发生多个类之间的交互处理，耦合度高，而这种操作非常的不好调试。单元测试的原则之一就在于我们用来<strong>测试的代码要求功能很单一</strong>，这其实与良好的代码设计的思想是非常相符的。</p>
 <p>那，如何保证每一个方法都是可测试的呢？</p>
 <p>下面通过一个例子，来介绍 Swift 应该如何让代码变的可测试：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to \(number)"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssitant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone = <span class="type">Phone</span>()</span><br><span class="line">    <span class="keyword">let</span> bossNumber = <span class="string">"12345678"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to <span class="subst">\(number)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssitant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone = <span class="type">Phone</span>()</span><br><span class="line">    <span class="keyword">let</span> bossNumber = <span class="string">"12345678"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这段代码也很简单，但是，我们要怎么进行测试呢？</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistantTestClass</span>: <span class="title">XCTestCase</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">testCallingBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">let</span> assistant = <span class="type">PersonalAssistant</span>()</span><br><span class="line">        assistant.callBoss()</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Asset ？？</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这里存在这么几个问题：</p>
@@ -1524,7 +1524,7 @@
 <li>没法<strong>快速执行</strong></li>
 </ol>
 <h4 id="Dependency_Injection">Dependency Injection</h4><p>为了降低代码本身的耦合，也为了让代码更好测试，这里我们需要引入 DI（Dependency Injection，依赖注入）。</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span>: <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to \(number)"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone: <span class="type">PhoneProtocol</span></span><br><span class="line">    <span class="keyword">let</span> bossNumber: <span class="type">String</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span>, myBossNumber: <span class="type">String</span>) &#123;</span><br><span class="line">        phone = aPhone</span><br><span class="line">        bossNumber = myBossNumber</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Phone</span>: <span class="title">PhoneProtocol</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">call</span><span class="params">(number: String)</span></span>&#123;</span><br><span class="line">        <span class="built_in">print</span> (<span class="string">"Real phone calling to <span class="subst">\(number)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PersonalAssistant</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> phone: <span class="type">PhoneProtocol</span></span><br><span class="line">    <span class="keyword">let</span> bossNumber: <span class="type">String</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span>, myBossNumber: <span class="type">String</span>) &#123;</span><br><span class="line">        phone = aPhone</span><br><span class="line">        bossNumber = myBossNumber</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">callBoss</span><span class="params">()</span></span>&#123;</span><br><span class="line">        phone.call(number: bossNumber)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>甚至可以<strong>提供默认值</strong>： </p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">init</span>(aPhone: <span class="type">PhoneProtocol</span> = <span class="type">Phone</span>(), myBossNumber: <span class="type">String</span> = <span class="string">"12345678"</span>)</span><br></pre></td></tr></table></figure>
 <p>通过 DI，我们获得了对 phone 和 number 的完全控制，我们可以传人任意的号码，任意的通讯设备，这使得整个代码的扩展性更好了。同时，也解决了我们提到的第一个问题，降低耦合度。</p>
@@ -1547,7 +1547,7 @@
 <p>至此，这个简单的例子，就介绍完了。通过 Protocol 依赖注入，使得我们代码的耦合度更低，扩展性更好，可测试。所以，良好的代码设计是很有必要的。</p>
 <hr>
 <h2 id="自测">自测</h2><p>如果说，下面一个例子，能通过重构代码，写出对应的 case，那么，我这篇文章也就没白写..</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@IBAction</span> <span class="function"><span class="keyword">func</span> <span class="title">openTapped</span><span class="params">(<span class="number">_</span> sender: Any)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mode: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> segmentedControl.selectedSegmentIndex &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        mode = <span class="string">"view"</span></span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        mode = <span class="string">"edit"</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">fatalError</span>(<span class="string">"Impossible Case"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url = <span class="type">URL</span>(string: <span class="string">"myappscheme://open?id=\(document!.identifier)&amp;mode=\(mode)"</span>)!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="type">UIApplication</span>.shared.canOpenURL(url) &#123;</span><br><span class="line">        <span class="type">UIApplication</span>.shared.open(url, options: [:], completionHandler: <span class="literal">nil</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"url error"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Test</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testOpensDocumentURLWhenButtonIsTapped</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"Preview"</span>) <span class="keyword">as</span>! <span class="type">PreviewViewController</span></span><br><span class="line">    controller.loadViewIfNeeded()</span><br><span class="line">    controller.segmentedControl.selectedSegmentIndex = <span class="number">1</span></span><br><span class="line">    controller.document = <span class="type">Document</span>(identifier: <span class="string">"TheID"</span>)</span><br><span class="line"></span><br><span class="line">    controller.openTapped(controller.button)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Asset ??</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@IBAction</span> <span class="function"><span class="keyword">func</span> <span class="title">openTapped</span><span class="params">(<span class="number">_</span> sender: Any)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> mode: <span class="type">String</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> segmentedControl.selectedSegmentIndex &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        mode = <span class="string">"view"</span></span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        mode = <span class="string">"edit"</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="built_in">fatalError</span>(<span class="string">"Impossible Case"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> url = <span class="type">URL</span>(string: <span class="string">"myappscheme://open?id=<span class="subst">\(document!.identifier)</span>&amp;mode=<span class="subst">\(mode)</span>"</span>)!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="type">UIApplication</span>.shared.canOpenURL(url) &#123;</span><br><span class="line">        <span class="type">UIApplication</span>.shared.open(url, options: [:], completionHandler: <span class="literal">nil</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"url error"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Test</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testOpensDocumentURLWhenButtonIsTapped</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> controller = <span class="type">UIStoryboard</span>(name: <span class="string">"Main"</span>, bundle: <span class="literal">nil</span>).instantiateViewController(withIdentifier: <span class="string">"Preview"</span>) <span class="keyword">as</span>! <span class="type">PreviewViewController</span></span><br><span class="line">    controller.loadViewIfNeeded()</span><br><span class="line">    controller.segmentedControl.selectedSegmentIndex = <span class="number">1</span></span><br><span class="line">    controller.document = <span class="type">Document</span>(identifier: <span class="string">"TheID"</span>)</span><br><span class="line"></span><br><span class="line">    controller.openTapped(controller.button)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Asset ??</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Enjoy it～</p>
 <hr>
 <h2 id="参考链接">参考链接</h2><p><a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/01-introduction.html#//apple_ref/doc/uid/TP40014132-CH1-SW1" target="_blank" rel="external">Testing with Xcode</a></p>
@@ -3156,7 +3156,7 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital2</span><span class="params">()</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> string = <span class="string">"Here is another Example"</span></span><br><span class="line">    <span class="keyword">let</span> headline = viewController.makeHeadline(string)</span><br><span class="line">    </span><br><span class="line">    <span class="type">XCTAssertEqual</span>(headline, <span class="string">"Here Is Another Example"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>再次 <strong>Command + U</strong>，不出意外，第一个还是通过，第二个则显示失败。原因大家都懂~</p>
 <p>接下去修改 <code>makeHeadline</code> 的具体实现：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 通过“ ”分割字符串, 存入数组</span></span><br><span class="line">    <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 遍历数组, 移除首字母, 并插入对应的大写字母</span></span><br><span class="line">    <span class="keyword">var</span> headline = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">var</span> word <span class="keyword">in</span> words &#123;</span><br><span class="line">        <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">        headline += <span class="string">"\(String(firstCharacter).uppercaseString)\(word) "</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 移除最后的“ ”</span></span><br><span class="line">    headline.removeAtIndex(headline.endIndex.predecessor())</span><br><span class="line">    <span class="keyword">return</span> headline</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 1. 通过“ ”分割字符串, 存入数组</span></span><br><span class="line">    <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 遍历数组, 移除首字母, 并插入对应的大写字母</span></span><br><span class="line">    <span class="keyword">var</span> headline = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> <span class="keyword">var</span> word <span class="keyword">in</span> words &#123;</span><br><span class="line">        <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">        headline += <span class="string">"<span class="subst">\(String(firstCharacter)</span>.uppercaseString)<span class="subst">\(word)</span> "</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 移除最后的“ ”</span></span><br><span class="line">    headline.removeAtIndex(headline.endIndex.predecessor())</span><br><span class="line">    <span class="keyword">return</span> headline</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>代码很简单，注释也写的很清楚，这里就不累述了。再次 <strong>Command + U</strong>，bingo~ 通过了。</p>
 <p>接下去再看看，是否有优化的空间。</p>
 <ol>
@@ -3164,7 +3164,7 @@
 <li><strong>makeHeadline</strong> 函数的实现太 Objc 化了，没有用上 Swift 里的高级功能。</li>
 </ol>
 <p>OK，既然不好，那就优化一下呗~</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> inputString =       <span class="string">"this is A test headline"</span></span><br><span class="line">        <span class="keyword">let</span> expectedHeadline =  <span class="string">"This Is A Test Headline"</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> result = viewController.makeHeadline(inputString)</span><br><span class="line">        <span class="type">XCTAssertEqual</span>(result, expectedHeadline)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> headline = words.<span class="built_in">map</span> &#123; (<span class="keyword">var</span> word) -&gt; <span class="type">String</span> <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">          <span class="keyword">return</span> <span class="string">"\(String(firstCharacter).uppercaseString)\(word)"</span></span><br><span class="line">          &#125;.joinWithSeparator(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> headline</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testMakeHeadline_ReturnsStringWithEachWordStartCapital</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> inputString =       <span class="string">"this is A test headline"</span></span><br><span class="line">        <span class="keyword">let</span> expectedHeadline =  <span class="string">"This Is A Test Headline"</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> result = viewController.makeHeadline(inputString)</span><br><span class="line">        <span class="type">XCTAssertEqual</span>(result, expectedHeadline)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeHeadline</span><span class="params">(string: String)</span></span> -&gt; <span class="type">String</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> words = string.componentsSeparatedByString(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> headline = words.<span class="built_in">map</span> &#123; (<span class="keyword">var</span> word) -&gt; <span class="type">String</span> <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">let</span> firstCharacter = word.removeAtIndex(word.startIndex)</span><br><span class="line">          <span class="keyword">return</span> <span class="string">"<span class="subst">\(String(firstCharacter)</span>.uppercaseString)<span class="subst">\(word)</span>"</span></span><br><span class="line">          &#125;.joinWithSeparator(<span class="string">" "</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> headline</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>再次  <strong>Command + U</strong>，确保测试通过。至此，这个简单的例子算是介绍完了。</p>
 <p>虽然例子简单，只实现了一个功能，但是 TDD 相关的东西，具体流程也都涉及了，剩下的，只是重复这些操作直至完成所有需求。</p>
 <p>如果觉得这个例子太简单了，没学够，建议看下 <a href="https://www.packtpub.com/application-development/test-driven-ios-development-swift" target="_blank" rel="external">《Test-Driven iOS Development with Swift》</a>  一书中的 <a href="http://www.packtpub.com/code_download/23832" target="_blank" rel="external">ToDo 源码</a>，大篇幅介绍 TDD 的实际应用。</p>
