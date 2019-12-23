@@ -1,16 +1,22 @@
-# Core Image【4】—— 2018 新特性
+title: Core Image【4】—— 2018 新特性
+date: 2019-12-22 22:31:29
+
+tags:
+
+- Core Image
+
+------
 
 Core Image 系列，目前的文章如下：
 
-* Core Image【1】—— 概述
-* Core Image【2】—— 自定义 Filter
-* Core Image【3】—— 2017 新特性
-* Core Image【4】—— 2018 新特性
+- [Core Image 你需要了解的那些事~](http://colin1994.github.io/2016/10/21/Core-Image-OverView/)
+- [Core Image 之自定义 Filter~](http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/)
+- [Core Image【3】—— 2017 新特性](http://colin1994.github.io/2019/12/22/Core-Image-2017/)
+- [Core Image【4】—— 2018 新特性](http://colin1994.github.io/2019/12/22/Core-Image-2018/)
+
+
 
 > 如果想了解 Core Image 相关，建议按序阅读，前后有依赖。
->
-
------
 
 
 
@@ -21,6 +27,10 @@ Core Image 系列，目前的文章如下：
 2018，Core Image 主要更新了三个点：**性能优化**，**原型开发**，**以及与 CoreML 的结合**。
 
 整体更新的不多，但都比较有意思。下面逐一详细阐述。
+
+
+
+<!--more-->
 
 
 
@@ -39,7 +49,7 @@ Core Image 系列，目前的文章如下：
 
 首先，回顾下 Core Image 滤镜链现有的工作方式：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/ad4e8443efe38ee5a38d5603c4e6d9b9.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_1.png)
 
 我们可以通过这样首尾相连的方式，组合不同的 Filter，达到我们想要的效果，各个 Filter 又对应着各自的 Kernel，我们也可以自定义 Kernel。
 
@@ -51,7 +61,7 @@ Core Image 系列，目前的文章如下：
 
 Core Image 为了性能，包括处理速度，以及降低内存，会自动把整个滤镜链，优化成一个 Filter 处理，如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/8174b09eb717d3a6e27c836268621af0.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_2.png)
 
 这可以说是 Core Image 很厉害的地方，也正因为这个特性，Core Image 在处理滤镜链上，性能比 GPUImage 要好得多。
 
@@ -63,7 +73,7 @@ Core Image 为了性能，包括处理速度，以及降低内存，会自动把
 
 比如这样一个场景：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/d747924125e7bb677ab67dc2b964aca7.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_3.png)
 
 滤镜链里面的三个滤镜，Sharpen，Hue，Contrast。
 
@@ -79,7 +89,7 @@ Core Image 为了性能，包括处理速度，以及降低内存，会自动把
 
 那么，Core Image 会如何优化这个问题呢？
 
-![](https://diycode.b0.upaiyun.com/photo/2018/24617819ec01e5faa2d859d6b973201f.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_4.png)
 
 它的做法，其实和我们之前提到的一样，iOS 12 之后，CIImage 新增了一个方法，**insertingIntermediate**。
 
@@ -90,7 +100,7 @@ func insertingIntermediate() -> CIImage
 
 Hue 得到的 outputImage，调用 insertingIntermediate() 方法，再作为 inputImage 传入 Contrast，优化后的流程如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/8315f8c92ed68db55e7c8f626914cccf.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_5.png)
 
 自动组合的逻辑，会根据 insertingIntermediate 做调整。这里，前两个 Filter 自动组合了。
 
@@ -126,14 +136,14 @@ image.insertingIntermediate(cache: true);
 
 在 2017 新特性中，我们提到过，CIKernel 支持 Metal 直接编写。所以目前自定义 Filter 有这么两种方式：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/7417769c610a8b77aec8c523ab21333c.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_6.png)
 
 > PS：
 > 这两种之前的文章中都已经详细阐述了，这里不再说明，有疑惑的可以翻看之前的。
 
 但是 iOS 12 之后，主推 Metal，不仅 OpenGL ES 被弃用，这里的 CIKernel Language 编写方式，也被弃用。当然，Metal 的性能优势还是很明显的，所以尽可能的使用 Metal，也是合理的。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/8fba62d2ddfc97a040be3856fab51d2f.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_7.png)
 
 
 
@@ -179,31 +189,30 @@ image.insertingIntermediate(cache: true);
 
 想象一下，我们有一个 3x3 的单通道卷积运算。按照上图的描述，我们每计算一次目标位置的像素值，就需要 9 次读操作，和 1 次写操作，如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/956d80d5c7b2cd60af05100db38bf59f.png)
-
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_8.png)
 
 
 
 再复杂点，如果需要获取 4 个位置的像素值，按照之前逐个读写的方式，那么就需要 36 次的读操作，和 4 次的写操作。但是仔细观察最终读的区域，其实是有很大一部分重复的。如果能一次写入 4 个像素值，那么实际上只有 16 个位置的像素值需要读取。
-![](https://diycode.b0.upaiyun.com/photo/2018/e5091894c8d8cd79f6e9e513f52a263f.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_9.png)
 
 而 CIkernel 的一个新特性就是，支持按组写，优化这部分性能，所以上述操作，可以同时进行 16 次读操作，4 次写操作。
 
 再进一步，CIKernel 还支持按组读，所以 16 次读操作，可以细分成 4 组来完成。最终，一次操作会完成：4 组 读，4 次写。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/986c910b79d01b16243733aa509d0da1.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_10.png)
 
 具体实践起来，kernel 代码如下：（这里是 r 通道的处理）
 
 先把 float 换成 half，这是之前提到的一个优化点，如下是常规的读 9 次，写 1次。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/35de101cc86080eeb705fe86dffba2fb.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_11.png)
 
 
 
 按组读写优化后，代码如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/9cdc0d32222f99e64e8f4dc5e9483a78.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_13.png)
 
 这里说明下。
 
@@ -244,7 +253,7 @@ dest.write(half4(r1, 0,0,1), half4(r2, 0,0,1), half4(r3, 0,0,1), half4(r4, 0,0,1
 
 这就可能出现因为工具的不完全一致，导致效果错误。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/6f75ea97bce31c1f3583f53236a0edba.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_14.png)
 
 还有一个问题，就是性能。
 
@@ -256,7 +265,7 @@ dest.write(half4(r1, 0,0,1), half4(r2, 0,0,1), half4(r3, 0,0,1), half4(r4, 0,0,1
 >
 > 把 Core Image 强大的图像处理能力，和 Python 语言的灵活结合起来。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/6d31d0cde0cc10f6ae6904c8cf808374.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_15.png)
 
 
 
@@ -275,11 +284,11 @@ from Quartz import CIVector
 v = CIVector.vectorWithX_Y_Z_W_(0, 1, 2, 3)
 ```
 
-![](https://diycode.b0.upaiyun.com/photo/2018/1f60d7db46d202a75a7c565de98b3a91.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_16.png)
 
 至于 PyCoreImage 的整体架构，如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/a6c5ee7aca6b0128da518cf2273a4e2e.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_17.png)
 
 
 
@@ -296,25 +305,25 @@ v = CIVector.vectorWithX_Y_Z_W_(0, 1, 2, 3)
 
 下面是一个高斯模糊的具体例子：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/520e9259123a89b57904efa8225be7a0.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_18.png)
 
 代码很简单，这里不具体说明。
 
 另外，为了降低学习成本，PyCoreImage 对比 Core Image 做了一些简化，比如颜色空间统一为 sRGB 等。绿色标注即差异项：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/c0b518b8dc68e00b780994c71262c308.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_19.png)
 
 
 
 下面是一个备忘录，列举了常用的一些操作：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/bb6efbe96c4b43c89ff4201d85f2ccc8.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_20.png)
 
 这里额外提一个，Kernel 的加载方式。
 
 自定义 Filter，可以通过如下方式加载并应用效果。这里可以留意到，kernel 和我们在 iOS 上用的完全一致，真正的减少了移植的成本。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/4bb2a0a17af53277611da8ada541dc05.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_21.png)
 
 
 
@@ -330,7 +339,7 @@ v = CIVector.vectorWithX_Y_Z_W_(0, 1, 2, 3)
 
 新加入了一个内置 Filter，CICoreMLModelFilter，可以和方便的与 CoreML 结合起来，实现效果。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/9aa47e880bd8c47618449e1d00d28de2.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_25.png)
 
 参数十分简洁，就两个，inputImage 和 inputModel。如下：
 
@@ -366,15 +375,15 @@ let result = image.applyingFilter("CICoreMLModelFilter", parameters: ["inputMode
 
 如下是几个具体例子：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/41b67e67f039708afa127dffb5fee528.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_22.png)
 
 另外，结合 PyCoreImage，在电脑上可以快速生成样本数据。如下是具体的实践代码：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/45d9cb192ff6c84f40ae25c1d2bacaed.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_23.png)
 
 运行后，就可以得到大量样本啦～
 
-![](https://diycode.b0.upaiyun.com/photo/2018/5444a7aa0d60df9eabe6a3135943fb44.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/image_4_24.png)
 
 
 
