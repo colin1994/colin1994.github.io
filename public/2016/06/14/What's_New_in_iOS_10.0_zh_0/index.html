@@ -50,7 +50,7 @@
 原文链接：What’s New in iOS 10.0
 
 这篇文章总结了运行在目前 iOS设备上的 iOS">
-<meta property="og:updated_time" content="2019-12-23T01:02:31.290Z">
+<meta property="og:updated_time" content="2019-12-23T03:27:29.603Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="What's New in iOS 10.0 中文版(上)">
 <meta name="twitter:description" content="由于原文篇幅较长，为了方便阅读，分为上下篇。
@@ -273,11 +273,11 @@
 <li><p>贴纸包提供一系列的贴纸，用户可以添加到他们的信息内容中。</p>
 </li>
 <li><p><em>iMessage app</em> 让你在 Messages App 中展示一个自定义用户界面，创建一个标签的浏览器，包括一次对话中的文本，贴纸和媒体文件，并且创建，发送和更新消息交互。</p>
-<p> iMessage App也可以帮助用户搜索保存在你的 App中相关网站的图片，当它们处在  Messages App 中的时候。</p>
+<p> iMessage App也可以帮助用户搜索保存在你的 App中相关网站的图片，当它们处在  Messages App 中的时候。</p>
 </li>
 </ul>
 <p>你可以创建一个贴纸包而无需编写任何代码：简单地拖拽图片到 Xcode中贴纸包文件夹内贴纸 asset 目录。</p>
-<p>为了开发一个  iMessage App，你可以使用 Messages 框架中的 API (<code>Messages.framework</code>)。更多关于 Messages 框架，详见 <em><a href="https://developer.apple.com/reference/messages" target="_blank" rel="external">Messages Framework Reference</a></em>. 对于创建 App Extensions的普遍信息，详见 <em><a href="https://developer.apple.com/library/prerelease/content/documentation/General/Conceptual/ExtensibilityPG/index.html#//apple_ref/doc/uid/TP40014214" target="_blank" rel="external">App Extension Programming Guide</a></em>.</p>
+<p>为了开发一个  iMessage App，你可以使用 Messages 框架中的 API (<code>Messages.framework</code>)。更多关于 Messages 框架，详见 <em><a href="https://developer.apple.com/reference/messages" target="_blank" rel="external">Messages Framework Reference</a></em>. 对于创建 App Extensions的普遍信息，详见 <em><a href="https://developer.apple.com/library/prerelease/content/documentation/General/Conceptual/ExtensibilityPG/index.html#//apple_ref/doc/uid/TP40014214" target="_blank" rel="external">App Extension Programming Guide</a></em>.</p>
 <p>如果你的 App提供图片在 Messages中分享，你想要用户可以使用 Spotlight 的流行图片搜索  (即, “#images”) 来搜索图片，而不用离开 Messages App，首先创建一个 iMessage app。然后遵循下面步骤： </p>
 <ul>
 <li>给你 App 的 entitlements 添加  <code>com.apple.developer.associated-domains</code> 键。包括保存你想要搜索的图片的网站域名的一个列表。对于每个域，指定 <code>spotlight-image-search</code> 服务。</li>
@@ -293,7 +293,7 @@
 <h2 id="广泛的颜色">广泛的颜色</h2><p>贯穿系统的大多数图形框架，包括 Core Graphics, Core Image, Metal, 和 AVFoundation, 有大幅的改进来支持 extended-range 像素格式和 wide-gamut 颜色空间。通过将此行为扩展到整个图形栈中，它比以往任何时间更容易支持具有宽颜色显示的设备。此外，UIKit 使在新扩展的 sRGB颜色空间上工作标准化，因此很容易混合 sRGB和其他颜色，更广泛的色域没有明显的性能损失。</p>
 <p>这里有一些你开始使用广泛颜色的最佳实践。</p>
 <ul>
-<li>在 iOS 10 中，<a href="https://developer.apple.com/reference/uikit/uicolor" target="_blank" rel="external">UIColor</a> 类使用扩展的 sRGB 颜色空间，并且它的构造器(initializers)不再限制初始值在  <code>0.0</code> 和 <code>1.0</code> 之间。如果你的应用程序依赖于 UIKit来限制组件(component)值 (无论你是创建一个颜色或者一个颜色的组件值)，当你链接到 iOS 10的时候，你需要改变这些行为。 </li>
+<li>在 iOS 10 中，<a href="https://developer.apple.com/reference/uikit/uicolor" target="_blank" rel="external">UIColor</a> 类使用扩展的 sRGB 颜色空间，并且它的构造器(initializers)不再限制初始值在  <code>0.0</code> 和 <code>1.0</code> 之间。如果你的应用程序依赖于 UIKit来限制组件(component)值 (无论你是创建一个颜色或者一个颜色的组件值)，当你链接到 iOS 10的时候，你需要改变这些行为。 </li>
 <li>当在 iPad Pro (9.7 inch) 的  <a href="https://developer.apple.com/reference/uikit/uiview" target="_blank" rel="external">UIView</a> 上执行自定义的绘制时，底层的绘图环境配置了一个扩展的 sRGB颜色空间。</li>
 <li>如果你的 App 渲染自定义的图像对象，使用新的  <a href="https://developer.apple.com/reference/uikit/uigraphicsimagerenderer" target="_blank" rel="external">UIGraphicsImageRenderer</a> 类来控制目标位图是使用扩展范围(extended-range)还是标准范围 (standard-range) 格式。</li>
 <li>如果你使用较低级别的 API，比如 Core Graphics 和 Metal来执行你自己的图像处理，你需要使用一个扩展的颜色空间和一个支持16位浮点值的像素格式的组件值。当限制颜色值是必要的时候，你应该明确这样做。</li>

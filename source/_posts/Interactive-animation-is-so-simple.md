@@ -222,7 +222,7 @@ but, 到底有多方便呢 ?
 
 ### 控制器类型
 
-`Jazzhands` 帮我们封装好了两种控制器类型 (IFTTTAnimatedPagingScrollViewController, IFTTTAnimatedScrollViewController)。 我们可以直接基于此, 做相应的动画。 这是十分方便的。比如官方的demo就是基于 `IFTTTAnimatedPagingScrollViewController` 来实现的。
+`Jazzhands` 帮我们封装好了两种控制器类型 (IFTTTAnimatedPagingScrollViewController, IFTTTAnimatedScrollViewController)。 我们可以直接基于此, 做相应的动画。 这是十分方便的。比如官方的demo就是基于 `IFTTTAnimatedPagingScrollViewController` 来实现的。
 
 它实现了 `scrollViewDidScroll` 等方法。
 

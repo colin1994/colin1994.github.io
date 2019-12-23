@@ -70,11 +70,11 @@ UIKit介绍了 `UITextInputTraits` 协议中的  `textContentType` 属性，�
 
 - *iMessage app* 让你在 Messages App 中展示一个自定义用户界面，创建一个标签的浏览器，包括一次对话中的文本，贴纸和媒体文件，并且创建，发送和更新消息交互。
 
-   iMessage App也可以帮助用户搜索保存在你的 App中相关网站的图片，当它们处在  Messages App 中的时候。
+   iMessage App也可以帮助用户搜索保存在你的 App中相关网站的图片，当它们处在  Messages App 中的时候。
 
 你可以创建一个贴纸包而无需编写任何代码：简单地拖拽图片到 Xcode中贴纸包文件夹内贴纸 asset 目录。
 
-为了开发一个  iMessage App，你可以使用 Messages 框架中的 API (`Messages.framework`)。更多关于 Messages 框架，详见 *[Messages Framework Reference](https://developer.apple.com/reference/messages)*. 对于创建 App Extensions的普遍信息，详见 *[App Extension Programming Guide](https://developer.apple.com/library/prerelease/content/documentation/General/Conceptual/ExtensibilityPG/index.html#//apple_ref/doc/uid/TP40014214)*.
+为了开发一个  iMessage App，你可以使用 Messages 框架中的 API (`Messages.framework`)。更多关于 Messages 框架，详见 *[Messages Framework Reference](https://developer.apple.com/reference/messages)*. 对于创建 App Extensions的普遍信息，详见 *[App Extension Programming Guide](https://developer.apple.com/library/prerelease/content/documentation/General/Conceptual/ExtensibilityPG/index.html#//apple_ref/doc/uid/TP40014214)*.
 
 如果你的 App提供图片在 Messages中分享，你想要用户可以使用 Spotlight 的流行图片搜索  (即, “#images”) 来搜索图片，而不用离开 Messages App，首先创建一个 iMessage app。然后遵循下面步骤： 
 
@@ -110,7 +110,7 @@ recognizer?.recognitionTask(with: request, resultHandler: { (result, error) in
 
 这里有一些你开始使用广泛颜色的最佳实践。
 
-- 在 iOS 10 中，[UIColor](https://developer.apple.com/reference/uikit/uicolor) 类使用扩展的 sRGB 颜色空间，并且它的构造器(initializers)不再限制初始值在  `0.0` 和 `1.0` 之间。如果你的应用程序依赖于 UIKit来限制组件(component)值 (无论你是创建一个颜色或者一个颜色的组件值)，当你链接到 iOS 10的时候，你需要改变这些行为。 
+- 在 iOS 10 中，[UIColor](https://developer.apple.com/reference/uikit/uicolor) 类使用扩展的 sRGB 颜色空间，并且它的构造器(initializers)不再限制初始值在  `0.0` 和 `1.0` 之间。如果你的应用程序依赖于 UIKit来限制组件(component)值 (无论你是创建一个颜色或者一个颜色的组件值)，当你链接到 iOS 10的时候，你需要改变这些行为。 
 - 当在 iPad Pro (9.7 inch) 的  [UIView](https://developer.apple.com/reference/uikit/uiview) 上执行自定义的绘制时，底层的绘图环境配置了一个扩展的 sRGB颜色空间。
 - 如果你的 App 渲染自定义的图像对象，使用新的  [UIGraphicsImageRenderer](https://developer.apple.com/reference/uikit/uigraphicsimagerenderer) 类来控制目标位图是使用扩展范围(extended-range)还是标准范围 (standard-range) 格式。
 - 如果你使用较低级别的 API，比如 Core Graphics 和 Metal来执行你自己的图像处理，你需要使用一个扩展的颜色空间和一个支持16位浮点值的像素格式的组件值。当限制颜色值是必要的时候，你应该明确这样做。

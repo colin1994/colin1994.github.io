@@ -148,7 +148,7 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
 
 一个简单的来电黑名单，我们只要补全 `retrievePhoneNumbersToBlock` 和 `retrievePhoneNumbersToIdentifyAndLabels` 中的相关数据即可，它们分别表示直接加入黑名单的号码以及识别出来，需要判断的号码。
 
-现在我们具体看一下这个类到底做了什么。
+现在我们具体看一下这个类到底做了什么。
 
 `beginRequest` ，该方法在 Containing App 调用 reload 或者在 设置 —> 电话 —> Call Blocking & Identification里开启权限的时候，会自动被调用。每次调用，都会提交当前的黑名单列表，具体操作如下：
 
