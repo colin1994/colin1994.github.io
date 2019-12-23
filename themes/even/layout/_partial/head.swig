@@ -36,3 +36,5 @@
 {% if not env.debug %}
   {% include "../_script/analytics.swig" %}
 {% endif %}
+
+<script data-ad-client="ca-pub-9798409996369414" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
