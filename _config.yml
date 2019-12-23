@@ -95,7 +95,7 @@ exclude_generator:
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:colin1994/colin1994.github.io.git
+  repository: git@colin1994.github.com:colin1994/colin1994.github.io.git
   branch: master
   name: colin1994
   email: hitwhylz@163.com
