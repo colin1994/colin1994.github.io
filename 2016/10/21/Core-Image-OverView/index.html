@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Core Image 你需要了解的那些事~"/>
+
+
+
+
+  <meta name="keywords" content="Core Image," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2016/10/21/Core-Image-OverView/"/>
+
+
+<meta name="description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+前言最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Core Image 你需要了解的那些事~">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/10/21/Core-Image-OverView/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+前言最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/24/original/6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/core_image.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/149/original/%E5%91%86%E8%90%8C_%E5%89%AF%E6%9C%AC.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/process.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/22/original/16.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/blurCompre.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/11/original/28.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/cpu.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/gpu.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/filters.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/automatic_tiling.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4000_memory.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4000_decode.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4100_memory.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4100.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/largeCompare.png">
+<meta property="og:updated_time" content="2019-12-23T01:02:31.284Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Core Image 你需要了解的那些事~">
+<meta name="twitter:description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+
+
+前言最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了">
+<meta name="twitter:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/24/original/6.png">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
+
+
+    <title> Core Image 你需要了解的那些事~ · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Core Image 你需要了解的那些事~
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Oct 21, 2016
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core_Image_概述"><span class="toc-text">Core Image 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用方式"><span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意点"><span class="toc-text">注意点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_image-CIImage_==_nil"><span class="toc-text">1. image.CIImage == nil</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_CIContext"><span class="toc-text">2. CIContext</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_CPU_/_GPU"><span class="toc-text">3. CPU / GPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_CIFilter"><span class="toc-text">4. CIFilter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Core_Image_vs_GPUImage"><span class="toc-text">Core Image vs GPUImage</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_滤镜链"><span class="toc-text">1. 滤镜链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_支持大图"><span class="toc-text">2. 支持大图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_GPU_优化"><span class="toc-text">3. GPU 优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#延伸阅读"><span class="toc-text">延伸阅读</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>Core Image 系列，目前的文章如下：</p>
+<ul>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/" target="_blank" rel="external">Core Image 你需要了解的那些事~</a></li>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/" target="_blank" rel="external">Core Image 之自定义 Filter~</a></li>
+<li><a href="https://xiaozhuanlan.com/topic/3095648721" target="_blank" rel="external">Core Image【3】—— 2017 新特性</a></li>
+<li><a href="https://xiaozhuanlan.com/topic/5094762183" target="_blank" rel="external">Core Image【4】—— 2018 新特性</a></li>
+</ul>
+<hr>
+<h2 id="前言">前言</h2><p>最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了解。故此记录，与君交流~</p>
+<p>本文将会介绍逐一介绍 Core Image 相关基础概念、使用方式、注意点以及和其他图像处理方案的对比。也算是下一篇文章： <a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/" target="_blank" rel="external">Core Image 自定义 Filter~</a> 的预备知识，毕竟只有了解了 Core Image 的作用以及它的优势，才有学习自定义 Filter 的动力。</p>
+<p>现在，开始吧～<img src="http://wanzao2.b0.upaiyun.com/system/pictures/24/original/6.png" alt=""></p>
+<a id="more"></a>
+<h2 id="Core_Image_概述">Core Image 概述</h2><p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/core_image.png" alt="2016100195437core_image.png"></p>
+<p>Core Image 是 iOS5 新加入到 iOS 平台的一个图像处理框架，提供了强大高效的图像处理功能， 用来对基于像素的图像进行操作与分析， 内置了很多强大的滤镜(Filter) (目前数量超过了180种)， 这些Filter 提供了各种各样的效果， 并且还可以通过 <code>滤镜链</code> 将各种效果的 <code>Filter叠加</code> 起来形成强大的自定义效果。</p>
+<p>一个 <strong>滤镜</strong> 是一个对象，有很多输入和输出，并执行一些变换。例如，模糊滤镜可能需要输入图像和一个模糊半径来产生适当的模糊后的输出图像。</p>
+<p>一个 <strong>滤镜链</strong> 是一个链接在一起的滤镜网络，使得一个滤镜的输出可以是另一个滤镜的输入。以这种方式，可以实现精心制作的效果。</p>
+<p> iOS8 之后更是支持自定义 CIFilter，可以定制满足业务需求的复杂效果。</p>
+<blockquote>
+<p>Core Image is an image processing and analysis technology designed to provide near real-time processing for still and video images. It operates on image data types from the Core Graphics, Core Video, and Image I/O frameworks, using either a GPU or CPU rendering path. Core Image hides the details of low-level graphics processing by providing an easy-to-use application programming interface (API). You don’t need to know the details of OpenGL or OpenGL ES to leverage the power of the GPU, nor do you need to know anything about Grand Central Dispatch (GCD) to get the benefit of multicore processing. Core Image handles the details for you.</p>
+</blockquote>
+<p>这是苹果官方文档对于 Core Image 的介绍，大致意思是：Core Image 是一种为静态图像和 Video 提供处理和分析的技术，它可以使用 GPU/CPU 的方式对图像进行处理。Core Image 提供了简洁的 API 给用户，隐藏了图像处理中复杂的底层内容。你可以在不了解 OpenGL、OpenGL ES 甚至是 GCD 的基础上对其进行使用，他已经帮你对这些复杂的内容进行处理了。</p>
+<p>废话这么多，苹果就想告诉我们一件事：<strong>所有的底层细节他都帮你做好了，你只需要放心调用API就行了。</strong></p>
+<p>这就是 Core Image 的基础概念，比较简短，正如它的使用方式一样简洁。</p>
+<p>然而在我个人学习过程中，我有一种强烈的感觉：<strong>Apple 很重视 Core Image，Core Image 一定会越来越棒。</strong></p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/149/original/%E5%91%86%E8%90%8C_%E5%89%AF%E6%9C%AC.png" alt=""></p>
+<ul>
+<li>每年的 WWDC Session 中，都有提及 Core Image 的相关优化。</li>
+<li>从最初的几十种内置滤镜到如今的180多种。</li>
+<li>从最初只支持 macOS，到如今也支持 iOS。</li>
+<li>iOS8 之后支持自定义 Filter。</li>
+<li>iOS8 增强 GPU 渲染，在后台也能继续使用 GPU 进行处理。</li>
+<li>引入 CIDetector，提供一些常用的图片识别功能。包括人脸识别、条形码识别、文本识别等。</li>
+<li>与越来越多的框架相结合：OpenGLES，PhotoExtension，SceneKit，SpriteKit，Metal。</li>
+<li>iOS 10之后，支持对原生 RAW 格式图片的处理。</li>
+<li>…</li>
+</ul>
+<p>So，它真的值得学习！</p>
+<h2 id="使用方式">使用方式</h2><p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/process.png" alt="2016100259378process.png"></p>
+<p>这里我们从它的基础 API 介绍起。</p>
+<p>Core Image 的 API 主要就是三类：</p>
+<ul>
+<li>CIImage 保存图像数据的类，可以通过UIImage，图像文件或者像素数据来创建，包括未处理的像素数据。</li>
+<li>CIFilter 表示应用的滤镜，这个框架中对图片属性进行细节处理的类。它对所有的像素进行操作，用一些键-值设置来决定具体操作的程度。</li>
+<li>CIContext 表示上下文，如 Core Graphics 以及 Core Data 中的上下文用于处理绘制渲染以及处理托管对象一样，Core Image 的上下文也是实现对图像处理的具体对象。可以从其中取得图片的信息。</li>
+</ul>
+<p>至于使用，相当的方便。</p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/22/original/16.png" alt=""></p>
+<p>下面以 “动态模糊” 举例，我们使用系统提供的 <strong>CIMotionBlur</strong> 来实现。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 传入滤镜名称(e.g. @"CIMotionBlur"), 输出处理后的图片</span></span><br><span class="line">- (<span class="built_in">UIImage</span> *)outputImageWithFilterName:(<span class="built_in">NSString</span> *)filterName &#123;</span><br><span class="line">    <span class="comment">// 1. 将UIImage转换成CIImage</span></span><br><span class="line">    <span class="built_in">CIImage</span> *ciImage = [[<span class="built_in">CIImage</span> alloc] initWithImage:<span class="keyword">self</span>.imageView.image];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 创建滤镜</span></span><br><span class="line">    <span class="keyword">self</span>.filter = [<span class="built_in">CIFilter</span> filterWithName:filterName keysAndValues:k<span class="built_in">CIInputImageKey</span>, ciImage, <span class="literal">nil</span>];</span><br><span class="line">    <span class="comment">// 设置相关参数</span></span><br><span class="line">    [<span class="keyword">self</span>.filter setValue:@(<span class="number">10.</span>f) forKey:<span class="string">@"inputRadius"</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3. 渲染并输出CIImage</span></span><br><span class="line">    <span class="built_in">CIImage</span> *outputImage = [<span class="keyword">self</span>.filter outputImage];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 4. 获取绘制上下文</span></span><br><span class="line">    <span class="keyword">self</span>.context = [<span class="built_in">CIContext</span> contextWithOptions:<span class="literal">nil</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 5. 创建输出CGImage</span></span><br><span class="line">    <span class="built_in">CGImageRef</span> cgImage = [<span class="keyword">self</span>.context create<span class="built_in">CGImage</span>:outputImage fromRect:[outputImage extent]];</span><br><span class="line">    <span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageWith<span class="built_in">CGImage</span>:cgImage];</span><br><span class="line">    <span class="comment">// 6. 释放CGImage</span></span><br><span class="line">    <span class="built_in">CGImageRelease</span>(cgImage);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> image;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/blurCompre.png" alt="2016100243119blurCompre.png"></p>
+<p>至于滤镜链，则是和普通滤镜的使用没什么差别。只要把前一个滤镜的输出，当作后一个滤镜的输入，即可实现，就不累述了。</p>
+<p>另外，如果想查阅 Filter 的属性，可以通过 <strong>attributes</strong> 属性来获取。比如这个例子中的 <strong>CIMotionBlur</strong>：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"CIAttributeFilterAvailable_Mac"</span> = <span class="string">"10.4"</span>;</span><br><span class="line">    <span class="string">"CIAttributeFilterAvailable_iOS"</span> = <span class="string">"8.3"</span>;</span><br><span class="line">    <span class="built_in">CIAttributeFilterCategories</span> =     (</span><br><span class="line">        <span class="built_in">CICategoryBlur</span>,</span><br><span class="line">        <span class="built_in">CICategoryStillImage</span>,</span><br><span class="line">        <span class="built_in">CICategoryVideo</span>,</span><br><span class="line">        <span class="built_in">CICategoryBuiltIn</span></span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">CIAttributeFilterDisplayName</span> = <span class="string">"Motion Blur"</span>;</span><br><span class="line">    <span class="built_in">CIAttributeFilterName</span> = <span class="built_in">CIMotionBlur</span>;</span><br><span class="line">    <span class="built_in">CIAttributeReferenceDocumentation</span> = <span class="string">"http://developer.apple.com/library/ios/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html#//apple_ref/doc/filter/ci/CIMotionBlur"</span>;</span><br><span class="line">    inputAngle =     &#123;</span><br><span class="line">        <span class="built_in">CIAttributeClass</span> = <span class="built_in">NSNumber</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDefault</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDescription</span> = <span class="string">"The angle of the motion determines which direction the blur smears."</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDisplayName</span> = Angle;</span><br><span class="line">        <span class="built_in">CIAttributeIdentity</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">CIAttributeSliderMax</span> = <span class="string">"3.141592653589793"</span>;</span><br><span class="line">        <span class="built_in">CIAttributeSliderMin</span> = <span class="string">"-3.141592653589793"</span>;</span><br><span class="line">        <span class="built_in">CIAttributeType</span> = <span class="built_in">CIAttributeTypeAngle</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    inputImage =     &#123;</span><br><span class="line">        <span class="built_in">CIAttributeClass</span> = <span class="built_in">CIImage</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDescription</span> = <span class="string">"The image to use as an input image. For filters that also use a background image, this is the foreground image."</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDisplayName</span> = Image;</span><br><span class="line">        <span class="built_in">CIAttributeType</span> = <span class="built_in">CIAttributeTypeImage</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    inputRadius =     &#123;</span><br><span class="line">        <span class="built_in">CIAttributeClass</span> = <span class="built_in">NSNumber</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDefault</span> = <span class="number">20</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDescription</span> = <span class="string">"The radius determines how many pixels are used to create the blur. The larger the radius, the blurrier the result."</span>;</span><br><span class="line">        <span class="built_in">CIAttributeDisplayName</span> = Radius;</span><br><span class="line">        <span class="built_in">CIAttributeIdentity</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">CIAttributeMin</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">CIAttributeSliderMax</span> = <span class="number">100</span>;</span><br><span class="line">        <span class="built_in">CIAttributeSliderMin</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="built_in">CIAttributeType</span> = <span class="built_in">CIAttributeTypeDistance</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上的介绍，可能偏显苍白，但是我想说的是，使用内置的滤镜，就是这么简单。如果你还想了解更多，可以继续阅读以下这几篇文章，它们对 Core Image 的基础概念介绍的更加详细。</p>
+<ul>
+<li><a href="https://objccn.io/issue-21-6/" target="_blank" rel="external">Core Image 介绍</a> ： ObjC 的文章，值得看看。</li>
+<li><a href="http://blog.csdn.net/zhangao0086/article/details/39012231" target="_blank" rel="external">iOS8 Core Image In Swift</a> ：这个系列是对官方文档的一个完整实战，讲的比较全面。</li>
+<li><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html" target="_blank" rel="external">Core Image Filter Reference</a>：内置的所有滤镜及其用法示例。</li>
+<li><a href="https://github.com/FlexMonkey/Filterpedia" target="_blank" rel="external">Filterpedia</a> ：演示了内置滤镜及一些自定义滤镜的效果，基于 Swift 实现的。</li>
+</ul>
+<p>下面，才是本文着重想要介绍的，算是 Core Image 的一些高级应用。让我们继续往下看～</p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/11/original/28.png" alt="goon"></p>
+<h2 id="注意点">注意点</h2><h3 id="1-_image-CIImage_==_nil">1. image.CIImage == nil</h3><p>为了获取 CIImage，可能有的同学会直接通 UIImage.CIImage 的方式去获取，但是这样的方式是无法保证获取到 CIImage 对象的。定义如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span>(nullable,<span class="keyword">nonatomic</span>,<span class="keyword">readonly</span>) <span class="built_in">CIImage</span> *<span class="built_in">CIImage</span> <span class="built_in">NS_AVAILABLE_IOS</span>(<span class="number">5</span>_0); </span><br><span class="line"><span class="comment">// returns underlying CIImage or nil if CGImageRef based</span></span><br></pre></td></tr></table></figure>
+<p>这里已经很明确说明了，UIImage 对象可能不是基于 CIImage 创建的（比如它是由 <code>imageWithCIImage:</code> 生成的），这样就无法获取到 CIImage 对象。</p>
+<p>正确的姿势应该是：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CIImage</span> *ciImage = [[<span class="built_in">CIImage</span> alloc] initWithImage:<span class="keyword">self</span>.originalImage];</span><br></pre></td></tr></table></figure>
+<h3 id="2-_CIContext">2. CIContext</h3><p>在创建结果 UIImage 的时候，最简单的方式就是通过 <strong>imageWithCIImage</strong> 来实现。这种情况下，不需要显示的声明 <strong>CIContext</strong>，因为 <strong>imageWithCIImage</strong> 内部自动完成了这个步骤。这使得使用 Core Image 更加的方便。当然，它也引起了另外一个问题，每次都会重新创建一个 <strong>CIContext</strong>，然而 <strong>CIContext</strong> 的代价是非常高的。</p>
+<p>并且，CIContext 和 CIImage 对象是不可变的，在线程之间共享这些对象是安全的。所以多个线程可以使用同一个 GPU 或者 CPU CIContext 对象来渲染 CIImage 对象。</p>
+<p>所以重用 CIContext 是很有必要的。这意味着，我们不应该使用 <strong>imageWithCIImage</strong> 来生成 UIImage，而应该自己创建维护 CIContext。</p>
+<p>比如：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.context = [<span class="built_in">CIContext</span> contextWithOptions:<span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="built_in">CGImageRef</span> cgImage = [<span class="keyword">self</span>.context create<span class="built_in">CGImage</span>:outputImage fromRect:[outputImage extent]];</span><br><span class="line"><span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageWith<span class="built_in">CGImage</span>:cgImage];</span><br></pre></td></tr></table></figure>
+<h3 id="3-_CPU_/_GPU">3. CPU / GPU</h3><p>Core Image 的另外一个优势，就是可以根据需求选择 CPU 或者 GPU 来处理。</p>
+<p>Context 创建的时候，我们可以给它设置为是基于 GPU 还是 CPU。</p>
+<p>基于 GPU 的话，处理速度更快，因为利用了 GPU 硬件的并行优势。可以使用 OpenGLES 或者 Metal 来渲染图像，这种方式CPU完全没有负担，应用程序的运行循环不会受到图像渲染的影响。</p>
+<p>但是 GPU 受限于硬件纹理尺寸，而且如果你的程序在后台继续处理和保存图片的话，那么需要使用 CPU，因为当 App 切换到后台状态时 GPU 处理会被打断。使用 CPU 渲染的 iOS 会采用 GCD 来对图像进行渲染，这保证了 CPU 渲染在大部分情况下更可靠，比 GPU 渲染更容易使用，可以在后台实现渲染过程。</p>
+<p>综上，对于复杂的图像滤镜使用 GPU 更好，但是如果在处理视频并保存文件，或保存照片到照片库中时，为避免程序进入后台对图片保存造成影响，这时应该使用 CPU 进行渲染。</p>
+<p>用 Apple 官方的一句话来描述再合适不过了：</p>
+<blockquote>
+<p>CPU is still what will give you the best fidelity where as the GPU will give you the best performance.</p>
+</blockquote>
+<p>具体的设置方式，可以参考下面的例子：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建基于 CPU 的 CIContext 对象 (默认是基于 GPU，CPU 需要额外设置参数)</span></span><br><span class="line">context = [<span class="built_in">CIContext</span> contextWithOptions: [<span class="built_in">NSDictionary</span> dictionaryWithObject:[<span class="built_in">NSNumber</span> numberWithBool:<span class="literal">YES</span>] forKey:k<span class="built_in">CIContextUseSoftwareRenderer</span>]];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建基于 GPU 的 CIContext 对象</span></span><br><span class="line">context = [<span class="built_in">CIContext</span> contextWithOptions: <span class="literal">nil</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建基于 GPU 的 CIContext 对象</span></span><br><span class="line">EAGLContext *eaglctx = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];</span><br><span class="line">context = [<span class="built_in">CIContext</span> contextWithEAGLContext:eaglctx];</span><br></pre></td></tr></table></figure>
+<p>同样是基于  GPU 的，它们之间也是有区别的。</p>
+<p><strong>contextWithOptions</strong> 创建的 context 并没有实时性能， 虽然渲染是在 GPU 上执行，但是其输出的 image 是不能显示的，只有当其被复制回 CPU 存储器上时，才会被转成一个可被显示的 image 类型，比如 UIImage。</p>
+<p>它的渲染过程大致如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/cpu.png" alt="2016100325659cpu.png"></p>
+<p>当使用 Core Image 在 GPU 上渲染图片的时候，先是把图像传递到 GPU 上，然后执行滤镜相关操作。但是当需要生成  CGImage 对象的时候，图像又被复制回 CPU 上。最后要在视图上显示的时候，又返回 GPU 进行渲染。这样在 GPU 和 CPU 之前来回切换，会造成很严重的性能损耗。</p>
+<p><strong>contextWithEAGLContext</strong> 创建的 context 支持实时渲染，渲染图像的过程始终在 GPU 上进行，并且永远不会复制回 CPU 存储器上，这就保证了更快的渲染速度和更好的性能。</p>
+<p>当然，这个前提是利用实时渲染的特效，而不是每次操作都产生一个 UIImage，然后再设置到视图上。</p>
+<p>比如 OpenGLES：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置 OpenGLES 渲染环境</span></span><br><span class="line">EAGLContext *eaglContext = [[EAGLContext alloc] 	  initWithAPI:kEAGLRenderingAPIOpenGLES2];</span><br><span class="line"><span class="keyword">self</span>.glkView.context = eaglContext;</span><br><span class="line"><span class="keyword">self</span>.context = [<span class="built_in">CIContext</span> contextWithEAGLContext:eaglContext];</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 实时渲染</span></span><br><span class="line">[<span class="keyword">self</span>.pixellateFilter setValue:@(sender.value) forKey:<span class="string">@"inputRadius"</span>];</span><br><span class="line"></span><br><span class="line">[<span class="keyword">self</span>.context drawImage:_pixellateFilter.outputImage inRect:_targetBounds  fromRect:_inputImage.extent];</span><br><span class="line">[<span class="keyword">self</span>.glkView.context presentRenderbuffer:GL_RENDERBUFFER];</span><br></pre></td></tr></table></figure>
+<p>它的渲染过程大致如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/gpu.png" alt="2016100328506gpu.png"></p>
+<p>并且，iOS8 后增强了 GPU 渲染，在后台也能继续使用 GPU 进行处理。这点会在下文详细说明。</p>
+<p><strong>所以应该尽可能的使用 GPU 去做图像处理。</strong></p>
+<p>另外，Apple 对 Core Image 内部进行了优化，如果通过</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建基于 GPU 的 CIContext 对象</span></span><br><span class="line">context = [<span class="built_in">CIContext</span> contextWithOptions: <span class="literal">nil</span>];</span><br></pre></td></tr></table></figure>
+<p>创建 <strong>context</strong>，那么它内部的渲染器会根据设备最优选择。依次为 <strong>Metal，OpenGLES，CoreGraphics。</strong></p>
+<blockquote>
+<p>PS：Metal 需要 iOS8 + A7，且模拟器不支持 Metal。OpenGLES3 需要 iOS7 + A7</p>
+<p>测试结果：</p>
+<p>iPhone 6s， iOS 10， 模拟器：OpenGLES3</p>
+<p>iPhone 6s，iOS 10，真机：Metal</p>
+<p>iPhone 5，iOS 8， 模拟器：OpenGLES</p>
+</blockquote>
+<h3 id="4-_CIFilter">4. CIFilter</h3><p>之前提到 CIContext 是线程安全的，然而 CIFilter 并不是线程安全的，这意味着 一个 CIFilter 对象不能在多个线程间共享。如果你的操作是多线程的，每个线程都必须创建自己的 CIFilter 对象。否则，你的 App 将产生不可预期的结果。</p>
+<h2 id="Core_Image_vs_GPUImage">Core Image vs GPUImage</h2><p>其他图像处理方案的对比，这里比较有争议的就是 OpenGLES 和 Core Image 了。</p>
+<p>在 OpenGLES 部分，拿主流的 <a href="https://github.com/BradLarson/GPUImage" target="_blank" rel="external">GPUImage</a> 来做对比，分析一下它们各自的优缺点。只有对比了才知道，Core Image 好在哪里，是否值得使用。</p>
+<blockquote>
+<p>PS：以下的优势阐述，撇去了两个框架都具备的，仅保留对比后各自的优势。</p>
+<p>另外，GPUImage 我没有深入学习过，对于它的一些优势，主要是总结它的开发者 Brad 描述的，以及简单的 Demo 进行对比。</p>
+</blockquote>
+<p><strong>GPUImage 优势：</strong></p>
+<ul>
+<li>最低支持 iOS 4.0，iOS 5.0 之后就支持自定义滤镜。</li>
+<li>在低端机型上，GPUImage 有更好的表现。（这个我没用真正的设备对比过，GPUImage 的主页上是这么说的）</li>
+<li>GPUImage 在视频处理上有更好的表现。</li>
+<li>GPUImage 的代码完成公开，实现透明。</li>
+<li>可以根据自己的业务需求，定制更加复杂的管线操作。可定制程度高。</li>
+</ul>
+<p><strong>Core Image 优势：</strong></p>
+<ul>
+<li>官方框架，使用放心，维护方便。</li>
+<li>支持 CPU 渲染，可以在后台继续处理和保存图片。</li>
+<li>一些滤镜的性能更强劲。例如由 Metal Performance Shaders 支持的模糊滤镜等。</li>
+<li>支持使用 Metal 渲染图像。而 Metal 在 iOS 平台上有更好的表现。</li>
+<li>与 Metal，SpriteKit，SceneKit，Core Animation 等更完美的配合。</li>
+<li>支持图像识别功能。包括人脸识别、条形码识别、文本识别等。</li>
+<li>支持自动增强图像效果，会分析图像的直方图，图像属性，脸部区域，然后通过一组滤镜来改善图像效果。</li>
+<li>支持对原生 RAW 格式图片的处理。</li>
+<li>滤镜链的性能比 GPUImage 高。(没有验证过，GPUImage 的主页上是这么说的)。</li>
+<li>支持对大图进行处理，超过 GPU 纹理限制 (4096 * 4096)的时候，会自动拆分成几个小块处理(Automatic tiling)。GPUImage 当处理超过纹理限制的图像时候，会先做判断，压缩成最大纹理限制的图像，导致图像质量损失。</li>
+</ul>
+<p>至此，我觉得 Core Image 的优势很明显了，尤其是与 Metal 的配合，自动增强图像效果，支持处理大图以及滤镜链的优化。</p>
+<p>下面关于这几点优化，做个简单的描述。</p>
+<h3 id="1-_滤镜链">1. 滤镜链</h3><blockquote>
+<p>if you chain together a sequence of filters, Core Image will automatically concatenate these subroutines into a single program.The idea behind this is to improve performance and quality, by reducing the number of intermediate buffers.</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/filters.png" alt="2016100749763filters.png"></p>
+<p>Core Image 会自动把多个滤镜组合成一个新的程序（program），通过减少中间缓冲区的数量，来提高性能和质量。</p>
+<h3 id="2-_支持大图">2. 支持大图</h3><p>超过 GPU 纹理限制 （4096 * 4096）的时候，会自动拆分成几个小块处理 （Automatic tiling）。</p>
+<p>图片大小：（8374，7780），验证结果：</p>
+<blockquote>
+<p>PS： rois 表示当前处理区域。 extent 表示图像实际大小。</p>
+<p>这个输出是 Core Image 在处理过程中打印的。</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="number">1</span>) rois=[<span class="number">0</span> <span class="number">0</span> <span class="number">2092</span> <span class="number">3888</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]  </span><br><span class="line">(<span class="number">2</span>) rois=[<span class="number">2092</span> <span class="number">0</span> <span class="number">2092</span> <span class="number">3888</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br><span class="line">(<span class="number">3</span>) rois=[<span class="number">0</span> <span class="number">3888</span> <span class="number">2092</span> <span class="number">3892</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br><span class="line">(<span class="number">4</span>) rois=[<span class="number">2092</span> <span class="number">3888</span> <span class="number">2092</span> <span class="number">3892</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br><span class="line">(<span class="number">5</span>) rois=[<span class="number">4184</span> <span class="number">0</span> <span class="number">2092</span> <span class="number">3888</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br><span class="line">(<span class="number">6</span>) rois=[<span class="number">6276</span> <span class="number">0</span> <span class="number">2098</span> <span class="number">3888</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br><span class="line">(<span class="number">7</span>) rois=[<span class="number">4184</span> <span class="number">3888</span> <span class="number">2092</span> <span class="number">3892</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br><span class="line">(<span class="number">8</span>) rois=[<span class="number">6276</span> <span class="number">3888</span> <span class="number">2098</span> <span class="number">3892</span>] extent=[<span class="number">0</span> <span class="number">0</span> <span class="number">8374</span> <span class="number">7780</span>]</span><br></pre></td></tr></table></figure>
+<p>如果按序讲每个区域进行拼凑，就是原图的实际区域了。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/automatic_tiling.png" alt="2016101313942automatic_tiling.png"></p>
+<p>另外，Core Image 对大图和小图的处理上，也有所不同。<strong>小图提前解码，大图延迟解码 !</strong></p>
+<p>当传入的 image 是小图 (size &lt; inputImageMaximumSize)时，在调用 <strong>initWithCGImage</strong> 获取输入图像 <strong>CIImage</strong> 的时候，这个 image 就被完全解码了。这是很有必要的。因为小图可能多次被用到，把编码的工作提前并且只做一次，一定程度上优化性能。</p>
+<p>而对于大图来说，它的解码操作是尽可能延后的（<strong>being lazy</strong>），直到真正需要显示， CIContext 执行 render 相关操作。因为大图的解码代价较大，并且不常用，无脑提前解码，放到内存中是没有必要的。</p>
+<p>下面是验证结果，选了两个相差不大的图片，但是介于 4096 左右。</p>
+<p><strong>4000 * 4000，小图：</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4000_memory.png" alt="20161005272964000_memory.png"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4000_decode.png" alt="20161005205644000_decode.png"></p>
+<p>很明显的，<strong>Memory 占有率高</strong>，并且调用了 <strong>decode</strong> 相关操作。</p>
+<p><strong>4100 * 4100，大图：</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4100_memory.png" alt="20161005838734100_memory.png"></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/4100.png" alt="20161005840444100.png"></p>
+<p>这里的 <strong>Memory 占用较低</strong>，并且没有看到 <strong>decode</strong> 相关操作。</p>
+<p>同样的，当通过 CIImage 获取输出 CGImage 的时候，如果输出 CGImage 是小图的话，那么当 <strong>[CIContext createCGImage]</strong> 调用的时候，image 就被完全渲染了。而对于大图，要等到 CGImage 真正需要渲染显示的时候，这个 image 才会被渲染。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Render the region 'fromRect' of image 'image' into a temporary buffer using</span><br><span class="line"> * the context, then create and return a new CoreGraphics image with</span><br><span class="line"> * the results. The caller is responsible for releasing the returned image.</span><br><span class="line"> * The return value will be null if size is empty or too big. */</span></span><br><span class="line"><span class="meta">#if !defined(SWIFT_CLASS_EXTRA) || (defined(SWIFT_SDK_OVERLAY_COREIMAGE_EPOCH) &amp;&amp; SWIFT_SDK_OVERLAY_COREIMAGE_EPOCH &gt;= 2)</span></span><br><span class="line">- (nullable <span class="built_in">CGImageRef</span>)create<span class="built_in">CGImage</span>:(<span class="built_in">CIImage</span> *)image</span><br><span class="line">                            fromRect:(<span class="built_in">CGRect</span>)fromRect;</span><br></pre></td></tr></table></figure>
+<p>经过这样的优化处理后，对于大图，<a href="https://developer.apple.com/videos/play/wwdc2014/514/" target="_blank" rel="external">Session 514</a> 给出了直观的数据对比：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/largeCompare.png" alt="2016100518100largeCompare.png"></p>
+<h3 id="3-_GPU_优化">3. GPU 优化</h3><p>另外一个很重要的优化就是：<strong>提高了 iOS 上 Core Image 使用 GPU 进行渲染的性能</strong></p>
+<p>具体体现在：</p>
+<p><strong>1.后台操作</strong></p>
+<ul>
+<li>短时间内，进入后台后会依旧使用高效的 GPU 进行渲染。</li>
+<li>后台操作的 GPU 优先级低，不会对前台的渲染造成性能影响。</li>
+</ul>
+<p><strong>2.多线程</strong></p>
+<p>iOS 8之前，如果主线程使用 GPU 做相关操作，次要线程想使用 Core Image 的时候，通常要使用安全的 CPU 来实现，避免引起意想不到的问题。</p>
+<p>在 iOS 8之后，可以在次要线程设置 Context 的 <strong>kCIContextPriorityRequestLow</strong> 值为 YES，这样就标记为当前 Context 在 GPU 上渲染的时候优先级低，从而不会影响到 GPU 上高优先级的渲染。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CIContext</span> *context = [<span class="built_in">CIContext</span> contextWithOptions: [<span class="built_in">NSDictionary</span> dictionaryWithObject:[<span class="built_in">NSNumber</span> numberWithBool:<span class="literal">YES</span>] forKey:k<span class="built_in">CIContextPriorityRequestLow</span>]];</span><br></pre></td></tr></table></figure>
+<p>所以，应该尽可能的使用 GPU 进行渲染，来提高性能。</p>
+<p><strong>综上，我认为在某需求 Core Image 能实现的时候，使用 Core Image 应该是 iOS 平台上最好的选择。</strong></p>
+<p>至此，我所了解的 Core Image 使用上的注意点已经总结完了，希望你能有所获~</p>
+<p>当然，如果你还想了解更多，那么我的下一篇文章： <a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/" target="_blank" rel="external">Core Image 自定义 Filter~</a>  值得你期待。</p>
+<p>Have fun~</p>
+<h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html" target="_blank" rel="external">Core Image Filter Reference</a></p>
+<p>包含了 Core Image 所提供图像滤镜的完整列表以及用法示例。</p>
+<p><a href="https://objccn.io/issue-21-6/" target="_blank" rel="external">Core Image 介绍</a> </p>
+<p> ObjC 的文章，详细介绍了 Core Image，值得看看。</p>
+<p><a href="https://developer.apple.com/search/?q=Core%20Image&amp;type=Videos" target="_blank" rel="external">Core Image Sessions</a></p>
+<p>关于 Core Image 的 Session，内容很全。</p>
+<p><a href="https://developer.apple.com/library/prerelease/content/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_intro/ci_intro.html" target="_blank" rel="external">Core Image Programming Guide</a></p>
+<p>官方 Core Image 编程指南。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/Core-Image/">Core Image</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2016/10/21/Core-Image-Custom-Filter/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Core Image 之自定义 Filter~</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2016/06/17/Call-Directory-Extension-Study/">
+        <span class="next-text nav-default">Call Directory Extension 初探</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>

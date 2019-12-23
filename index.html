@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/"/>
+
+
+<meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Colin's Nest">
+<meta property="og:url" content="http://http://colin1994.github.io/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Colin's Nest">
+<meta name="twitter:description">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
+
+
+    <title> Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts">
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/08/25/metal-tutorial/">Metal 系列教程</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Aug 25, 2018
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>从 2014 年，Apple 正式推出 Metal 到现在，这个 Metal 系列教程，酝酿了很久，却迟迟没有进展。</p>
+<p>直到 <strong>WWDC 2018，Apple 宣布 iOS 12 将弃用 OpenGL / CL</strong>，我想，这或许是个机会。</p>
+<blockquote>
+<p>Apps built using OpenGL ES will continue to run in iOS 12, but Open GL ES is deprecated in iOS 12. Games and graphics-intensive apps that previously used OpenGL ES should now adopt Metal.</p>
+</blockquote>
+<p><img src="https://diycode.b0.upaiyun.com/photo/2018/de088c47205fd04fc8d9e11748813b10.jpeg" alt=""></p>
+<p>这个系列会回顾整理之前学习的内容，有序输出。算是对自己的一个交代，同时也希望，能帮助到那些想要学习 Metal 却不知道怎么下手的朋友。</p>
+          <div class="read-more">
+            <a href="/2018/08/25/metal-tutorial/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/11/12/OpenGLES-Lesson05/">GLSL 详解（高级篇）</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Nov 12, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <blockquote>
+<p>PS：<br>无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。</p>
+</blockquote>
+          <div class="read-more">
+            <a href="/2017/11/12/OpenGLES-Lesson05/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/11/11/OpenGLES-Lesson04/">GLSL 详解（基础篇）</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Nov 11, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>上节在绘制三角形的时候，简单讲解了一些着色器，GLSL 的相关概念，可能看的云里雾里的。不要担心，在本节中，我将详细讲解着色语言 GL Shader Language（GLSL）的一些基本的概念。</p>
+<blockquote>
+<p>PS：<br>无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。</p>
+</blockquote>
+          <div class="read-more">
+            <a href="/2017/11/11/OpenGLES-Lesson04/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/08/31/iOS-Unit-Testing/">iOS 单元测试</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Aug 31, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="什么是单元测试">什么是单元测试</h2><p><strong>形象版：</strong></p>
+<blockquote>
+<p>工厂在组装一台机器之前，会<strong>对每个元件都进行测试</strong>。这，就是单元测试。</p>
+</blockquote>
+<p><strong>官方版：</strong></p>
+<blockquote>
+<p>单元测试是指对软件中的<strong>最小可测试单元</strong>进行<strong>检查和验证</strong>。</p>
+</blockquote>
+          <div class="read-more">
+            <a href="/2017/08/31/iOS-Unit-Testing/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/04/18/OpenGLES-Lesson03/">OpenGL ES 渲染基本图元</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Apr 18, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>在<a href="http://colin1994.github.io/2017/04/09/OpenGLES-Lesson02/">上篇文章</a>中，已经介绍了 OpenGL ES 的基础环境搭建，并且实现了设置背景色功能。</p>
+<p>在本文中，我们将会在上文的基础上，渲染基本图元，三角形。在这个过程中，将会详细介绍可编程图形渲染管线是如何工作的。</p>
+<p>最终的效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/OpenGLES/image_4_1.png" alt="2017013028167QQ20170130-174258@2x.png"></p>
+          <div class="read-more">
+            <a href="/2017/04/18/OpenGLES-Lesson03/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/04/09/OpenGLES-Lesson02/">OpenGL ES 环境搭建</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Apr 9, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>在<a href="http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/">上篇文章</a>中，已经介绍了 OpenGL ES 的一些基础概念以及大致工作流程。</p>
+<p>在本文中，我们将会介绍在 iOS 平台上如何接入 OpenGL ES，并搭建好基础环境，实现设置背景色功能。它是之后任何实战的基础模版。在搭建过程中，会针对之前介绍的一些概念，再结合代码讲解。</p>
+<blockquote>
+<p>PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽的特性，都是在此基础上完成的。所以理解它是很有必要的～</p>
+</blockquote>
+<p>设置蓝色背景后，效果如下：</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/2017012639178QQ20170126-231448@2x.png" alt="2017012639178QQ20170126-231448@2x.png"></p>
+          <div class="read-more">
+            <a href="/2017/04/09/OpenGLES-Lesson02/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/04/01/OpenGLES-Lesson01/">OpenGL ES 基础概念</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Apr 1, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>这里主要描述一些 OpenGL ES 必须先了解的一些概念，为之后的实战铺路。</p>
+<h2 id="状态机">状态机</h2><blockquote>
+<p>OpenGL 是一个状态机，它维持自己的状态，并根据用户调用的函数来改变自己的状态。</p>
+<p>根据状态的不同，调用同样的函数也可能产生不同的效果。</p>
+</blockquote>
+<p>在 OpenGL 的世界里，<strong>大多数元素都可以用状态来描述</strong>，比如：</p>
+          <div class="read-more">
+            <a href="/2017/04/01/OpenGLES-Lesson01/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/04/01/OpenGLES-Lesson00/">OpenGL ES 开篇</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Apr 1, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>在学习 OpenGL ES 之前，总结下我自己接触 OpenGL ES 时的一些疑惑，我相信这也是初学者都会遇到的一些困惑。</p>
+<h2 id="Q_&amp;_A">Q &amp; A</h2><p><strong>Q：OpenGL 是什么 ?</strong></p>
+<blockquote>
+<p>A：<strong>OpenGL</strong>（Open Graphics Library）是 Khronos Group （一个图形软硬件行业协会，该协会主要关注图形和多媒体方面的开放标准）开发维护的一个规范，它是硬件无关的。它主要为我们定义了用来操作图形和图片的一系列函数的 API，需要注意的是 <strong>OpenGL 本身并非 API</strong>。</p>
+<p>而 GPU 的硬件开发商则需要提供满足 OpenGL 规范的实现，这些实现通常被称为”驱动“，它们负责将 OpenGL 定义的 API 命令翻译为 GPU 指令。<strong>所以你可以用同样的 OpenGL 代码在不同的显卡上跑</strong>，因为它们实现了同一套规范，尽管内部实现可能存在差异。</p>
+</blockquote>
+          <div class="read-more">
+            <a href="/2017/04/01/OpenGLES-Lesson00/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/04/01/OpenGLES-Menu/">OpenGL ES， 初学者的自我总结</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Apr 1, 2017
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="前言：">前言：</h2><blockquote>
+<p>学习 OpenGL ES 一段时间了，<strong>深知这个过程的不容易</strong>。</p>
+<p>尤其是入门，OpenGL 到底好在哪里？什么是渲染管线？什么是状态机？纹理是不是就是图片？深度测试，模版测试又是什么鬼？…</p>
+<p>OpenGL <strong>有太多太多的东西需要学习</strong>。我最初接触 OpenGL，就是想借助它，实现美图秀秀里的一些功能。然而，不知道看了多少教程，实现了多少个旋转立方体，困惑了多少次，放弃了多少回…</p>
+<p>慢慢地，似乎找到了一些门路…</p>
+<ul>
+<li>可以导入照片处理并保存了</li>
+<li>可以实现简单的滤镜了</li>
+<li>可以实现画笔功能了</li>
+<li>可以实现马赛克功能了</li>
+<li>…</li>
+</ul>
+<p>于是，这系列的文章应运而生。</p>
+</blockquote>
+          <div class="read-more">
+            <a href="/2017/04/01/OpenGLES-Menu/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2016/10/21/Core-Image-Custom-Filter/">Core Image 之自定义 Filter~</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Oct 21, 2016
+        </span>
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>Core Image 系列，目前的文章如下：</p>
+<ul>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/">Core Image 你需要了解的那些事~</a></li>
+<li><a href="http://colin1994.github.io/2016/10/21/Core-Image-Custom-Filter/">Core Image 之自定义 Filter~</a></li>
+<li><a href="https://xiaozhuanlan.com/topic/3095648721">Core Image【3】—— 2017 新特性</a></li>
+<li><a href="https://xiaozhuanlan.com/topic/5094762183">Core Image【4】—— 2018 新特性</a></li>
+</ul>
+<hr>
+<h2 id="前言">前言</h2><p>最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了解。故此记录，与君交流~</p>
+<p>本文主要讲解 Core Image 自定义滤镜部分的内容，包括如何使用自定义 Filter，如何编写 kernel，QC 工具介绍，注意点以及一些开发技巧。</p>
+<p>在这之前，我默认你了解 Core Image 的基本原理以及使用方式。如果没有，我建议你花点时间看看我的上一篇文章：<a href="http://colin1994.github.io/2016/10/21/Core-Image-OverView/">Core Image 你需要了解的那些事~</a>，它介绍 Core Image 相关基础概念、使用方式、注意点以及和其他图像处理方案的对比，想必会有所收获。</p>
+<p>现在，开始吧～<img src="http://wanzao2.b0.upaiyun.com/system/pictures/1/original/27.png" alt=""></p>
+          <div class="read-more">
+            <a href="/2016/10/21/Core-Image-Custom-Filter/" class="read-more-link">Read more..</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    
+    
+      <a class="next" href="/page/2/">
+        <span class="next-text">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+
+          </div>
+          
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>

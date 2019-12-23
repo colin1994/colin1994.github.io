@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Call Directory Extension 初探"/>
+
+
+
+
+  <meta name="keywords" content="iOS 10,CallKit," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2016/06/17/Call-Directory-Extension-Study/"/>
+
+
+<meta name="description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Call Directory Extension 初探">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/06/17/Call-Directory-Extension-Study/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/16/original/15.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_1.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_2.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_4.png">
+<meta property="og:updated_time" content="2019-12-23T01:02:31.284Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Call Directory Extension 初探">
+<meta name="twitter:description" content="iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，”that enable call blocking and caller identification. You can cr">
+<meta name="twitter:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
+
+
+    <title> Call Directory Extension 初探 · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Call Directory Extension 初探
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Jun 17, 2016
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#API介绍"><span class="toc-text">API介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实战演示"><span class="toc-text">实战演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_创建工程"><span class="toc-text">1. 创建工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-添加_Extension"><span class="toc-text">2.添加 Extension</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_开启权限"><span class="toc-text">3. 开启权限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关思考及后续"><span class="toc-text">相关思考及后续</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <blockquote>
+<p>iOS 10中引入了许多令人振奋的新特性，其中 CallKit让我特别感兴趣。这是一个非常重要的 API，继2014年苹果推出 VoIP证书后，这次 VoIP 接口的开放，以及一个全新的 App Extension，简直是VOIP的福音，可见苹果对VOIP的重视。并且，<strong>”that enable call blocking and caller identification. You can create an app extension that can associate a phone number with a name or tell the system when a number should be blocked.”</strong> 这意味着现在可以通过 Call Directory Extension 来实现电话黑名单功能了。Cool~ 本文简单阐述了如果实现简单的来电黑名单功能。</p>
+</blockquote>
+<p><strong>阅读须知：目前学习的资料也仅限相关 API，另外 API也没有详细的注释，所以本文主要是个人探索所得，如果有什么错误，还望见谅并予以指正。现在，让我们开始吧~</strong></p>
+<a id="more"></a>
+<h2 id="API介绍">API介绍</h2><p><strong>Extension</strong> 一直给我的印象就是很轻量，单一的，就如之前接触的  <a href="http://colin1994.github.io/2016/03/12/Photo-Editing-Extension/" target="_blank" rel="external">Photo Editing Extension</a> 一样，使用起来十分简单。这次的 <strong>Call Directory Extension</strong> 也不出例外，出奇的简单。只涉及了两个类，四个方法。下面我们逐一介绍：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  CXCallDirectoryProvider.h</span></span><br><span class="line"><span class="comment">//  CallKit</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Copyright © 2016 Apple. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@available</span>(iOS <span class="number">10.0</span>, *)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CXCallDirectoryProvider</span> : <span class="title">NSObject</span>, <span class="title">NSExtensionRequestHandling</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">beginRequest</span><span class="params">(with context: CXCallDirectoryExtensionContext)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先是第一个类 <strong>CXCallDirectoryProvider</strong>，它是来电的响应者，为我们提供了 <strong>beginRequest</strong> 方法，该方法在 Containing App 调用 reload 或者在 设置 —&gt; 电话 —&gt; Call Blocking &amp; Identification里开启权限的时候，会自动被调用。所以我们之后将要重写它，来实现黑名单相关逻辑。怎么样，简单吧~ <img src="http://wanzao2.b0.upaiyun.com/system/pictures/2/original/21.png" alt="emoji_1"></p>
+<p>Now, Go on~</p>
+<p>接下来是另外一个类 <strong>CXCallDirectoryExtensionContext</strong>，它提供了另外三个方法，如下所示：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  CXCallDirectoryExtensionContext.h</span></span><br><span class="line"><span class="comment">//  CallKit</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  Copyright © 2016 Apple. All rights reserved.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@available</span>(iOS <span class="number">10.0</span>, *)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CXCallDirectoryExtensionContext</span> : <span class="title">NSExtensionContext</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">addBlockingEntry</span><span class="params">(withNextSequentialPhoneNumber phoneNumber: String)</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">addIdentificationEntry</span><span class="params">(withNextSequentialPhoneNumber phoneNumber: String, label: String)</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">completeRequest</span><span class="params">(completionHandler completion: <span class="params">(<span class="params">(Bool)</span></span></span></span> -&gt; <span class="type">Swift</span>.<span class="type">Void</span>)? = <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不难看出，<strong>CXCallDirectoryExtensionContext</strong> 主要负责提交我们处理好的请求。说白点，我们利用它来让系统知道，我们对某个来电所做出的判断。 <strong>addBlockingEntry</strong> 方法，接受一个电话号码字符串，形如 <strong>“+8618…69”</strong> (PS：不要问我为什么要加区号.. 这都是血与泪的经验)，来直接加入黑名单，也就是不接听该来电。<strong>addIdentificationEntry</strong> 方法，接受一个电话号码字符串以及对该号码的描述，也就是来电的时候需要显示的内容。 <strong>completeRequest</strong> 也就是提交之前的处理结果。至此，我们所要做的工作就完成了。<img src="http://wanzao2.b0.upaiyun.com/system/pictures/16/original/15.png" alt="emoji_2"></p>
+<h2 id="实战演示">实战演示</h2><p>虽然自认为上面的描述已经够详细了，不过这里还是有必要详细走一遍流程，以免遗漏。</p>
+<p>开发环境：Xcode8.0 Beta + 64位 iOS10设备（至于为什么64位，之后再解释，说多了都是泪..）</p>
+<h3 id="1-_创建工程">1. 创建工程</h3><p>没什么特别。 <strong>Xcode —&gt; File —&gt; New —&gt; Project</strong>。随便选个 iOS Application，创建即可。这里我选择开发语言为 Swift，你随意~。</p>
+<p>这里我们的目标是来电黑名单，也就是 Extension部分，所以创建好的 Containing App，不用做什么改动。</p>
+<h3 id="2-添加_Extension">2.添加 Extension</h3><p><strong>Xcode —&gt; File —&gt; New —&gt; Target</strong>。创建一个 <strong>Call Directory Extension</strong>，如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_1.jpeg" alt="Extension_1"></p>
+<p>这里注意下底部的说明， （This extension and the app it is bundled with must be <strong>64-bit only</strong>）也就是，这个 extension只支持 64位的设备，坑爹有没有！！之前创建太急，没认真看，用那台 5C倒腾了半天，就是出问题。只好狠心把主力机也升级了。</p>
+<p>创建好 Extension，会弹出这样的提示框：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_2.jpeg" alt="Extension_2"></p>
+<p>询问我们是否激活这个 scheme，当然选择激活咯，继续~</p>
+<p>之后只要关注 <strong>xxxHandler.swift</strong> 即可，xxx是你之前创建的 extension命名。</p>
+<p>这里的相关代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> CallKit</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallDirectoryHandler</span>: <span class="title">CXCallDirectoryProvider</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">beginRequest</span><span class="params">(with context: CXCallDirectoryExtensionContext)</span></span> &#123;</span><br><span class="line">    	<span class="comment">// --- 1</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> phoneNumbersToBlock = retrievePhoneNumbersToBlock() <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">NSLog</span>(<span class="string">"Unable to retrieve phone numbers to block"</span>)</span><br><span class="line">            <span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"CallDirectoryHandler"</span>, code: <span class="number">1</span>, userInfo: <span class="literal">nil</span>)</span><br><span class="line">            context.cancelRequest(withError: error)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 2</span></span><br><span class="line">        <span class="keyword">for</span> phoneNumber <span class="keyword">in</span> phoneNumbersToBlock &#123;</span><br><span class="line">            context.addBlockingEntry(withNextSequentialPhoneNumber: phoneNumber)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 3</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> (phoneNumbersToIdentify, phoneNumberIdentificationLabels) = retrievePhoneNumbersToIdentifyAndLabels() <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="type">NSLog</span>(<span class="string">"Unable to retrieve phone numbers to identify and their labels"</span>)</span><br><span class="line">            <span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"CallDirectoryHandler"</span>, code: <span class="number">2</span>, userInfo: <span class="literal">nil</span>)</span><br><span class="line">            context.cancelRequest(withError: error)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 4</span></span><br><span class="line">        <span class="keyword">for</span> (phoneNumber, label) <span class="keyword">in</span> <span class="built_in">zip</span>(phoneNumbersToIdentify, phoneNumberIdentificationLabels) &#123;</span><br><span class="line">            context.addIdentificationEntry(withNextSequentialPhoneNumber: phoneNumber, label: label)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// --- 5</span></span><br><span class="line">        context.completeRequest()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">retrievePhoneNumbersToBlock</span><span class="params">()</span></span> -&gt; [<span class="type">String</span>]? &#123;</span><br><span class="line">        <span class="comment">// retrieve list of phone numbers to block</span></span><br><span class="line">        <span class="keyword">return</span> [<span class="string">"+8618xxxx157"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">retrievePhoneNumbersToIdentifyAndLabels</span><span class="params">()</span></span> -&gt; (phoneNumbers: [<span class="type">String</span>], labels: [<span class="type">String</span>])? &#123;</span><br><span class="line">        <span class="comment">// retrieve list of phone numbers to identify, and their labels</span></span><br><span class="line">        <span class="keyword">return</span> ([<span class="string">"+8618xxxx569"</span>], [<span class="string">"测试"</span>])</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个简单的来电黑名单，我们只要补全 <code>retrievePhoneNumbersToBlock</code> 和 <code>retrievePhoneNumbersToIdentifyAndLabels</code> 中的相关数据即可，它们分别表示直接加入黑名单的号码以及识别出来，需要判断的号码。</p>
+<p>现在我们具体看一下这个类到底做了什么。</p>
+<p><code>beginRequest</code> ，该方法在 Containing App 调用 reload 或者在 设置 —&gt; 电话 —&gt; Call Blocking &amp; Identification里开启权限的时候，会自动被调用。每次调用，都会提交当前的黑名单列表，具体操作如下：</p>
+<p>在 <strong>// —- 1</strong> 中，先判断是否成功调用了 <code>retrievePhoneNumbersToBlock</code> 方法，如果没有，则打印 Log： <strong>Unable to retrieve phone numbers to block</strong>，然后直接终止这次请求并返回。</p>
+<p>在 <strong>// —- 2</strong> 中，遍历添加黑名单中的号码，这里的号码将直接拦截。</p>
+<p>在 <strong>// —- 3</strong> 中，先判断是否成功调用了 <code>retrievePhoneNumbersToIdentifyAndLabels</code> 方法，如果没有，则打印 Log： <strong>Unable to retrieve phone numbers to identify and their labels</strong>，然后直接终止这次请求并返回。</p>
+<p>在 <strong>// —- 4</strong> 中，遍历添加识别后的号码及其描述，这里的号码将连带描述一起显示。</p>
+<p>在 <strong>// —- 5</strong> 中，完成提交请求。 </p>
+<p>到这里，代码已经全部完成了。</p>
+<h3 id="3-_开启权限">3. 开启权限</h3><p>之后我们运行该 App到设备中，然后进入设备的设置 —&gt; 电话 —&gt; Call Blocking &amp; Identification，开启我们的 App即可。如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_3.png" alt="Extension_3"></p>
+<p>至此，相关的工作就都完成了，我们的来电黑名单也已经实现了，可以用添加到列表中的号码来测试啦，如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/CallDirectory/callExtension_4.png" alt="Extension_4"></p>
+<h2 id="相关思考及后续">相关思考及后续</h2><p>虽然实现黑名单功能很简单，但是这里我认为主要的问题应该是集中在，如何编辑这个黑名单列表。列表数据项可能很多，并且数据可能是实时更新添加的，那应该怎么做才更好呢？这里我的第一反应就是利用 App Group实现数据共享，在 Containing App完成相关的数据操作，在 Extension App中去获取即可。至于可行性，倒是没有验证过，如果不行，就当我瞎比比咯~。 当然，可能还有其他的办法，以及可能还会遇到其他的问题，这里在之后的学习过程中，我会逐步完善。</p>
+<p>当然，对于 CallKit的学习，我也仅限于这一两天，还是没有资料的情况下。所以文中难免存在各种错误以及遗漏，欢迎指正。</p>
+<p>这之后，继续 CallKit的学习，实现它的另外一个功能：VoIP App。 wait…</p>
+<p>Enjoy it~</p>
+<h2 id="参考链接">参考链接</h2><p><a href="https://developer.apple.com/videos/play/wwdc2016/230/" target="_blank" rel="external">Enhancing VoIP Apps with CallKit</a></p>
+<p><a href="https://developer.apple.com/reference/callkit" target="_blank" rel="external">CallKit</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/iOS-10/">iOS 10</a>
+            
+              <a href="/tags/CallKit/">CallKit</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2016/10/21/Core-Image-OverView/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Core Image 你需要了解的那些事~</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2016/06/14/What's_New_in_iOS_10.0_zh_0/">
+        <span class="next-text nav-default">What's New in iOS 10.0 中文版(上)</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>

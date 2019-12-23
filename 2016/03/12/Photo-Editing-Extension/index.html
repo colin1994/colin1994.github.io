@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="Photo Editing Extension 详解 (附带应用滤镜Demo)"/>
+
+
+
+
+  <meta name="keywords" content="iOS开发,教程," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2016/03/12/Photo-Editing-Extension/"/>
+
+
+<meta name="description" content="extension是iOS8新开放的一种对几个固定系统区域的扩展机制，它可以在一定程度上弥补iOS的沙盒机制对应用间通信的限制。允许应用帮助系统扩展自定义功能，去实现一个特定作用域的任务，如照片编辑、自定义键盘、通知中心、Action动作、Share分享等。 这对于一向封闭的iOS来说, 无疑是一大福音。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Photo Editing Extension 详解 (附带应用滤镜Demo)">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/03/12/Photo-Editing-Extension/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="extension是iOS8新开放的一种对几个固定系统区域的扩展机制，它可以在一定程度上弥补iOS的沙盒机制对应用间通信的限制。允许应用帮助系统扩展自定义功能，去实现一个特定作用域的任务，如照片编辑、自定义键盘、通知中心、Action动作、Share分享等。 这对于一向封闭的iOS来说, 无疑是一大福音。">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201512/13/1449993990_7598.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201512/13/1449995608_4851.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201512/13/1449995608_8648.png">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201512/13/1449996631_7873.jpeg">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201512/13/1449996016_4664.png">
+<meta property="og:image" content="http://download.csdn.net/images/minetype/zip.gif">
+<meta property="og:updated_time" content="2019-12-23T01:02:31.289Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Photo Editing Extension 详解 (附带应用滤镜Demo)">
+<meta name="twitter:description" content="extension是iOS8新开放的一种对几个固定系统区域的扩展机制，它可以在一定程度上弥补iOS的沙盒机制对应用间通信的限制。允许应用帮助系统扩展自定义功能，去实现一个特定作用域的任务，如照片编辑、自定义键盘、通知中心、Action动作、Share分享等。 这对于一向封闭的iOS来说, 无疑是一大福音。">
+<meta name="twitter:image" content="http://img.my.csdn.net/uploads/201512/13/1449993990_7598.png">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
+
+
+    <title> Photo Editing Extension 详解 (附带应用滤镜Demo) · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Photo Editing Extension 详解 (附带应用滤镜Demo)
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Mar 12, 2016
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-_相关概念"><span class="toc-text">1. 相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1_Extension_Point"><span class="toc-text">1.1 Extension Point</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2_App_Extension"><span class="toc-text">1.2 App Extension</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3_Containing_App"><span class="toc-text">1.3 Containing App</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4_Host_App"><span class="toc-text">1.4 Host App</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-_Extension和Containing_App、Host_App通信"><span class="toc-text">2. Extension和Containing App、Host App通信</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1_Extension和Host_App"><span class="toc-text">2.1 Extension和Host App</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2_Containing_App和Host_App"><span class="toc-text">2.2 Containing App和Host App</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3_Extension和Containing_App"><span class="toc-text">2.3 Extension和Containing App</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-_数据共享"><span class="toc-text">3. 数据共享</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1_功能开启"><span class="toc-text">3.1 功能开启</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-1_在App中开启"><span class="toc-text">3.1.1 在App中开启</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-2_在Extension中开启"><span class="toc-text">3.1.2 在Extension中开启</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2_extension和containing_app数据共享"><span class="toc-text">3.2 extension和containing app数据共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1_通过NSUserDefaults共享数据"><span class="toc-text">3.2.1 通过NSUserDefaults共享数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1_通过NSFileManager共享数据"><span class="toc-text">3.2.1 通过NSFileManager共享数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3_动态加载,_资源共享"><span class="toc-text">3.3 动态加载, 资源共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-1_copy_framework到App_Groups"><span class="toc-text">3.3.1 copy framework到App Groups</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-2_使用framework"><span class="toc-text">3.3.2 使用framework</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-_生命周期"><span class="toc-text">4. 生命周期</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-_Photo_Editing使用滤镜实战"><span class="toc-text">5. Photo Editing使用滤镜实战</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-_相关资料"><span class="toc-text">6. 相关资料</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <blockquote>
+<p>extension是iOS8新开放的一种对几个固定系统区域的扩展机制，它可以在一定程度上弥补iOS的沙盒机制对应用间通信的限制。允许应用帮助系统扩展自定义功能，去实现一个特定作用域的任务，如照片编辑、自定义键盘、通知中心、Action动作、Share分享等。 这对于一向封闭的iOS来说, 无疑是一大福音。</p>
+</blockquote>
+<a id="more"></a>
+<p>虽然iOS8离现在比较远了, 分享 <strong>“Extension “</strong> 相关的文章也很多了, 不过对于<strong>“Photo Editing”</strong>, 我觉得还是有必要来讲一讲的, 一来多数教程介绍Extension 的时候都是拿<strong>Widgets</strong>举例, 再有<strong>Photo Editing</strong>是可自定义内容最丰富的一个, 你完全可以把它当作App里额外的一个界面来完成。</p>
+<p>正好前一阵在实习的时候, 实现过相关功能, 总结一番也是极好。</p>
+<h1 id="1-_相关概念">1. 相关概念</h1><h2 id="1-1_Extension_Point">1.1 Extension Point</h2><p>系统中支持Extension 的区域，Extension 的类别也是据此区分的，iOS上共有Today、Share、Action、Photo Editing、Storage Provider、Custom keyboard几种，其中Today中的extension又被称为Widget。</p>
+<ul>
+<li><strong>今日(Today，又称为Widget)</strong>：可以快速获取更新或者在通知中心的今日视图中执行一项快速任务。</li>
+<li><strong>共享(Share)</strong>：发布到一个共享网站或者与其它应用程序共享内容。</li>
+<li><strong>动作(Action)</strong>：在另一个应用程序的上下文中操作或查看内容。</li>
+<li><strong>照片编辑(Photo Editing)</strong>（仅限于iOS）：在照片应用程序中编辑照片或视频。</li>
+<li><strong>查找器</strong>（仅限于iOS）：在查找器中直接显示文件同步的状态信息。</li>
+<li><strong>文档提供程序(Storage Provider)</strong>（仅限于iOS）：提供对文件库的访问和管理。</li>
+<li><strong>自定义键盘(Custom keyboard)</strong>（仅限于iOS）：用自定义键盘替代iOS系统键盘，并用于所有的应用程序中。</li>
+</ul>
+<p>由于每个扩展点都有与之相关的使用策略和专门的API，开发人员必须为他们想要提供的那种功能选择恰当的扩展点, 每种Extension Point的使用方式和适合干的活都不一样，因此不存在通用的Extension 。</p>
+<p>例如，在默认情况下，键盘Extension“<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/ExtensibilityPG/Keyboard.html" target="_blank" rel="external">不能访问网络，而且不能与其包含应用程序共享同一容器</a>”。通过对Extension进行恰当的配置，这样的限制可以移除，但开发人员仍然需要遵守苹果应用商店审查指南和iOS开发者计划许可协议中的具体的网络键盘指南。</p>
+<p><img src="http://img.my.csdn.net/uploads/201512/13/1449993990_7598.png" alt="Extension Point"></p>
+<h2 id="1-2_App_Extension">1.2 App Extension</h2><p>即为本文所说的Extension。Extension并不是一个独立的app，它有一个包含在App Bundle中的独立Bundle，Extension的Bundle后缀名是.appex。其生命周期也和普通App不同，这些后文将会详述。</p>
+<p>Extension不能单独存在，必须有一个包含它的Containing App。</p>
+<p>另外，Extension需要用户手动激活，不同的Extension激活方式也不同。</p>
+<p>比如：</p>
+<ul>
+<li>Today中的widget需要在Today中激活和关闭；</li>
+<li>Custom keyboard需要在设置中进行相关设置；</li>
+<li>Photo Editing需要在使用照片时在照片管理器中激活或关闭；</li>
+<li>Storage Provider可以在选择文件时出现；</li>
+<li>Share和Action可以在任何应用里被激活，但前提是开发者需要设置Activation Rules，以确定extension需要在合适出现。</li>
+</ul>
+<h2 id="1-3_Containing_App">1.3 Containing App</h2><p>尽管苹果开放了Extension，但是在iOS中Extension并不能单独存在，要想提交到AppStore，必须将Extension包含在一个app中提交，并且App的实现部分不能为空, 这个包含Extension的App就叫Containing App。</p>
+<p>Extension会随着Containing App的安装而安装，同时随着Containing App的卸载而卸载。</p>
+<h2 id="1-4_Host_App">1.4 Host App</h2><p>能够调起Extension的App被称为Host App。</p>
+<p>比如:</p>
+<ul>
+<li>widget的Host App就是Today。</li>
+<li>Photo Editing 的 Host App 就是 Photos</li>
+</ul>
+<h1 id="2-_Extension和Containing_App、Host_App通信">2. Extension和Containing App、Host App通信</h1><h2 id="2-1_Extension和Host_App">2.1 Extension和Host App</h2><p>Extension和Host App之间可以通过extensionContext属性直接通信，该属性是新增加的UIViewController类别：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">UIViewController</span>(<span class="title">NSExtensionAdditions</span>) &lt;<span class="title">NSExtensionRequestHandling</span>&gt; </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Returns the extension context. Also acts as a convenience method for a view controller to check if it participating in an extension request. </span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">readonly</span>,retain) <span class="built_in">NSExtensionContext</span> *extensionContext <span class="built_in">NS_AVAILABLE_IOS</span>(<span class="number">8</span>_0); </span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<p>实际上extension和Host App之间是通过IPC（interprocess communication）实现的，只是苹果把调用接口高度抽象了，我们并不需要关注那么底层的东西。</p>
+<h2 id="2-2_Containing_App和Host_App">2.2 Containing App和Host App</h2><p>他们之间没有任何直接关系，也从来不需要通信。</p>
+<h2 id="2-3_Extension和Containing_App">2.3 Extension和Containing App</h2><p>这二者之间的关系最复杂，纠纠缠缠扯不清关系。</p>
+<p>众所周知，<a href="https://developer.apple.com/library/ios/documentation/iphone/conceptual/iphoneosprogrammingguide/TheiOSEnvironment/TheiOSEnvironment.html" target="_blank" rel="external">每个iOS应用程序都有自己的沙箱</a>。<a href="https://developer.apple.com/library/mac/documentation/security/conceptual/AppSandboxDesignGuide/AppSandboxInDepth/AppSandboxInDepth.html" target="_blank" rel="external">通过Mac苹果应用商店分发的OS X应用程序</a>也有类似的要求，不过许多OS X应用程序是在Mac苹果应用商店之外分发的，并不需要遵守这一沙箱要求。</p>
+<p>沙箱是苹果iOS安全策略的基石之一。沙箱是为了限制应用程序对文件、首选项、网络资源、硬件等的访问，具体来讲，其目的是为了限制受损的应用程序可能对系统造成的损害。</p>
+<p>考虑到并不是所有可以用在应用程序中的API都可以用在Extension中，所以与通常的应用程序相比，App Extension运行在有更多限制的沙箱中。不能在Extension中使用的API标记为不可用宏，如NS_EXTENSIONS_UNAVAILABLE，它会在链接时导致失败。</p>
+<p>此外，对于Extension与其它应用程序之间的通信，苹果有几项强制规定：</p>
+<ol>
+<li>调用Extension的应用程序即主应用程序不能启动Extension；只有系统可以启动Extension。</li>
+<li>当Extension启动后，主应用程序就和它直接通信。</li>
+<li>主应用程序永远不和包含应用程序直接通信。</li>
+<li>Extension不是一个应用程序，但它由系统生成，并有它自己单独的进程。</li>
+<li>为了在包含应用程序和它的Extension之间共享数据，包含应用程序及其Extension都必须是应用程序组的一部分。对于应用程序组的其中两个成员，部分数据可以在两者沙箱之外的第三个容器中共享。</li>
+</ol>
+<p>正如Ars Technica的Andrew Cunningham总结的那样，这些规则的最终结果主要是一个应用程序不能进入另一个应用程序的沙箱。这与Android相反，在Android上，<a href="http://developer.android.com/guide/topics/providers/content-providers.html" target="_blank" rel="external">内容提供程序</a>和<a href="http://developer.android.com/reference/android/content/ContentResolver.html" target="_blank" rel="external">解析程序</a>仍然可以一起工作来为应用程序提供对其它应用程序中数据的访问。</p>
+<p><strong>不能直接通信:</strong></p>
+<p>首先，尽管Extension的bundle是放在Containing App的bundle中，但是他们是两个完全独立的进程，之间不能直接通信。不过Extension可以通过openURL的方式启动Containing App（当然也能启动其它App），不过必须通过extensionContext借助host app来实现：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过openURL的方式启动Containing APP </span></span><br><span class="line">- (<span class="keyword">void</span>)openURLContainingAPP </span><br><span class="line">&#123; </span><br><span class="line">    [<span class="keyword">self</span>.extensionContext openURL:[<span class="built_in">NSURL</span> URLWithString:<span class="string">@"appextension://123"</span>] </span><br><span class="line">                 completionHandler:^(<span class="built_in">BOOL</span> success) &#123; </span><br><span class="line">                     <span class="built_in">NSLog</span>(<span class="string">@"open url result:%d"</span>,success); </span><br><span class="line">                 &#125;]; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Extension中是无法直接使用openURL的。</strong></p>
+<p><strong>可以共享Shared Resources:</strong></p>
+<p>Extension和Containing App可以共同读写一个被称为Shared Resources的存储区域，这是通过App Groups实现的，后文将会详述。</p>
+<p>三者间的关系可以通过官网给的两张图片形象地说明：</p>
+<p> <img src="http://img.my.csdn.net/uploads/201512/13/1449995608_4851.png" alt="Extension_Containing_App_1"></p>
+<p><img src="http://img.my.csdn.net/uploads/201512/13/1449995608_8648.png" alt="Extension_Containing_App_2"></p>
+<h1 id="3-_数据共享">3. 数据共享</h1><p><strong>App Groups</strong>这是iOS8新开放的功能，在OS X上早就可用了。它主要用于同一Group下的App共享同一份读写空间，以实现数据共享。</p>
+<h2 id="3-1_功能开启">3.1 功能开启</h2><p>为了便于后续操作，请先确保你的开发者账号在Xcode上处于登录状态。</p>
+<h3 id="3-1-1_在App中开启">3.1.1 在App中开启</h3><p>App Groups位于：</p>
+<p>TARGETS—&gt;AppExtensionDemo—&gt;Capabilities—&gt;App Groups`</p>
+<p>找到以后，将App Groups右上角的开关打开，然后选择添加Groups，正规的命名规则应该是：group.com.company.app。</p>
+<p>添加成功以后如下图所示：</p>
+<p><img src="http://img.my.csdn.net/uploads/201512/13/1449996631_7873.jpeg" alt="App_Groups"></p>
+<h3 id="3-1-2_在Extension中开启">3.1.2 在Extension中开启</h3><p>开启方式和App中一样，需要注意的是必须保证这里地App Groups名称和App中的相同。</p>
+<h2 id="3-2_extension和containing_app数据共享">3.2 extension和containing app数据共享</h2><p>App Groups给我们提供了同一Group内App可以共同读写的区域，可以通过以下方式实现数据共享：</p>
+<h3 id="3-2-1_通过NSUserDefaults共享数据">3.2.1 通过NSUserDefaults共享数据</h3><p><strong>存数据</strong></p>
+<p>通过以下方式向NSUserDefaults中保存数据：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)saveTextBy<span class="built_in">NSUserDefaults</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSUserDefaults</span> *shared = [[<span class="built_in">NSUserDefaults</span> alloc] initWithSuiteName:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    [shared setObject:_textField.text forKey:<span class="string">@"test"</span>];</span><br><span class="line">    [shared synchronize];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是：</p>
+<ol>
+<li>保存数据的时候必须指明group id；</li>
+<li>而且要注意NSUserDefaults能够处理的数据只能是可plist化的对象，详情见<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/PropertyLists/AboutPropertyLists/AboutPropertyLists.html" target="_blank" rel="external">Property List Programming Guide</a>。</li>
+<li>为了防止出现数据同步问题，不要忘记调用<code>[shared synchronize];</code></li>
+</ol>
+<p><strong>读数据</strong></p>
+<p>对应的读取数据方式：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSString</span> *)readDataFrom<span class="built_in">NSUserDefaults</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSUserDefaults</span> *shared = [[<span class="built_in">NSUserDefaults</span> alloc] initWithSuiteName:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *value = [shared valueForKey:<span class="string">@"test"</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-1_通过NSFileManager共享数据">3.2.1 通过NSFileManager共享数据</h3><p>NSFileManager在iOS7提供了containerURLForSecurityApplicationGroupIdentifier方法，可以用来实现app group共享数据。</p>
+<p><strong>存数据</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)saveTextBy<span class="built_in">NSFileManager</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    containerURL = [containerURL URLByAppendingPathComponent:<span class="string">@"Library/Caches/good"</span>];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">NSString</span> *value = _textField.text;</span><br><span class="line">    <span class="built_in">BOOL</span> result = [value writeToURL:containerURL atomically:<span class="literal">YES</span> encoding:<span class="built_in">NSUTF8StringEncoding</span> error:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (!result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"save value:%@ success."</span>,value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>读数据</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">NSString</span> *)readTextBy<span class="built_in">NSFileManager</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    containerURL = [containerURL URLByAppendingPathComponent:<span class="string">@"Library/Caches/good"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *value = [<span class="built_in">NSString</span> stringWithContentsOfURL:containerURL encoding:<span class="built_in">NSUTF8StringEncoding</span> error:&amp;err];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PS:</p>
+<p>两个应用共同读取同一份数据，就会引发数据同步问题。WWDC2014的视频中建议使用NSFileCoordination实现普通文件的读写同步，而数据库可以使用CoreData,Sqlite也支持同步。</p>
+<h2 id="3-3_动态加载,_资源共享">3.3 动态加载, 资源共享</h2><p>这个感兴趣的可以看下, 无关紧要~</p>
+<p>和数据共享类似，Extension和Containing App很自然地会有一些业务逻辑上可以共用的代码，这时可以通过iOS8中刚开放使用的framework实现。苹果在<a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/ExtensibilityPG/ExtensionScenarios.html#//apple_ref/doc/uid/TP40014214-CH21-SW1" target="_blank" rel="external">App Extension Programming Guide</a>中是这样描述的：</p>
+<blockquote>
+<p>In iOS 8.0 and later, you can use an embedded framework to share code between your extension and its containing app. For example, if you develop image-processing code that you want both your Photo Editing extension and its containing app to share, you can put the code into a framework and embed it in both targets.</p>
+</blockquote>
+<p>即将framework分别嵌入到extension和containing app的target中实现代码共享。但这样岂不是需要分别要将framework分别copy到extension和containing app的main bundle中？</p>
+<p>参考extension和containing app数据共享，我试想能不能将framework只保存一份放在App Groups区域？</p>
+<h3 id="3-3-1_copy_framework到App_Groups">3.3.1 copy framework到App Groups</h3><p>在app首次启动的时候将framework放到App Groups区域：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)copyFrameworkFromMainBundleToAppGroup</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSFileManager</span> *manager = [<span class="built_in">NSFileManager</span> defaultManager];</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *sorPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/Dylib.framework"</span>,[[<span class="built_in">NSBundle</span> mainBundle] bundlePath]];</span><br><span class="line">    <span class="built_in">NSString</span> *desPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/Library/Caches/Dylib.framework"</span>,containerURL.path];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">BOOL</span> removeResult = [manager removeItemAtPath:desPath error:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (!removeResult) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"remove success."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">BOOL</span> copyResult = [[<span class="built_in">NSFileManager</span> defaultManager] copyItemAtPath:sorPath toPath:desPath error:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (!copyResult) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"copy success."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> copyResult;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-3-2_使用framework">3.3.2 使用framework</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)loadFrameworkInAppGroup</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">NSError</span> *err = <span class="literal">nil</span>;</span><br><span class="line">    <span class="built_in">NSURL</span> *containerURL = [[<span class="built_in">NSFileManager</span> defaultManager] containerURLForSecurityApplicationGroupIdentifier:<span class="string">@"group.com.xx.test"</span>];</span><br><span class="line">    <span class="built_in">NSString</span> *desPath = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/Library/Caches/Dylib.framework"</span>,containerURL.path];</span><br><span class="line">    <span class="built_in">NSBundle</span> *bundle = [<span class="built_in">NSBundle</span> bundleWithPath:desPath];</span><br><span class="line">    <span class="built_in">BOOL</span> result = [bundle loadAndReturnError:&amp;err];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        Class root = <span class="built_in">NSClassFromString</span>(<span class="string">@"Person"</span>);</span><br><span class="line">        <span class="keyword">if</span> (root) &#123;</span><br><span class="line">            Person *person = [[root alloc] init];</span><br><span class="line">            <span class="keyword">if</span> (person) &#123;</span><br><span class="line">                [person run];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>,err);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过测试，竟然能够加载成功。</p>
+<p>对比一下, 有如下总结: </p>
+<p>主要验证了两种方式:</p>
+<ol>
+<li>导入公用framework到项目中, 只有<strong>containing app</strong> 的 <strong>Link Binary With Libraries</strong>添加对应framework, extension运行时动态加载framework。</li>
+<li><strong>containing app</strong> 和 <strong>extension</strong>的<strong>Link Binary With Libraries</strong>分别链接公用framework, (Compile Sources 只包含在framework这个target中)</li>
+</ol>
+<p>以上两种方式都可以做到公用资源。 区别如下:</p>
+<ol>
+<li><p>方式一需要App Groups, 共享资源。 方式二不需要。</p>
+</li>
+<li><p>方式一需要<strong>containing app</strong>先启动把, 把数据copy到App Groups中, <strong>entension</strong>才能加载到。 方式二不需要。</p>
+</li>
+<li><p>方式一不能直接初始化类, 比如:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;TestFrameWork/FilterImage.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">FilterImage *filter = [[FilterImage alloc] init];</span><br><span class="line"></span><br><span class="line">将会报错:</span><br><span class="line"></span><br><span class="line">Undefined symbols <span class="keyword">for</span> architecture x86_64:</span><br><span class="line">  <span class="string">"_OBJC_CLASS_$_FilterImage"</span>, referenced from:</span><br><span class="line">      objc-class-ref <span class="keyword">in</span> PhotoEditingViewController.o</span><br><span class="line">ld: symbol(s) not found <span class="keyword">for</span> architecture x86_64</span><br><span class="line">clang: error: linker command failed with exit code <span class="number">1</span> (use -v to see invocation)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>   需要用这样的方式:</p>
+   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Class root = <span class="built_in">NSClassFromString</span>(<span class="string">@"FilterImage"</span>);</span><br><span class="line"><span class="keyword">if</span> (root) &#123;</span><br><span class="line">    FilterImage *filter = [[root alloc] init];</span><br><span class="line">    <span class="built_in">NSString</span> *nameLUT = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@"%@/TestFrameWork.bundle/images/filter_lut_%d"</span>, desPath, <span class="number">2</span>];</span><br><span class="line">   </span><br><span class="line">    <span class="keyword">self</span>.imageView.image = [filter filterImage:<span class="keyword">self</span>.input.displaySizeImage imageName:nameLUT];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>   方式二可以直接使用。 (#import “FilterImage.h”)</p>
+<p>   ​</p>
+<p>   对比了一下导出包的大小。</p>
+<p>   写了3个Demo, </p>
+<ol>
+<li>方式一, 动态加载          12.1M</li>
+<li>方式二，静态链接         23.7M</li>
+<li>方式三，只包含framework，没有extension   11.2M</li>
+</ol>
+<h1 id="4-_生命周期">4. 生命周期</h1><p>下图来自官方文档，它详细描述了Extension App的生命周期 <img src="http://img.my.csdn.net/uploads/201512/13/1449996016_4664.png" alt="Life_Cycle"></p>
+<p><strong>开始</strong></p>
+<p>在用户通过host app点击extension时，系统就会实例化extension应用，这是生命周期的开始。</p>
+<p><strong>执行任务</strong></p>
+<p>在extension启动以后，开始执行它的使命。</p>
+<p><strong>终止</strong></p>
+<p>在用户取消任务，或者任务执行结束，或者开启了一个长时后台任务时，系统会将其杀掉。</p>
+<p>由此可见，extension就是为了任务而生！</p>
+<h1 id="5-_Photo_Editing使用滤镜实战">5. Photo Editing使用滤镜实战</h1><p>这里因为时间关系, 就直接采用 <strong>Apple</strong> 官方例子, 不再重新写了。如果实践过程中, 有遇到任何问题, 欢迎留言或者其他方式与我交流~</p>
+<p>Demo下载地址: <img src="http://download.csdn.net/images/minetype/zip.gif" alt="">Photo Editing Extension Demo  </p>
+<p>这里有几点需要注意的。</p>
+<ol>
+<li><p>因为Host App是Photos, 所以我们的Extension必须适配横竖屏, 因为它的状态是跟着Host App变的, 而不是Containing App。 至于横竖屏的适配, 建议采用Size Class, 然后监听缩放模式, 来适配屏幕</p>
+<p>​</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - UIContentContainer</span></span><br><span class="line">- (<span class="keyword">void</span>)willTransitionToTraitCollection:(<span class="built_in">UITraitCollection</span> *)newCollection</span><br><span class="line">              withTransitionCoordinator:(<span class="keyword">id</span> &lt;<span class="built_in">UIViewControllerTransitionCoordinator</span>&gt;)coordinator</span><br><span class="line">&#123;</span><br><span class="line">    [<span class="keyword">super</span> willTransitionToTraitCollection:newCollection</span><br><span class="line">                 withTransitionCoordinator:coordinator];</span><br><span class="line">    [coordinator animateAlongsideTransition:^(<span class="keyword">id</span> &lt;<span class="built_in">UIViewControllerTransitionCoordinatorContext</span>&gt; context) &#123;</span><br><span class="line">       <span class="comment">// 横屏处理</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">         <span class="comment">// 竖屏处理</span></span><br><span class="line">        &#125;</span><br><span class="line">        [<span class="keyword">self</span>.view setNeedsLayout];</span><br><span class="line">    &#125; completion:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>   同样, 需要获取初始状态来处理。</p>
+<p>   ​</p>
+   <figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">self</span>.traitCollection.verticalSizeClass == <span class="built_in">UIUserInterfaceSizeClassCompact</span>) &#123;</span><br><span class="line">    <span class="comment">//To Do: modify something for compact vertical size</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//To Do: modify something for other vertical size</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>如果第三方库用Pod来管理的话, 需要修改pod的target, 以及添加链接。</p>
+<p><code>Build Settings — &gt; Other Linker Flags    **-l&quot;Pods-MBProgressHUD&quot;**</code></p>
+</li>
+</ol>
+<h1 id="6-_相关资料">6. 相关资料</h1><p><a href="https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/ExtensibilityPG/index.html#//apple_ref/doc/uid/TP40014214-CH20-SW1" target="_blank" rel="external">App Extension Programming Guide</a></p>
+<p><a href="http://www.infoq.com/news/2014/07/apple-ios8-app-extensions" target="_blank" rel="external">App Extensions for iOS 8 in Depth</a></p>
+<p><a href="http://foggry.com/blog/2014/06/23/wwdc2014zhi-app-extensionsxue-xi-bi-ji/" target="_blank" rel="external">WWDC2014之App Extensions学习笔记</a></p>
+<p><a href="https://developer.apple.com/library/ios/samplecode/SamplePhotoEditingExtension/Introduction/Intro.html#//apple_ref/doc/uid/TP40014576" target="_blank" rel="external">Sample Photo Editing Extension</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/iOS开发/">iOS开发</a>
+            
+              <a href="/tags/教程/">教程</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2016/03/16/Interactive-animation-is-so-simple/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Jazzhands, 交互动画就是这么简单</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2016/03/12/iOS-welcome-page-multilingual/">
+        <span class="next-text nav-default">iOS启动页多语言</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="description" content="iOS启动页多语言"/>
+
+
+
+
+  <meta name="keywords" content="iOS开发,教程," />
+
+
+
+
+  <link rel="alternate" href="/rss2.xml" title="Colin's Nest">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.4.x" />
+
+
+
+<link rel="canonical" href="http://http://colin1994.github.io/2016/03/12/iOS-welcome-page-multilingual/"/>
+
+
+<meta name="description" content="启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 UILaunchImages ~ 下文将详细描述如何实现启动页多语言。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS启动页多语言">
+<meta property="og:url" content="http://http://colin1994.github.io/2016/03/12/iOS-welcome-page-multilingual/index.html">
+<meta property="og:site_name" content="Colin's Nest">
+<meta property="og:description" content="启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 UILaunchImages ~ 下文将详细描述如何实现启动页多语言。">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_2.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/181/original/%E5%BC%80%E5%BF%8309.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/262538-a84f9bece1aa8b37.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/283/original/%E7%94%9F%E6%B0%9411.png">
+<meta property="og:image" content="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-03-12%20%E4%B8%8B%E5%8D%884.44.06.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_3.png">
+<meta property="og:image" content="http://wanzao2.b0.upaiyun.com/system/pictures/270/original/%E5%BE%97%E7%91%9F10.png">
+<meta property="og:updated_time" content="2019-12-23T01:02:31.290Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS启动页多语言">
+<meta name="twitter:description" content="启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 UILaunchImages ~ 下文将详细描述如何实现启动页多语言。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.4.x" />
+
+
+
+
+
+
+
+<script>
+  var CONFIG = {
+    search: false,
+    searchPath: "/search.xml",
+    fancybox: false,
+    toc: true,
+  }
+</script>
+
+
+
+
+  
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131205955-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131205955-1');
+</script>
+
+
+
+
+    <title> iOS启动页多语言 · Colin's Nest </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Colin's Nest</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/tags">
+        <li class="mobile-menu-item">
+          
+          
+            Tags
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Colin's Nest</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            
+            
+              Tags
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          iOS启动页多语言
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          Mar 12, 2016
+        </span>
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#传统多语言设置"><span class="toc-text">传统多语言设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动页设置"><span class="toc-text">启动页设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UILaunchImages"><span class="toc-text">UILaunchImages</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <blockquote>
+<p> 启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 <code>UILaunchImages</code> ~ 下文将详细描述如何实现启动页多语言。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="传统多语言设置">传统多语言设置</h2><p>说起多语言, 我们无非这样实现:</p>
+<ol>
+<li><p>为 App 添加多语言支持。<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_0.png" alt="LaunchImages_0"></p>
+</li>
+<li><p>添加对应的配置, 资源。 比如：</p>
+<p>文本: <img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_1.png" alt="LaunchImages_1"></p>
+<p>图片:<img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_2.png" alt="LaunchImages_2"></p>
+</li>
+<li><p>使用对应资源, 比如:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label.text = <span class="built_in">NSLocalizedString</span>(<span class="string">@"多语言"</span>, <span class="literal">nil</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>再麻烦一点, 就是xib, storyboard的多语言的。 但是原理一样, 这样的方式都能实现多语言支持。So, 就是这么简单~</p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/181/original/%E5%BC%80%E5%BF%8309.png" alt="emoji"></p>
+<p> 然而, 启动页貌似不吃这套 ,,,</p>
+<h2 id="启动页设置">启动页设置</h2><p>先说说我们如何设置启动页吧。</p>
+<p><code>Assets.xcassets</code> 这玩意引入之前, 我们是对启动页图片按规范命名, 比如 Default, -568h, @2x, @3x 之类的, 让系统帮助我们自动判断对应的启动页图片。</p>
+<p><code>Assets.xcassets</code> 之后, 我们都了一种选择, 可以直接拖拽图片到 <code>LaunchImage</code> 中, 并且图片命名也没那么多要求。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/262538-a84f9bece1aa8b37.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240/format/jpg" alt="LaunchImage_3"></p>
+<p>再之后, 多了 <code>LaunchScreen.storyboard</code> , 意味着我们有了更多的选择, 可以做更多的事情, 把它当做一个xib, 拖拽相关控件上去就好~</p>
+<p>方式很多, 是否意味着实现多语言的办法也很多 ?</p>
+<p>然而并不是,, <img src="http://wanzao2.b0.upaiyun.com/system/pictures/283/original/%E7%94%9F%E6%B0%9411.png" alt="emoji"></p>
+<p>不论是对<code>图片</code> 进行多语言, 还是 <code>LaunchScreen.storyboard</code> 多语言, 发现启动页始终没有跟着系统语言变, 血崩..</p>
+<p>当然, 办法并不是没有, 只是没找到对的而已~ 下面介绍如何通过<code>UILaunchImages</code> 实现启动页多语言。</p>
+<blockquote>
+<p>PS: 感觉 LaunchScreen.storyboard 是能做到多语言支持的, 难道是我实现过程中有问题 ? </p>
+</blockquote>
+<h2 id="UILaunchImages">UILaunchImages</h2><p>先看一下官方文档:</p>
+<blockquote>
+<p>UILaunchImages (Array - iOS) Explicitly specifies the launch images to use for the app. This key contains an array of dictionaries. Each dictionary contains detailed information about a single launch image and how it is used. Xcode fills in the value of each dictionary based on information you provide in your project settings.</p>
+</blockquote>
+<p>显然, 我们可以通过设置 <code>UILaunchImages</code> 来配置启动图片。</p>
+<p>至于 <code>UILaunchImages</code> 的几个 Key , 简单描述如下: </p>
+<ul>
+<li><p><code>UILaunchImageName</code> (required) 启动页资源名称</p>
+</li>
+<li><p><code>UILaunchImageMinimumOSVersion</code>(required) 启动页支持的最低版本</p>
+</li>
+<li><p><code>UILaunchImageSize</code> 启动页尺寸</p>
+</li>
+<li><p><code>UILaunchImageOrientation</code> 启动页方向</p>
+<p>​</p>
+</li>
+</ul>
+<p>代表什么, 都比较简单, 具体可以参考官方文档~ [  <a href="https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/iPhoneOSKeys.html#//apple_ref/doc/uid/TP40009252-SW28" target="_blank" rel="external">UILaunchImages</a> ]</p>
+<p>用这种方式配置启动页也十分简单, 具体步骤:</p>
+<ol>
+<li><p>取消启动页使用的 Asset Catalog</p>
+<p><img src="http://7xkc7a.com1.z0.glb.clouddn.com/LaunchImages%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-03-12%20%E4%B8%8B%E5%8D%884.44.06.png" alt=""></p>
+</li>
+<li><p>在Info.plist 中添加UILaunchImages项</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImages<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>7.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;320, 480&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage-568h<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>7.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;320, 568&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage-667h<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>8.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;375, 667&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dict</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageName<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>LaunchImage-736h<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageMinimumOSVersion<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>8.0<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageSize<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>&#123;414, 736&#125;<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">key</span>&gt;</span>UILaunchImageOrientation<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">string</span>&gt;</span>Portrait<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dict</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>   <img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_4.png" alt=""></p>
+<ol>
+<li><p>添加对应的启动页资源</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/LaunchImage/LaunchImagesLaunchImages_3.png" alt=""></p>
+<p>​</p>
+</li>
+</ol>
+<p>如此, 即可完成 启动页 多语言的适配, 不信你就试试呗~ </p>
+<p><img src="http://wanzao2.b0.upaiyun.com/system/pictures/270/original/%E5%BE%97%E7%91%9F10.png" alt=""></p>
+<blockquote>
+<p>PS: 这里, 说明一点。 启动页只会保留一份, 也就是说, 你第一次加载完以后, 切换了语言, 再重新打开App, 它的启动页不会跟着更新的。 这也符合苹果的用户交互指引。</p>
+<p>如果你想要动态修改启动页面图LaunchImage, 抱歉！<strong>根据苹果的用户交互指引,该页面是在程序加载时显示的,不建议动态修改.</strong></p>
+<p>正确的做法一般都是用固定的图片做启动页面图,在启动页面结束之后做任何你想做的事.</p>
+<p>如果真想动态修改启动页面,启动页面是固定的名字,可以在程序执行之后强制把页面替换掉,不过这样APP可能会被拒.</p>
+<p>该怎么设置一个动态的启动图呢？在启动图结束的时候，用一个View来展示你的动图，记得placeHolder设置为和你的LaunchImage的图片一样就行，这样就可以做出类似的效果了</p>
+</blockquote>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+  <div class="post-reward">
+    <input type="checkbox" name="reward" id="reward" hidden />
+    <label class="reward-button" for="reward">赞赏支持</label>
+    <div class="qr-code">
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/wechat.png" title="wechat">
+        </label>
+      
+      
+        <label class="qr-code-image" for="reward">
+          <img class="image" src="/image/reward/alipay.png" title="alipay">
+        </label>
+      
+    </div>
+  </div>
+
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/iOS开发/">iOS开发</a>
+            
+              <a href="/tags/教程/">教程</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2016/03/12/Photo-Editing-Extension/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Photo Editing Extension 详解 (附带应用滤镜Demo)</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2015/07/13/Imitation-Clean-Master/">
+        <span class="next-text nav-default">仿猎豹垃圾清理</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>  
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/colin1994" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+        
+          <a href="http://www.weibo.com/u/3171165012" class="iconfont icon-weibo" title="weibo"></a>
+        
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/rss2.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Colin丶</span>
+  </span>
+</div>
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+  
+  
+
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
+
+    
+  </body>
+</html>
