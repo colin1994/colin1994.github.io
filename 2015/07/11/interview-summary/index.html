@@ -58,15 +58,17 @@
 
 
 
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
 
 
 
 
 <script>
   var CONFIG = {
-    search: false,
+    search: true,
     searchPath: "/search.xml",
-    fancybox: false,
+    fancybox: true,
     toc: true,
   }
 </script>
@@ -176,7 +178,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -185,7 +187,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -194,7 +196,7 @@
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -203,11 +205,19 @@
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
       
+      
+        <li class="menu-search">
+          <form>
+            <i class="iconfont icon-search" id="open-search"></i>
+            <input type="text" class="search-input" id="search-input" />
+            <i class="iconfont icon-close" id="close-search"></i>
+          </form>
+        </li>
       
     </ul>
   
@@ -238,7 +248,7 @@
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一个多月来的面试总结(阿里,_网易,_腾讯)"><span class="toc-text">一个多月来的面试总结(阿里, 网易, 腾讯)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#阿里_研发部门"><span class="toc-text">阿里_研发部门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#阿里一面_电话"><span class="toc-text">阿里一面_电话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#阿里二面_电话"><span class="toc-text">阿里二面_电话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#阿里校招_在线笔试"><span class="toc-text">阿里校招_在线笔试</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#网易_邮件部门(拿到offer)"><span class="toc-text">网易_邮件部门(拿到offer)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#网易一面_电话"><span class="toc-text">网易一面_电话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网易二面_现场"><span class="toc-text">网易二面_现场</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网易HR面_现场"><span class="toc-text">网易HR面_现场</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#腾讯_微信事业部(拿到offer)"><span class="toc-text">腾讯_微信事业部(拿到offer)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#微信一面_电话"><span class="toc-text">微信一面_电话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#微信二面_collabedit+电话"><span class="toc-text">微信二面_collabedit+电话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#微信HR面_电话"><span class="toc-text">微信HR面_电话</span></a></li></ol></li></ol>
     </div>
@@ -457,7 +467,7 @@
       <a class="prev" href="/2015/07/11/Regular-Expressions/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">正则表达式</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
@@ -524,11 +534,11 @@
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 
@@ -575,6 +585,8 @@
 
 
     
+  
+
 
 
 
@@ -588,11 +600,39 @@
   
 
   
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
 
 
     <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
 <script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
 
     
+  <script type="text/html" id="search-result">
+    <article class="post">
+      <header class="post-header">
+        <h1 class="post-title">
+          <a href="$url$" class="post-link">
+            $title$
+          </a>
+        </h1>
+      </header>
+      <div class="post-content">
+        $content$
+        <div class="read-more">
+          <a href="$url$" class="read-more-link">
+            阅读更多
+          </a>
+        </div>
+      </div>
+    </article>
+  </script>
+  <script type="text/html" id="no-search-result">
+    <div class="no-result">
+      <h2>No result found!</h2>
+    </div>
+  </script>
+  <script type="text/javascript" src="/js/src/search.js?v=2.4.x"></script>
+
   </body>
 </html>

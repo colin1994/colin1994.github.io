@@ -45,15 +45,17 @@
 
 
 
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
 
 
 
 
 <script>
   var CONFIG = {
-    search: false,
+    search: true,
     searchPath: "/search.xml",
-    fancybox: false,
+    fancybox: true,
     toc: true,
   }
 </script>
@@ -163,7 +165,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -172,7 +174,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -181,7 +183,7 @@
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -190,11 +192,19 @@
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
       
+      
+        <li class="menu-search">
+          <form>
+            <i class="iconfont icon-search" id="open-search"></i>
+            <input type="text" class="search-input" id="search-input" />
+            <i class="iconfont icon-close" id="close-search"></i>
+          </form>
+        </li>
       
     </ul>
   
@@ -239,7 +249,7 @@
 <p> 启动页适配多语言, 想必很多 App 都有类似的需求。但是之前尝试过程中, 发现  “多语言” 的那几种实现方式, 在欢迎页上都不适应, 直到遇到了 <code>UILaunchImages</code> ~ 下文将详细描述如何实现启动页多语言。</p>
 </blockquote>
           <div class="read-more">
-            <a href="/2016/03/12/iOS-welcome-page-multilingual/" class="read-more-link">Read more..</a>
+            <a href="/2016/03/12/iOS-welcome-page-multilingual/" class="read-more-link">阅读更多</a>
           </div>
         
       
@@ -285,7 +295,7 @@
 <p>效果图:</p>
 <p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/Other/imageliebao_0.PNG"></p>
           <div class="read-more">
-            <a href="/2015/07/13/Imitation-Clean-Master/" class="read-more-link">Read more..</a>
+            <a href="/2015/07/13/Imitation-Clean-Master/" class="read-more-link">阅读更多</a>
           </div>
         
       
@@ -332,7 +342,7 @@
 <p><img src="http://img.my.csdn.net/uploads/201503/15/1426387345_9339.jpeg" width="500"/></p>
 <p><img src="http://img.my.csdn.net/uploads/201503/15/1426387346_3643.jpeg" width="500"/></p>
           <div class="read-more">
-            <a href="/2015/07/12/TODO-Macro/" class="read-more-link">Read more..</a>
+            <a href="/2015/07/12/TODO-Macro/" class="read-more-link">阅读更多</a>
           </div>
         
       
@@ -391,7 +401,7 @@
 </ol>
 <hr>
           <div class="read-more">
-            <a href="/2015/07/11/Regular-Expressions/" class="read-more-link">Read more..</a>
+            <a href="/2015/07/11/Regular-Expressions/" class="read-more-link">阅读更多</a>
           </div>
         
       
@@ -435,7 +445,7 @@
 <p>想必关注我的朋友都发现了, 最近我发表原创文章的数量和质量大大不如以前了, 也不怎么活跃了。主要原因是现在大三了, 7月份就能离校实习了, 所以前段时间也在为找实习忙碌着。接下去应该就能恢复正常, 继续为大家分享一些iOS开发上的小技巧, 毕竟, 也算拿到了心仪的offer。</p>
 </blockquote>
           <div class="read-more">
-            <a href="/2015/07/11/interview-summary/" class="read-more-link">Read more..</a>
+            <a href="/2015/07/11/interview-summary/" class="read-more-link">阅读更多</a>
           </div>
         
       
@@ -455,7 +465,7 @@
     
       <a class="prev" href="/page/2/">
         <i class="iconfont icon-left"></i>
-        <span class="prev-text">Prev</span>
+        <span class="prev-text">上一页</span>
       </a>
     
     
@@ -513,11 +523,11 @@
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 
@@ -558,6 +568,8 @@
 
 
     
+  
+
 
 
 
@@ -571,11 +583,39 @@
   
 
   
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
 
 
     <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
 <script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
 
     
+  <script type="text/html" id="search-result">
+    <article class="post">
+      <header class="post-header">
+        <h1 class="post-title">
+          <a href="$url$" class="post-link">
+            $title$
+          </a>
+        </h1>
+      </header>
+      <div class="post-content">
+        $content$
+        <div class="read-more">
+          <a href="$url$" class="read-more-link">
+            阅读更多
+          </a>
+        </div>
+      </div>
+    </article>
+  </script>
+  <script type="text/html" id="no-search-result">
+    <div class="no-result">
+      <h2>No result found!</h2>
+    </div>
+  </script>
+  <script type="text/javascript" src="/js/src/search.js?v=2.4.x"></script>
+
   </body>
 </html>

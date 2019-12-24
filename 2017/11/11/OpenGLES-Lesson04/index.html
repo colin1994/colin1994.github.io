@@ -56,15 +56,17 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
 
 
 
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
 
 
 
 
 <script>
   var CONFIG = {
-    search: false,
+    search: true,
     searchPath: "/search.xml",
-    fancybox: false,
+    fancybox: true,
     toc: true,
   }
 </script>
@@ -174,7 +176,7 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -183,7 +185,7 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -192,7 +194,7 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
           <a class="menu-item-link" href="/tags">
             
             
-              Tags
+              标签
             
           </a>
         </li>
@@ -201,11 +203,19 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
           <a class="menu-item-link" href="/about">
             
             
-              About
+              关于
             
           </a>
         </li>
       
+      
+        <li class="menu-search">
+          <form>
+            <i class="iconfont icon-search" id="open-search"></i>
+            <input type="text" class="search-input" id="search-input" />
+            <i class="iconfont icon-close" id="close-search"></i>
+          </form>
+        </li>
       
     </ul>
   
@@ -236,7 +246,7 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
     
     
   <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概览"><span class="toc-text">概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用_GLSL_构建着色器"><span class="toc-text">使用 GLSL 构建着色器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-_变量"><span class="toc-text">1. 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#变量及变量类型"><span class="toc-text">变量及变量类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#变量构造器和类型转换"><span class="toc-text">变量构造器和类型转换</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#标量"><span class="toc-text">标量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#向量"><span class="toc-text">向量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#矩阵"><span class="toc-text">矩阵</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#向量和矩阵的分量"><span class="toc-text">向量和矩阵的分量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#向量和矩阵的操作"><span class="toc-text">向量和矩阵的操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-_结构体"><span class="toc-text">2. 结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-_数组"><span class="toc-text">3. 数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-_语句"><span class="toc-text">4. 语句</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#运算符"><span class="toc-text">运算符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#流程控制语句"><span class="toc-text">流程控制语句</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-_函数"><span class="toc-text">5. 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-_限定符"><span class="toc-text">6. 限定符</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#存储限定符"><span class="toc-text">存储限定符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#默认限定符"><span class="toc-text">默认限定符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#const_限定符"><span class="toc-text">const 限定符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#attribute_限定符"><span class="toc-text">attribute 限定符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#uniform_限定符"><span class="toc-text">uniform 限定符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#varying_限定符"><span class="toc-text">varying 限定符</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#invariant_限定符"><span class="toc-text">invariant 限定符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#参数限定符"><span class="toc-text">参数限定符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#精度限定符"><span class="toc-text">精度限定符</span></a></li></ol></li></ol></li></ol>
     </div>
@@ -751,13 +761,13 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
       <a class="prev" href="/2017/11/12/OpenGLES-Lesson05/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default">GLSL 详解（高级篇）</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
       <a class="next" href="/2017/08/31/iOS-Unit-Testing/">
         <span class="next-text nav-default">iOS 单元测试</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
@@ -824,11 +834,11 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
 
 <div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
   </span>
   
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
   </span>
 
@@ -875,6 +885,8 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
 
 
     
+  
+
 
 
 
@@ -888,11 +900,39 @@ PS：无特殊说明，文中的 GLSL 均指 OpenGL ES 2.0 的着色语言。">
   
 
   
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
 
 
     <script type="text/javascript" src="/js/src/even.js?v=2.4.x"></script>
 <script type="text/javascript" src="/js/src/bootstrap.js?v=2.4.x"></script>
 
     
+  <script type="text/html" id="search-result">
+    <article class="post">
+      <header class="post-header">
+        <h1 class="post-title">
+          <a href="$url$" class="post-link">
+            $title$
+          </a>
+        </h1>
+      </header>
+      <div class="post-content">
+        $content$
+        <div class="read-more">
+          <a href="$url$" class="read-more-link">
+            阅读更多
+          </a>
+        </div>
+      </div>
+    </article>
+  </script>
+  <script type="text/html" id="no-search-result">
+    <div class="no-result">
+      <h2>No result found!</h2>
+    </div>
+  </script>
+  <script type="text/javascript" src="/js/src/search.js?v=2.4.x"></script>
+
   </body>
 </html>
