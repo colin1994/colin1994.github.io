@@ -29,3 +29,7 @@
     </ul>
   {% endif %}
 </nav>
+
+<amp-auto-ads type="adsense"
+        data-ad-client="ca-pub-9798409996369414">
+</amp-auto-ads>
