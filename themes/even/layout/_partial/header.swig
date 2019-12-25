@@ -8,6 +8,16 @@
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog_header_2 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-9798409996369414"
+     data-ad-slot="2863177695"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 <div class="logo-wrapper">
   <a href="{{ url_for('.') }}" class="logo">{{ config.title }}</a>
 </div>

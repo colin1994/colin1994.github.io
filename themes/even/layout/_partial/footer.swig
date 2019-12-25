@@ -37,3 +37,13 @@
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- blog_footer_2 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-9798409996369414"
+     data-ad-slot="2273324210"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
