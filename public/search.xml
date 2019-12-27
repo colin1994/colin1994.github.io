@@ -3,6 +3,272 @@
   
     
     <entry>
+      <title><![CDATA[iOS 内存调试技巧]]></title>
+      <url>/2019/12/27/iOS-Memory-Debug/</url>
+      <content type="html"><![CDATA[<p><strong>前言：</strong></p>
+<p>本文会介绍如何快速定位、解决内存问题的一些技巧，如下：</p>
+<ul>
+<li>signal SIGABRT，EXC_BAD_ACCESS，Memory Leak 问题</li>
+<li>Breakpoint，Zombie Objects，Address Sanitizer，Instruments，Malloc Stack，Debug Memory Graph，Analyze 的正确使用姿势</li>
+</ul>
+<a id="more"></a>
+<hr>
+<p>前一阵遇到了一个 EXC_BAD_ACCESS 问题，概率性出现，不太好定位。</p>
+<p>最后通过 Address Sanitizer，分分钟解决，那酸爽～</p>
+<p>顺便总结下平时会遇到的一些内存相关问题，可能是直接崩溃，也有可能是概率性崩溃，当然最常见的还是未正常释放对象引起的内存占用等问题。</p>
+<p>文末有本文配套的实验 Demo。</p>
+<p>工欲善其事，必先利其器～</p>
+<blockquote>
+<p>PS：</p>
+<p>本文是针对真机调试下，遇到了内存问题，如何快速定位。</p>
+<p>当然，内存相关的问题，绝不仅仅如此，包括内存如何分配，如何降低内存占用，OOM 等。</p>
+<p>这，又是另外一个故事了，我们以后再讲。</p>
+</blockquote>
+<p>[TOC]</p>
+<hr>
+<h2 id="1-_SIGABRT">1. SIGABRT</h2><blockquote>
+<p>建议查错方式：Breakpoint</p>
+</blockquote>
+<p>SIGABRT 类的问题，基本上都能定位到，因为系统明确捕获并提示，你的 App 发生了错误。</p>
+<p>虽然很简单… 但作为一个系列，顺带提一下。</p>
+<p>iOS 中发生 SIGABRT，内存方面一般表现为<strong>越界，访问没有初始化的地址或者错误地址</strong>。</p>
+<p>举个最最最最简单的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NSArray *array = [NSArray new];</span><br><span class="line">id object = [array objectAtIndex:0];</span><br></pre></td></tr></table></figure>
+<p>这里很明显越界了，App 崩溃，并且报错：</p>
+<p> <strong>-[__NSArrayM objectAtIndex:]: index 0 beyond bounds for empty array’</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_1.png" alt=""></p>
+<p>报错是报错了，但是我们看左边的调用栈，指向了无用的 <strong>main</strong>，并没有定位到我们的具体代码。</p>
+<h3 id="image_lookup">image lookup</h3><p><strong>First throw call stack</strong> 里输出的调用栈，但是并没有符号化，无法直接阅读。</p>
+<p>当然，如果要解析，也是可以借助 <strong>image 寻址</strong> 来实现，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(lldb) image lookup --address 0x1001b26c0</span><br><span class="line">      Address: MemoryDemo[0x00000001000066c0] (MemoryDemo.__TEXT.__text + 136)</span><br><span class="line">      Summary: MemoryDemo`-[ViewController viewDidLoad] + 136 at ViewController.m:22</span><br></pre></td></tr></table></figure>
+<p>可以看到，能够定位到具体的代码。但是这就显得比较麻烦了。</p>
+<h3 id="Breakpoint">Breakpoint</h3><p>这时候，可以通过添加一个<strong>全局异常断点</strong>，来定位问题：</p>
+<p><strong>Breakpoint navigator —&gt; Create a breakpoint —&gt; Exception Breakpoint</strong></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_2.png" alt=""></p>
+<p>重新运行，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_3.png" alt=""></p>
+<p>当然，<strong>Exception Breakpoint</strong> 的作用远远比这个强大。建议移动到用户组下，便于所有工程都开启。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_4.png" alt=""></p>
+<hr>
+<h2 id="2-_EXC_BAD_ACCESS">2. EXC_BAD_ACCESS</h2><blockquote>
+<p>建议查错方式：Zombie Objects &amp; Address Sanitizer</p>
+</blockquote>
+<p><strong>EXC_BAD_ACCESS，意味着向某块内存发送消息，但是该内存无法响应对应的消息指令。</strong></p>
+<blockquote>
+<p>In summary, when you run into EXC_BAD_ACCESS, it means that you try to send a message to a block of memory that can’t execute that message.</p>
+</blockquote>
+<p>通常，我们遇到的大多数情况下都是<strong>向一个已释放的对象发送消息。</strong>这在 MRC 时代比较常见，但不代表 ARC 中不会有这样的问题。</p>
+<p>为了方便模拟，我们在 MRC 环境中测试。</p>
+<h3 id="Zombie_Objects">Zombie Objects</h3><p>添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@implementation MRCObject</span><br><span class="line"></span><br><span class="line">- (void)zomibleObjectsTest &#123;</span><br><span class="line">    NSObject *obj = [NSObject new];</span><br><span class="line">    [obj release];</span><br><span class="line">    [obj release];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">// 测试代码</span><br><span class="line">MRCObject *mObject = [MRCObject new];</span><br><span class="line">[mObject zomibleObjectsTest];</span><br></pre></td></tr></table></figure>
+<p>运行后，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_5.png" alt=""></p>
+<p>可以看到，报了 <strong>EXC_BAD_ACCESS</strong>，也定位到了具体代码。但是，并没有相关的崩溃说明。如果直接排查问题，是比较麻烦的（这里的 MRC 代码很简单，但是实际项目中，要比这复杂的多）。</p>
+<p>这时候，就可以借助 <strong>Zombie Objects</strong> 来辅助调试。</p>
+<p><strong>Edit Scheme —&gt; Diagnostics —&gt; Memory Management —&gt; Zombie Objects。</strong></p>
+<p>开启后，再次运行，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_7.png" alt=""></p>
+<p><strong>-[NSObject release]: message sent to deallocated instance 0x1c400e180</strong></p>
+<p>很明确的告诉我们，向一个已释放的对象（0x1c400e180）发送了 release 消息。</p>
+<p>并且，我们可以在左侧 Variables View 面板中，找到 0x1c400e180 代表的对象，</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_8.png" alt=""></p>
+<p>那这里，我们可以知道，是 obj 这个对象被释放后，又向他发送 release 消息引起的崩溃。<br>这时候，就可以愉快的、针对性的解决问题啦～</p>
+<p>不过，不知道大家有没有注意到。我们的 obj 对象，类型明明是 NSObject，为什么变成了 <code>_NSZoombie_NSObject</code> ？</p>
+<h4 id="Zombie_Objects_实现原理">Zombie Objects 实现原理</h4><p>为了解释这个问题，我们顺带讲下 Zombie Objects 的官方实现原理。</p>
+<p>通过在 <a href="https://opensource.apple.com/source/CF/CF-1153.18/CFRuntime.c" target="_blank" rel="external">CFRuntime.c</a> 中查阅源码，搜索 Zombie，发现了疑似相关的定义<strong>__CFZombifyNSObject</strong> ：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_9.png" alt=""></p>
+<p>回到项目中，加上对应的<strong>符号断点</strong>，尝试查看内部具体实现。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_10.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_11.png" alt=""></p>
+<p>再次运行后（保持 Zombie Objects 开启），可以发现 __CFZombifyNSObject 确实被调用了。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_12.png" alt=""></p>
+<p>虽然是汇编代码，但是配合右侧的注释，可读性非常高。</p>
+<p>有用过 Method Swizzling 的，相信对这块的实现都不陌生，就不累述。总结来说，__CFZombifyNSObject 做了这么一件事：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将 NSObject 的 dealloc 方法，替换成 __dealloc_zombie 来实现。</span><br></pre></td></tr></table></figure>
+<p>既然如此，我们继续添加一个符号断点：-[NSObject __dealloc_zombie]，来看看它内部的实现。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_13.png" alt=""></p>
+<p>到这里，整个实现就很明朗了，虽然稍微复杂了点，但是还是能从中获取一些信息的。</p>
+<p>大致流程翻译过来，就是：</p>
+<ul>
+<li>判断是否开启 __CFZombieEnabled</li>
+<li>object_getClass，class_getName 获取当前对象类名</li>
+<li>通过 asprintf，把格式化后的数据（<code>_NSZombie_%s</code>）写入某个字符串缓冲区，做为新类名</li>
+<li>通过 objc_lookUpClass，查找新类名的类是否存在，不存在，则往下创建</li>
+<li>通过 objc<em>lookUpClass，获取名为 `_NSZombie</em>` 的类。这个类比较特殊，里面没有实现任何的方法</li>
+<li>通过 objc<em>duplicateClass，复制  `_NSZombie</em><code>类，生成新的</code><em>NSZombie</em>%s` 类</li>
+<li>通过 object<em>setClass，将当前对象的类型设置成新的 `_NSZombie</em>%s` 类</li>
+</ul>
+<p>至此，原先的对象，类型已经被替换成 <code>_NSZombie_%s</code>  了，而这个类没有实现任何方法，所以往该对象发送任何消息的时候，必定会崩溃，从而被 Xcode 捕获到。</p>
+<p>这就解释了为什么会有个 <code>_NSZoombie_NSObject</code> 类型对象的问题。</p>
+<blockquote>
+<p>PS：</p>
+<p>总结 Zombie 的实现，是 Swizzling NSObject 的 dealloc 方法，创建一个不包含任何方法的 class 将原来的 class 内存内容替换掉，即用生成僵尸对象来替换 dealloc 的实现，当对象引用计数为 0 的时候，将需要 dealloc 的对象转化为僵尸对象。如果之后再给这个僵尸对象发消息，则抛出异常，并打印出相应的信息，这样调试者可以很轻松的找到异常发生位置。 </p>
+</blockquote>
+<hr>
+<h3 id="Address_Sanitizer">Address Sanitizer</h3><p>绝大多数情况下，EXC_BAD_ACCESS 问题，我们都可以通过 Zombie Objects 来定位到。但也有些时候，Zombie Objects 就显得比较无力。</p>
+<p>测试下下面这段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">char *buffer2 = malloc(80);</span><br><span class="line">buffer2[90] = &apos;Y&apos;;</span><br><span class="line">free(buffer2);</span><br></pre></td></tr></table></figure>
+<p>这段代码，我们看过去，是很明显存在问题，越界访问了无效的内存区域。<br>但实际上，90% 是不会产生 Crash，就算产生 Crash 也不会在具体代码处指明错误，并打印错误 Log。如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_14.png" alt=""></p>
+<p>熟悉的 main…</p>
+<blockquote>
+<p>PS：</p>
+<p>开头提到了，前一阵我遇到的一个概率性崩溃问题。就是这种类型的。</p>
+<p>在 memcpy 的时候，前后内存块大小不一致引起，大致代码就是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; char a[YLZ_FACE_COUNT], b[YLZ_S_FACE_COUNT];</span><br><span class="line">&gt; memcpy(a, b,sizeof(b));</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>YLZ_FACE_COUNT 和 YLZ_S_FACE_COUNT 是两个宏定义（为了说明，随便命名的），值不一样，但是本身命名又非常接近，导致 Xcode 自动补全的时候，不小心就会选择错。<br>而这又是概率性的崩溃，就很难定位到问题了。</p>
+</blockquote>
+<p>这时候，如果开启 Zombie Objects，也是一样的，无法快速定位到具体问题。原因就是 Zombie 设计本身，在 malloc 对象和内存越界方面，几乎无能为力。</p>
+<p>这时候，<strong>Address Sanitizer</strong> 就要派上用场了。</p>
+<p>首先，开启 Address Sanitizer。</p>
+<p><strong>Target —&gt; Edit Scheme —&gt; Diagnostics —&gt; Runtime Sanitization —&gt; Address Sanitizer</strong></p>
+<p>再次运行，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_15.png" alt=""></p>
+<p>定位到了具体代码，同时也说明了崩溃原因：<strong>Heap buﬀer overﬂow</strong>，溢出了。</p>
+<p>于是，就可以再次愉快的、针对性的解决问题啦～</p>
+<p>十分强大！</p>
+<h4 id="Address_Sanitizer_介绍">Address Sanitizer 介绍</h4><p>那么，<strong>Address Sanitizer</strong> 是什么？</p>
+<blockquote>
+<p>Address Sanitizer 是 Xcode7 中最早引入的  Runtime Tool，它用于发现内存问题。比如野指针 EXC_BAD_ACCESS ，内存越界等问题。</p>
+</blockquote>
+<p>在 Xcode9 之前，Address Sanitizer 就已经支持的错误检查包括：</p>
+<ul>
+<li>Use-after-free</li>
+<li>Heap buﬀer overﬂow</li>
+<li>Stack buﬀer overﬂow</li>
+<li>Global variable overﬂow</li>
+<li>Overﬂows in C++ containers</li>
+<li>Use-after-return</li>
+</ul>
+<p>这里再额外介绍 <strong>Use-after-free</strong> 的情况，即常见的野指针问题，访问已释放的内存区域。官方的例子如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_16.png" alt=""></p>
+<p>可以看到，Address Sanitizer 检测到了内存问题 — <strong>Use of deallocated memory</strong>，同时在 Issue ⾯板，可以看到 Memory 具体情况。Address Sanitizer 会告诉我们对象创建和销毁的调用栈。这就很方便我们定位，哪里不小心释放了对象，哪里又访问了不该访问的对象。问题自然迎刃而解 ～</p>
+<h4 id="Address_Sanitizer_原理_/_vs_Zombie_Objects">Address Sanitizer 原理 / vs  Zombie Objects</h4><p>那么，<strong>Address Sanitizer 和之前提到的 Zombie Objects 有什么区别？</strong></p>
+<p>一句话，<strong>Address Sanitizer 比 Zombie 更强大，适用性更广！特别在 malloc 对象方面。</strong></p>
+<p>Address Sanitizer 的原理是当程序创建变量分配一段内存时，将此内存后面的一段内存也冻结住，标识为中毒内存（poisoned memory）。如图所示，黄色是变量所占内存，紫色是冻结的中毒内存。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_17.png" alt=""></p>
+<p>当程序访问到中毒内存时（buﬀer overﬂow），就会抛出异常，并打印出相应 Log 信息。调试者可以根据中断位置和的 Log 信息，定位问题。如果对象释放了，对象所占的内存也会标识为中毒内存，这时候访问这段内存同样会抛出异常（Use-after-free）。 </p>
+<p>Xcode 9 中， Address Sanitizer 可以检测到两种新的内存问题：use-after-scope 和 use-after-return。并且在日常的 Debug 过程中，也能直接查看对象对应的内存信息。顺带再提一下：</p>
+<h4 id="use-after-scope/return">use-after-scope/return</h4><blockquote>
+<p>PS：<br>如果要检测 use-after-return，需要额外勾选 “Detect use of stack after return” 选项。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_18.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_19.png" alt=""></p>
+<p>出了 Scope 或者 Function 后，局部变量被删除，对应的内存区域被释放回收。如果没有改变相关指针的值，即该指针仍然指向原来的内存地址，那这指针就变成了野指针（迷途指针），它指向的内存地址是不确定的。这类问题，通过 Address Sanitizer 则可很容易发现。</p>
+<h4 id="Compatible_with_Malloc_Scribble">Compatible with Malloc Scribble</h4><p>在日常的 Debug 过程中，也能直接查看对象对应的内存信息，并持续观察它的内存变化情况，如下一个简单的测试代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NSObject *testObject = [NSObject new];</span><br><span class="line">testObject = nil;</span><br></pre></td></tr></table></figure>
+<p>在执行 testObject = nil，之前，打个断点，右键左侧 Variables View 面板中的 testObject 对象，选中 View Memory of 添加内存观察。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_20.png" alt=""></p>
+<p>添加后，会看到这样的界面：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_22.png" alt=""></p>
+<p>左侧显示了对象创建和销毁的调用栈。右侧显示了对应内存地址具体的内容。其中，白色高亮的是为对象分配的实际内存。灰色则是之前提到的中毒内存（poisoned memory），Address Sanitizer 则会检测是否异常访问了这部分灰色内存。</p>
+<p>点击左侧的调用栈，能准确定位到具体的代码，如下</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_21.png" alt=""></p>
+<p>断点继续执行，释放 testObject 对象。这时候，多了销毁的调用栈。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_23.png" alt=""></p>
+<p>另外，在看下原先内存地址对应的具体内容都已经置灰了。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_24.png" alt=""></p>
+<blockquote>
+<p>PS：</p>
+<p>不知道有没有发现释放前后的内存地址不太一样.. （没发现就算了～）</p>
+<p>其实是写 Demo 过程，稍微出了点差错，不小心把工程关掉了。导致截图前后不是同一次运行..</p>
+</blockquote>
+<p>Address Sanitizer 就先介绍到这里，更多的功能，需要大家在实际使用过程中去发掘。</p>
+<hr>
+<h2 id="3-_Memory_Leak">3. Memory Leak</h2><blockquote>
+<p>建议查错方式：Instruments &amp; Malloc Stack &amp; Debug Memory Graph</p>
+</blockquote>
+<p>Memory Leak，内存泄漏，概括来说就是，你希望某个对象释放掉的时候，它没有按照预想被释放掉，导致不必要的内存占用。Leak 产生的方式很多，最经常遇到的应该就是 Retain Cycle，循环引用引起的。</p>
+<p>至于为什么会产生泄漏，就不累述了，这里简单举两个例子，说明不同情况下的解决方案。</p>
+<h3 id="Retain_Cycle">Retain Cycle</h3><p>新建 LeakViewController，在现有的 ViewController 中添加一个按钮，执行 Push 到 </p>
+<p>LeakViewController 的操作。</p>
+<p>YLZNetworkFetcher 是一个网络请求管理类，有个 block 返回请求结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">// YLZNetworkFetcher.h</span><br><span class="line">#import &lt;Foundation/Foundation.h&gt;</span><br><span class="line"></span><br><span class="line">typedef void (^YLZNetworkFetcherCompletionHandler)(NSData *data);</span><br><span class="line"></span><br><span class="line">@interface YLZNetworkFetcher : NSObject</span><br><span class="line"></span><br><span class="line">@property (nonatomic, strong, readonly) NSURL *url;</span><br><span class="line"></span><br><span class="line">- (id)initWithURL:(NSURL *)url;</span><br><span class="line">- (void)startWithCompletionHandler:(YLZNetworkFetcherCompletionHandler)completion;</span><br><span class="line"></span><br><span class="line">@end;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//  YLZNetworkFetcher.m</span><br><span class="line">#import &quot;YLZNetworkFetcher.h&quot;</span><br><span class="line"></span><br><span class="line">@interface YLZNetworkFetcher ()</span><br><span class="line"></span><br><span class="line">@property (nonatomic, copy) YLZNetworkFetcherCompletionHandler completionHandler;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation YLZNetworkFetcher</span><br><span class="line"></span><br><span class="line">- (instancetype)initWithURL:(NSURL *)url &#123;</span><br><span class="line">    if (self = [super init]) &#123;</span><br><span class="line">        _url = url;</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)startWithCompletionHandler:(YLZNetworkFetcherCompletionHandler)completion &#123;</span><br><span class="line">    self.completionHandler = completion;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">//  LeakViewController.m</span><br><span class="line">#import &quot;LeakViewController.h&quot;</span><br><span class="line">#import &quot;YLZNetworkFetcher.h&quot;</span><br><span class="line"></span><br><span class="line">@interface LeakViewController ()</span><br><span class="line"></span><br><span class="line">@property (nonatomic, strong) YLZNetworkFetcher *networkFetcher;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation LeakViewController</span><br><span class="line"></span><br><span class="line">- (void)dealloc &#123;</span><br><span class="line">    NSLog(@&quot;ylz -- dealloc&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line"></span><br><span class="line">    NSURL *url = [[NSURL alloc] initWithString:@&quot;&quot;];</span><br><span class="line">    _networkFetcher = [[YLZNetworkFetcher alloc] initWithURL:url];</span><br><span class="line">    [_networkFetcher startWithCompletionHandler:^(NSData *data) &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;, _networkFetcher);</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>运行后，来回 Push 几次，发现 LeakViewController 的 dealloc 始终没有调用，没有 Log 输出，很明显，这里发生了内存泄漏。</p>
+<p>当程序复杂到一定程度的时候，很难从某个 .m 文件中，直接找到哪个地方发生泄漏了。这时候工具就要派上用场了。</p>
+<p>Instruments 应该是之前大家用到最多的工具了。而这类的泄漏，Instruments 也能很好的帮我们定位到。运行 Instruments 后，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_25.png" alt=""></p>
+<p>红色的 X，表示捕获到了内存泄漏。点击下面的 Leaks 面板，这类的循环引用问题。会有很详细的说明和对应的图表。我们可以很清楚的看到，LeakViewController 和  YLZNetworkFetcher 之间形成了闭环，相互持有，导致都释放不了。</p>
+<p>那么，继续愉快的打破闭环吧～</p>
+<p>不过 Leaks 里面，如果被判定是循环引用，就会在 Cycles &amp; Roots 面板里面展示，反而 Call Tree 面板里面找不到相关的信息（也有可能是我姿势不对），没法直接跳到对应产生问题的代码处。</p>
+<p>而 <strong>Debug Memory Graph</strong>，则可以很方便的解决这个问题。</p>
+<blockquote>
+<p>Debug Memory Graph 是 Xcode8 开始加入的一项功能，它把原先就支持的一些指令，比如 heap AppName、leaks AppName、malloc_history AppName Address 等整合起来，提供可视化界面，方便使用。</p>
+</blockquote>
+<p>所以，使用它的时候，真的非常简单。</p>
+<p>建议先开启 <strong>Malloc Stack，它会记录每个对象的内存分配历史，扩展 Debug Memory Graph 的能力。</strong></p>
+<p>开启方式：</p>
+<p><strong>Target —&gt; Edit Scheme —&gt; Diagnostics —&gt; Logging —&gt; Malloc Stack。</strong></p>
+<p>然后在 Xcode 中调试 App 的时候，随时点击 Debug Memory Graph 按钮即可。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_26.png" alt=""></p>
+<p>针对上面那个例子，会出现这样的界面：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_27.png" alt=""></p>
+<p>这里可以讲的内容比较多，我们按序说明下。</p>
+<p>第一个，左下角的过滤面板：</p>
+<ul>
+<li>左侧输入框，输入对应类名，可以很方便过滤</li>
+<li>右侧第一个按钮，<strong>show only leaked blocks</strong>，只显示被判定为泄漏的对象</li>
+<li>右侧第二个按钮，<strong>show only content from workspace</strong>，只显示当前工程相关</li>
+</ul>
+<p>筛选后，第二个面板，就列出了相关的泄漏点。</p>
+<p>第三个面板，详细展示了对应的持有关系。 一般我们会关注 capture 这种类型，80% 的泄漏只要解决这块，就能修复。</p>
+<p>第四个面板，就是 Debug Memory Graph + Malloc Stack 强大的地方。在第三个面板中，我们看到一个 block 持有了 LeakViewController，但是这个 block 是什么？什么时候持有的？点击后，右侧的 Backtrace 就会很清楚的展示这整个过程。点击后也是跳到具体的代码处，十分强大。</p>
+<p>这个例子，比较简单，看起来没什么，但是实际项目中，遇到的一般是这样的：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_28.png" alt=""></p>
+<p>没有具体的变量名，没有具体的类名，这定位起来头就大了。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_29.png" alt=""></p>
+<p>但是当你发现， Malloc Stack 能显示完整调用栈的时候，那感觉真的是没法形容…</p>
+<h3 id="Not_Release">Not Release</h3><p>最后再提一种情况，单纯的没有释放，可能 VC 的 dealloc 走了，但是某块内存没有释放。</p>
+<p>比如下面这段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int size = 1024 * 1024 * 30;</span><br><span class="line">char *pData = malloc(size);</span><br><span class="line">for (int index = 0; index &lt; size; index++) &#123;</span><br><span class="line">    pData[index] = &apos;Y&apos;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反复进入，你会发现 dealloc 触发了，但是内存却是不断上升。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_30.png" alt=""></p>
+<p>这种泄漏，一般不容易发现，除非你有没次都对比内存占用的好习惯。</p>
+<p>这时候，如果用 Instruments 查看，你会发现一个神奇的现象，没有泄漏报错，同时内存占用一直没有上升。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_31.png" alt=""></p>
+<p>这就很可怕了..  我们知道，malloc 出来的，是需要手动 free 的，否则就会引起不必要的内存占用。</p>
+<p>那上述的表现是为什么呢？</p>
+<p>区别在于，我们使用 Xcode 联调的时候，是在 Debug 模式，但是 Instruments Profile 的时候，是在 Release 环境下，而 Release 默认是开启编译优化的，这部分代码，实际会被优化掉，导致看起来没有问题。</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_32.png" alt=""></p>
+<p>所以有时候，Debug 和 Release 环境下，表现会有差异，多半是因为这个原因。</p>
+<p>但我们当然是不希望自己的代码，被默认优化，而屏蔽了可能存在的问题，所以，Debug Memory Graph 又要派上用场了。效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_33.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_34.png" alt=""></p>
+<p>自动发现了 30 * 4 = 120M 的内存泄漏，并且指出了对应的代码。很舒服有没有～</p>
+<hr>
+<h2 id="4-_Analyze">4. Analyze</h2><p>最后介绍一个不太一样的工具，Analyze，它是编译时静态分析，通过分析代码，自动找出可能存在问题的地方。</p>
+<p>使用方式：</p>
+<p><strong>Product —&gt; Analyze（Shift + Command + B）</strong></p>
+<p>运行一下我们这个漏洞百出的 Demo，效果如下：</p>
+<p><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_35.png" alt=""></p>
+<p>虽然没能把所有问题都找出来，但是还是有一定的参考价值。</p>
+<hr>
+<h2 id="总结">总结</h2><p>写到这里，长舒一口气… </p>
+<p>这篇三十多张配图的文章，内容虽然说不上多么高深，但针对内存调试这块，相信很难找到这么全面的了。</p>
+<p>希望，能有所收获。</p>
+<p>文中的示例程序，已经放到 <a href="https://github.com/colin1994/iOS-Memory-Debug" target="_blank" rel="external">iOS-Memory-Debug</a> 上了，可以下载下来实际操作一番。方便的话，来个星星也是极好的。</p>
+<p>再往后，如果可能的话，我们再聊聊降低内存占用，OOM 定位等问题～</p>
+<hr>
+<h2 id="延伸阅读">延伸阅读</h2><p><a href="https://developer.apple.com/videos/play/wwdc2015/413/" target="_blank" rel="external">Advanced Debugging and the Address Sanitizer</a></p>
+<p><a href="https://developer.apple.com/videos/play/wwdc2017/406" target="_blank" rel="external">Finding Bugs Using Xcode Runtime Tools</a></p>
+<p><a href="https://code.tutsplus.com/tutorials/what-is-exc_bad_access-and-how-to-debug-it--cms-24544" target="_blank" rel="external">What Is EXC_BAD_ACCESS and How to Debug It</a></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> iOS开发 </tag>
+            
+            <tag> 性能优化 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[iOS App Thinning]]></title>
       <url>/2019/12/24/iOS-App-Thinning/</url>
       <content type="html"><![CDATA[<p>关于瘦包这个话题，之前大家讨论的已经够多了。</p>

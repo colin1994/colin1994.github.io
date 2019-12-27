@@ -73,7 +73,7 @@ id object = [array objectAtIndex:0];
 
  **-[__NSArrayM objectAtIndex:]: index 0 beyond bounds for empty array'**
 
-![](https://diycode.b0.upaiyun.com/photo/2018/0acfe0738b89e0ca8fa23d9dfc07a0f7.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_1.png)
 
 报错是报错了，但是我们看左边的调用栈，指向了无用的 **main**，并没有定位到我们的具体代码。
 
@@ -101,15 +101,15 @@ id object = [array objectAtIndex:0];
 
 **Breakpoint navigator —> Create a breakpoint —> Exception Breakpoint**
 
-![](https://diycode.b0.upaiyun.com/photo/2018/d2eeac8a9191821408b766173a999b03.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_2.png)
 
 重新运行，效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/4b59bcc47632d624c95e0bf6312587ef.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_3.png)
 
 当然，**Exception Breakpoint** 的作用远远比这个强大。建议移动到用户组下，便于所有工程都开启。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/e3ae446259bab722d2d0d4102c121a12.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_4.png)
 
 
 
@@ -156,7 +156,7 @@ MRCObject *mObject = [MRCObject new];
 
 运行后，效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/f2bad3956fa42bc5895a2d9dd653375a.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_5.png)
 
 可以看到，报了 **EXC_BAD_ACCESS**，也定位到了具体代码。但是，并没有相关的崩溃说明。如果直接排查问题，是比较麻烦的（这里的 MRC 代码很简单，但是实际项目中，要比这复杂的多）。
 
@@ -166,7 +166,7 @@ MRCObject *mObject = [MRCObject new];
 
 开启后，再次运行，效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/da3bb9bf6abfe0a7cd8a8aa88fd3d9e9.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_7.png)
 
 **-[NSObject release]: message sent to deallocated instance 0x1c400e180**
 
@@ -174,7 +174,7 @@ MRCObject *mObject = [MRCObject new];
 
 并且，我们可以在左侧 Variables View 面板中，找到 0x1c400e180 代表的对象，
 
-![](https://diycode.b0.upaiyun.com/photo/2018/cec011abe2fbe37dc68fc20f4fc0f5ef.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_8.png)
 
 那这里，我们可以知道，是 obj 这个对象被释放后，又向他发送 release 消息引起的崩溃。
 这时候，就可以愉快的、针对性的解决问题啦～
@@ -195,21 +195,21 @@ MRCObject *mObject = [MRCObject new];
 
 通过在 [CFRuntime.c](https://opensource.apple.com/source/CF/CF-1153.18/CFRuntime.c) 中查阅源码，搜索 Zombie，发现了疑似相关的定义**__CFZombifyNSObject** ：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/a303bb190dd30a3fc5903c09972acd31.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_9.png)
 
 回到项目中，加上对应的**符号断点**，尝试查看内部具体实现。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/4ab3b7e323fb386b3e51d71fb78c788f.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_10.png)
 
 
 
-![](https://diycode.b0.upaiyun.com/photo/2018/9f387d4a88f6ab3bafee3ae4405b7b65.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_11.png)
 
 
 
 再次运行后（保持 Zombie Objects 开启），可以发现 __CFZombifyNSObject 确实被调用了。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/e59258b1f725abe64ed59f9773077dc3.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_12.png)
 
 虽然是汇编代码，但是配合右侧的注释，可读性非常高。
 
@@ -221,7 +221,7 @@ MRCObject *mObject = [MRCObject new];
 
 既然如此，我们继续添加一个符号断点：-[NSObject __dealloc_zombie]，来看看它内部的实现。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/cf1c32f5b3b5fc63b68e122a2d6be84f.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_13.png)
 
 到这里，整个实现就很明朗了，虽然稍微复杂了点，但是还是能从中获取一些信息的。
 
@@ -263,7 +263,7 @@ free(buffer2);
 这段代码，我们看过去，是很明显存在问题，越界访问了无效的内存区域。
 但实际上，90% 是不会产生 Crash，就算产生 Crash 也不会在具体代码处指明错误，并打印错误 Log。如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/9d75c3e11ffbe331ecdc04878b81ea6f.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_14.png)
 
 熟悉的 main...
 
@@ -294,7 +294,7 @@ free(buffer2);
 
 再次运行，效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/64ceaf926ad32fdf6876bdb69c726afb.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_15.png)
 
 定位到了具体代码，同时也说明了崩溃原因：**Heap buﬀer overﬂow**，溢出了。
 
@@ -323,7 +323,7 @@ free(buffer2);
 
 这里再额外介绍 **Use-after-free** 的情况，即常见的野指针问题，访问已释放的内存区域。官方的例子如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/b0d1be3eba365442aba1994f93fff289.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_16.png)
 
 可以看到，Address Sanitizer 检测到了内存问题 — **Use of deallocated memory**，同时在 Issue ⾯板，可以看到 Memory 具体情况。Address Sanitizer 会告诉我们对象创建和销毁的调用栈。这就很方便我们定位，哪里不小心释放了对象，哪里又访问了不该访问的对象。问题自然迎刃而解 ～
 
@@ -337,7 +337,7 @@ free(buffer2);
 
 Address Sanitizer 的原理是当程序创建变量分配一段内存时，将此内存后面的一段内存也冻结住，标识为中毒内存（poisoned memory）。如图所示，黄色是变量所占内存，紫色是冻结的中毒内存。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/fb36e9331bebaeea0f615a9a5d55d54e.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_17.png)
 
 当程序访问到中毒内存时（buﬀer overﬂow），就会抛出异常，并打印出相应 Log 信息。调试者可以根据中断位置和的 Log 信息，定位问题。如果对象释放了，对象所占的内存也会标识为中毒内存，这时候访问这段内存同样会抛出异常（Use-after-free）。 
 
@@ -351,9 +351,9 @@ Xcode 9 中， Address Sanitizer 可以检测到两种新的内存问题：use-a
 > 如果要检测 use-after-return，需要额外勾选 "Detect use of stack after return” 选项。
 
 
-![](https://diycode.b0.upaiyun.com/photo/2018/b68e92404ea5bda1618a5c491336213a.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_18.png)
 
-![](https://diycode.b0.upaiyun.com/photo/2018/86443c1c38335d329dcad444c9507a3d.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_19.png)
 
 出了 Scope 或者 Function 后，局部变量被删除，对应的内存区域被释放回收。如果没有改变相关指针的值，即该指针仍然指向原来的内存地址，那这指针就变成了野指针（迷途指针），它指向的内存地址是不确定的。这类问题，通过 Address Sanitizer 则可很容易发现。
 
@@ -370,27 +370,27 @@ testObject = nil;
 
 在执行 testObject = nil，之前，打个断点，右键左侧 Variables View 面板中的 testObject 对象，选中 View Memory of 添加内存观察。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/7bd12f2a8d41641b0af30681047172c3.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_20.png)
 
 添加后，会看到这样的界面：
 
 
-![](https://diycode.b0.upaiyun.com/photo/2018/73417491b12130d4656db1fbb03169a5.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_22.png)
 
 左侧显示了对象创建和销毁的调用栈。右侧显示了对应内存地址具体的内容。其中，白色高亮的是为对象分配的实际内存。灰色则是之前提到的中毒内存（poisoned memory），Address Sanitizer 则会检测是否异常访问了这部分灰色内存。
 
 点击左侧的调用栈，能准确定位到具体的代码，如下
 
-![](https://diycode.b0.upaiyun.com/photo/2018/53e47107698b13f25a165750b15e0f5d.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_21.png)
 
 断点继续执行，释放 testObject 对象。这时候，多了销毁的调用栈。
 
 
-![](https://diycode.b0.upaiyun.com/photo/2018/0035e0d05ebe0a8c133282dd5c2443da.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_23.png)
 
 另外，在看下原先内存地址对应的具体内容都已经置灰了。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/c60b0636ba6f611265d67deb17385479.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_24.png)
 
 > PS：
 >
@@ -501,7 +501,7 @@ typedef void (^YLZNetworkFetcherCompletionHandler)(NSData *data);
 
 Instruments 应该是之前大家用到最多的工具了。而这类的泄漏，Instruments 也能很好的帮我们定位到。运行 Instruments 后，效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/d77eaaeee301991086b394b074c6331c.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_25.png)
 
 
 
@@ -527,11 +527,11 @@ Instruments 应该是之前大家用到最多的工具了。而这类的泄漏�
 
 然后在 Xcode 中调试 App 的时候，随时点击 Debug Memory Graph 按钮即可。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/6cccd7a46a7939782739cdb6f1596d78.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_26.png)
 
 针对上面那个例子，会出现这样的界面：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/f433b8de61376746bdf0551f8fd92bb1.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_27.png)
 
 这里可以讲的内容比较多，我们按序说明下。
 
@@ -551,11 +551,11 @@ Instruments 应该是之前大家用到最多的工具了。而这类的泄漏�
 
 这个例子，比较简单，看起来没什么，但是实际项目中，遇到的一般是这样的：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/261bbf716c6835ca66550a556b0fc8d4.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_28.png)
 
 没有具体的变量名，没有具体的类名，这定位起来头就大了。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/02d8fda379f107b5292c91d14d7b7e96.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_29.png)
 
 但是当你发现， Malloc Stack 能显示完整调用栈的时候，那感觉真的是没法形容...
 
@@ -577,7 +577,7 @@ for (int index = 0; index < size; index++) {
 
 反复进入，你会发现 dealloc 触发了，但是内存却是不断上升。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/9ff20135385f8a5e746d092d0c994e51.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_30.png)
 
 
 
@@ -585,7 +585,7 @@ for (int index = 0; index < size; index++) {
 
 这时候，如果用 Instruments 查看，你会发现一个神奇的现象，没有泄漏报错，同时内存占用一直没有上升。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/3da8282d7fdd60499f5d434fd6535b62.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_31.png)
 
 这就很可怕了..  我们知道，malloc 出来的，是需要手动 free 的，否则就会引起不必要的内存占用。
 
@@ -593,7 +593,7 @@ for (int index = 0; index < size; index++) {
 
 区别在于，我们使用 Xcode 联调的时候，是在 Debug 模式，但是 Instruments Profile 的时候，是在 Release 环境下，而 Release 默认是开启编译优化的，这部分代码，实际会被优化掉，导致看起来没有问题。
 
-![](https://diycode.b0.upaiyun.com/photo/2018/084aa2bc17dd02a89d32154355376369.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_32.png)
 
 所以有时候，Debug 和 Release 环境下，表现会有差异，多半是因为这个原因。
 
@@ -601,9 +601,9 @@ for (int index = 0; index < size; index++) {
 
 但我们当然是不希望自己的代码，被默认优化，而屏蔽了可能存在的问题，所以，Debug Memory Graph 又要派上用场了。效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/cf11cf089774f12e50a326d0f44ff868.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_33.png)
 
-![](https://diycode.b0.upaiyun.com/photo/2018/81ef085129e0064fd607a26169643a1c.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_34.png)
 
 自动发现了 30 * 4 = 120M 的内存泄漏，并且指出了对应的代码。很舒服有没有～
 
@@ -623,7 +623,7 @@ for (int index = 0; index < size; index++) {
 
 运行一下我们这个漏洞百出的 Demo，效果如下：
 
-![](https://diycode.b0.upaiyun.com/photo/2018/d57e3914d6658d82a751997965e01b75.png)
+![](https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_35.png)
 
 虽然没能把所有问题都找出来，但是还是有一定的参考价值。
 
@@ -637,9 +637,7 @@ for (int index = 0; index < size; index++) {
 
 写到这里，长舒一口气… 
 
-这篇三十多张配图的文章，前前后后花了两个周末完成。
-
-内容虽然说不上多么高深，但针对内存调试这块，相信很难找到这么全面的了。
+这篇三十多张配图的文章，内容虽然说不上多么高深，但针对内存调试这块，相信很难找到这么全面的了。
 
 希望，能有所收获。
 

@@ -8,8 +8,279 @@
     <atom:link href="/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Wed, 25 Dec 2019 01:55:15 GMT</pubDate>
+    <pubDate>Fri, 27 Dec 2019 10:08:38 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>iOS 内存调试技巧</title>
+      <link>http://http://colin1994.github.io/2019/12/27/iOS-Memory-Debug/</link>
+      <guid>http://http://colin1994.github.io/2019/12/27/iOS-Memory-Debug/</guid>
+      <pubDate>Fri, 27 Dec 2019 13:25:12 GMT</pubDate>
+      <description>
+      
+        &lt;p&gt;&lt;strong&gt;前言：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;本文会介绍如何快速定位、解决内存问题的一些技巧，如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;signal SIGABRT，EXC_BAD_ACCESS，Memory Leak 问题&lt;/li&gt;
+&lt;li&gt;Breakpoint，Zombie Objects，Address Sanitizer，Instruments，Malloc Stack，Debug Memory Graph，Analyze 的正确使用姿势&lt;/li&gt;
+&lt;/ul&gt;
+      
+      </description>
+      
+      <content:encoded>&lt;p&gt;&lt;strong&gt;前言：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;本文会介绍如何快速定位、解决内存问题的一些技巧，如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;signal SIGABRT，EXC_BAD_ACCESS，Memory Leak 问题&lt;/li&gt;
+&lt;li&gt;Breakpoint，Zombie Objects，Address Sanitizer，Instruments，Malloc Stack，Debug Memory Graph，Analyze 的正确使用姿势&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;hr&gt;
+&lt;p&gt;前一阵遇到了一个 EXC_BAD_ACCESS 问题，概率性出现，不太好定位。&lt;/p&gt;
+&lt;p&gt;最后通过 Address Sanitizer，分分钟解决，那酸爽～&lt;/p&gt;
+&lt;p&gt;顺便总结下平时会遇到的一些内存相关问题，可能是直接崩溃，也有可能是概率性崩溃，当然最常见的还是未正常释放对象引起的内存占用等问题。&lt;/p&gt;
+&lt;p&gt;文末有本文配套的实验 Demo。&lt;/p&gt;
+&lt;p&gt;工欲善其事，必先利其器～&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：&lt;/p&gt;
+&lt;p&gt;本文是针对真机调试下，遇到了内存问题，如何快速定位。&lt;/p&gt;
+&lt;p&gt;当然，内存相关的问题，绝不仅仅如此，包括内存如何分配，如何降低内存占用，OOM 等。&lt;/p&gt;
+&lt;p&gt;这，又是另外一个故事了，我们以后再讲。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;1-_SIGABRT&quot;&gt;1. SIGABRT&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;建议查错方式：Breakpoint&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;SIGABRT 类的问题，基本上都能定位到，因为系统明确捕获并提示，你的 App 发生了错误。&lt;/p&gt;
+&lt;p&gt;虽然很简单… 但作为一个系列，顺带提一下。&lt;/p&gt;
+&lt;p&gt;iOS 中发生 SIGABRT，内存方面一般表现为&lt;strong&gt;越界，访问没有初始化的地址或者错误地址&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;举个最最最最简单的例子：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;NSArray *array = [NSArray new];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;id object = [array objectAtIndex:0];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这里很明显越界了，App 崩溃，并且报错：&lt;/p&gt;
+&lt;p&gt; &lt;strong&gt;-[__NSArrayM objectAtIndex:]: index 0 beyond bounds for empty array’&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;报错是报错了，但是我们看左边的调用栈，指向了无用的 &lt;strong&gt;main&lt;/strong&gt;，并没有定位到我们的具体代码。&lt;/p&gt;
+&lt;h3 id=&quot;image_lookup&quot;&gt;image lookup&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;First throw call stack&lt;/strong&gt; 里输出的调用栈，但是并没有符号化，无法直接阅读。&lt;/p&gt;
+&lt;p&gt;当然，如果要解析，也是可以借助 &lt;strong&gt;image 寻址&lt;/strong&gt; 来实现，如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;(lldb) image lookup --address 0x1001b26c0&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      Address: MemoryDemo[0x00000001000066c0] (MemoryDemo.__TEXT.__text + 136)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      Summary: MemoryDemo`-[ViewController viewDidLoad] + 136 at ViewController.m:22&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;可以看到，能够定位到具体的代码。但是这就显得比较麻烦了。&lt;/p&gt;
+&lt;h3 id=&quot;Breakpoint&quot;&gt;Breakpoint&lt;/h3&gt;&lt;p&gt;这时候，可以通过添加一个&lt;strong&gt;全局异常断点&lt;/strong&gt;，来定位问题：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Breakpoint navigator —&amp;gt; Create a breakpoint —&amp;gt; Exception Breakpoint&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_2.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;重新运行，效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_3.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;当然，&lt;strong&gt;Exception Breakpoint&lt;/strong&gt; 的作用远远比这个强大。建议移动到用户组下，便于所有工程都开启。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_4.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;2-_EXC_BAD_ACCESS&quot;&gt;2. EXC_BAD_ACCESS&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;建议查错方式：Zombie Objects &amp;amp; Address Sanitizer&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;EXC_BAD_ACCESS，意味着向某块内存发送消息，但是该内存无法响应对应的消息指令。&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In summary, when you run into EXC_BAD_ACCESS, it means that you try to send a message to a block of memory that can’t execute that message.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;通常，我们遇到的大多数情况下都是&lt;strong&gt;向一个已释放的对象发送消息。&lt;/strong&gt;这在 MRC 时代比较常见，但不代表 ARC 中不会有这样的问题。&lt;/p&gt;
+&lt;p&gt;为了方便模拟，我们在 MRC 环境中测试。&lt;/p&gt;
+&lt;h3 id=&quot;Zombie_Objects&quot;&gt;Zombie Objects&lt;/h3&gt;&lt;p&gt;添加如下代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;@implementation MRCObject&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (void)zomibleObjectsTest &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    NSObject *obj = [NSObject new];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [obj release];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [obj release];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@end&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;// 测试代码&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;MRCObject *mObject = [MRCObject new];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;[mObject zomibleObjectsTest];&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;运行后，效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_5.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;可以看到，报了 &lt;strong&gt;EXC_BAD_ACCESS&lt;/strong&gt;，也定位到了具体代码。但是，并没有相关的崩溃说明。如果直接排查问题，是比较麻烦的（这里的 MRC 代码很简单，但是实际项目中，要比这复杂的多）。&lt;/p&gt;
+&lt;p&gt;这时候，就可以借助 &lt;strong&gt;Zombie Objects&lt;/strong&gt; 来辅助调试。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Edit Scheme —&amp;gt; Diagnostics —&amp;gt; Memory Management —&amp;gt; Zombie Objects。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;开启后，再次运行，效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_7.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;-[NSObject release]: message sent to deallocated instance 0x1c400e180&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;很明确的告诉我们，向一个已释放的对象（0x1c400e180）发送了 release 消息。&lt;/p&gt;
+&lt;p&gt;并且，我们可以在左侧 Variables View 面板中，找到 0x1c400e180 代表的对象，&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_8.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;那这里，我们可以知道，是 obj 这个对象被释放后，又向他发送 release 消息引起的崩溃。&lt;br&gt;这时候，就可以愉快的、针对性的解决问题啦～&lt;/p&gt;
+&lt;p&gt;不过，不知道大家有没有注意到。我们的 obj 对象，类型明明是 NSObject，为什么变成了 &lt;code&gt;_NSZoombie_NSObject&lt;/code&gt; ？&lt;/p&gt;
+&lt;h4 id=&quot;Zombie_Objects_实现原理&quot;&gt;Zombie Objects 实现原理&lt;/h4&gt;&lt;p&gt;为了解释这个问题，我们顺带讲下 Zombie Objects 的官方实现原理。&lt;/p&gt;
+&lt;p&gt;通过在 &lt;a href=&quot;https://opensource.apple.com/source/CF/CF-1153.18/CFRuntime.c&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;CFRuntime.c&lt;/a&gt; 中查阅源码，搜索 Zombie，发现了疑似相关的定义&lt;strong&gt;__CFZombifyNSObject&lt;/strong&gt; ：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_9.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;回到项目中，加上对应的&lt;strong&gt;符号断点&lt;/strong&gt;，尝试查看内部具体实现。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_10.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_11.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;再次运行后（保持 Zombie Objects 开启），可以发现 __CFZombifyNSObject 确实被调用了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_12.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;虽然是汇编代码，但是配合右侧的注释，可读性非常高。&lt;/p&gt;
+&lt;p&gt;有用过 Method Swizzling 的，相信对这块的实现都不陌生，就不累述。总结来说，__CFZombifyNSObject 做了这么一件事：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;将 NSObject 的 dealloc 方法，替换成 __dealloc_zombie 来实现。&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;既然如此，我们继续添加一个符号断点：-[NSObject __dealloc_zombie]，来看看它内部的实现。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_13.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;到这里，整个实现就很明朗了，虽然稍微复杂了点，但是还是能从中获取一些信息的。&lt;/p&gt;
+&lt;p&gt;大致流程翻译过来，就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;判断是否开启 __CFZombieEnabled&lt;/li&gt;
+&lt;li&gt;object_getClass，class_getName 获取当前对象类名&lt;/li&gt;
+&lt;li&gt;通过 asprintf，把格式化后的数据（&lt;code&gt;_NSZombie_%s&lt;/code&gt;）写入某个字符串缓冲区，做为新类名&lt;/li&gt;
+&lt;li&gt;通过 objc_lookUpClass，查找新类名的类是否存在，不存在，则往下创建&lt;/li&gt;
+&lt;li&gt;通过 objc&lt;em&gt;lookUpClass，获取名为 `_NSZombie&lt;/em&gt;` 的类。这个类比较特殊，里面没有实现任何的方法&lt;/li&gt;
+&lt;li&gt;通过 objc&lt;em&gt;duplicateClass，复制  `_NSZombie&lt;/em&gt;&lt;code&gt;类，生成新的&lt;/code&gt;&lt;em&gt;NSZombie&lt;/em&gt;%s` 类&lt;/li&gt;
+&lt;li&gt;通过 object&lt;em&gt;setClass，将当前对象的类型设置成新的 `_NSZombie&lt;/em&gt;%s` 类&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;至此，原先的对象，类型已经被替换成 &lt;code&gt;_NSZombie_%s&lt;/code&gt;  了，而这个类没有实现任何方法，所以往该对象发送任何消息的时候，必定会崩溃，从而被 Xcode 捕获到。&lt;/p&gt;
+&lt;p&gt;这就解释了为什么会有个 &lt;code&gt;_NSZoombie_NSObject&lt;/code&gt; 类型对象的问题。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：&lt;/p&gt;
+&lt;p&gt;总结 Zombie 的实现，是 Swizzling NSObject 的 dealloc 方法，创建一个不包含任何方法的 class 将原来的 class 内存内容替换掉，即用生成僵尸对象来替换 dealloc 的实现，当对象引用计数为 0 的时候，将需要 dealloc 的对象转化为僵尸对象。如果之后再给这个僵尸对象发消息，则抛出异常，并打印出相应的信息，这样调试者可以很轻松的找到异常发生位置。 &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h3 id=&quot;Address_Sanitizer&quot;&gt;Address Sanitizer&lt;/h3&gt;&lt;p&gt;绝大多数情况下，EXC_BAD_ACCESS 问题，我们都可以通过 Zombie Objects 来定位到。但也有些时候，Zombie Objects 就显得比较无力。&lt;/p&gt;
+&lt;p&gt;测试下下面这段代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;char *buffer2 = malloc(80);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;buffer2[90] = &amp;apos;Y&amp;apos;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;free(buffer2);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这段代码，我们看过去，是很明显存在问题，越界访问了无效的内存区域。&lt;br&gt;但实际上，90% 是不会产生 Crash，就算产生 Crash 也不会在具体代码处指明错误，并打印错误 Log。如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_14.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;熟悉的 main…&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：&lt;/p&gt;
+&lt;p&gt;开头提到了，前一阵我遇到的一个概率性崩溃问题。就是这种类型的。&lt;/p&gt;
+&lt;p&gt;在 memcpy 的时候，前后内存块大小不一致引起，大致代码就是：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;gt; char a[YLZ_FACE_COUNT], b[YLZ_S_FACE_COUNT];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;gt; memcpy(a, b,sizeof(b));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&amp;gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;YLZ_FACE_COUNT 和 YLZ_S_FACE_COUNT 是两个宏定义（为了说明，随便命名的），值不一样，但是本身命名又非常接近，导致 Xcode 自动补全的时候，不小心就会选择错。&lt;br&gt;而这又是概率性的崩溃，就很难定位到问题了。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这时候，如果开启 Zombie Objects，也是一样的，无法快速定位到具体问题。原因就是 Zombie 设计本身，在 malloc 对象和内存越界方面，几乎无能为力。&lt;/p&gt;
+&lt;p&gt;这时候，&lt;strong&gt;Address Sanitizer&lt;/strong&gt; 就要派上用场了。&lt;/p&gt;
+&lt;p&gt;首先，开启 Address Sanitizer。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Target —&amp;gt; Edit Scheme —&amp;gt; Diagnostics —&amp;gt; Runtime Sanitization —&amp;gt; Address Sanitizer&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;再次运行，效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_15.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;定位到了具体代码，同时也说明了崩溃原因：&lt;strong&gt;Heap buﬀer overﬂow&lt;/strong&gt;，溢出了。&lt;/p&gt;
+&lt;p&gt;于是，就可以再次愉快的、针对性的解决问题啦～&lt;/p&gt;
+&lt;p&gt;十分强大！&lt;/p&gt;
+&lt;h4 id=&quot;Address_Sanitizer_介绍&quot;&gt;Address Sanitizer 介绍&lt;/h4&gt;&lt;p&gt;那么，&lt;strong&gt;Address Sanitizer&lt;/strong&gt; 是什么？&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Address Sanitizer 是 Xcode7 中最早引入的  Runtime Tool，它用于发现内存问题。比如野指针 EXC_BAD_ACCESS ，内存越界等问题。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在 Xcode9 之前，Address Sanitizer 就已经支持的错误检查包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use-after-free&lt;/li&gt;
+&lt;li&gt;Heap buﬀer overﬂow&lt;/li&gt;
+&lt;li&gt;Stack buﬀer overﬂow&lt;/li&gt;
+&lt;li&gt;Global variable overﬂow&lt;/li&gt;
+&lt;li&gt;Overﬂows in C++ containers&lt;/li&gt;
+&lt;li&gt;Use-after-return&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里再额外介绍 &lt;strong&gt;Use-after-free&lt;/strong&gt; 的情况，即常见的野指针问题，访问已释放的内存区域。官方的例子如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_16.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;可以看到，Address Sanitizer 检测到了内存问题 — &lt;strong&gt;Use of deallocated memory&lt;/strong&gt;，同时在 Issue ⾯板，可以看到 Memory 具体情况。Address Sanitizer 会告诉我们对象创建和销毁的调用栈。这就很方便我们定位，哪里不小心释放了对象，哪里又访问了不该访问的对象。问题自然迎刃而解 ～&lt;/p&gt;
+&lt;h4 id=&quot;Address_Sanitizer_原理_/_vs_Zombie_Objects&quot;&gt;Address Sanitizer 原理 / vs  Zombie Objects&lt;/h4&gt;&lt;p&gt;那么，&lt;strong&gt;Address Sanitizer 和之前提到的 Zombie Objects 有什么区别？&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;一句话，&lt;strong&gt;Address Sanitizer 比 Zombie 更强大，适用性更广！特别在 malloc 对象方面。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Address Sanitizer 的原理是当程序创建变量分配一段内存时，将此内存后面的一段内存也冻结住，标识为中毒内存（poisoned memory）。如图所示，黄色是变量所占内存，紫色是冻结的中毒内存。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_17.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;当程序访问到中毒内存时（buﬀer overﬂow），就会抛出异常，并打印出相应 Log 信息。调试者可以根据中断位置和的 Log 信息，定位问题。如果对象释放了，对象所占的内存也会标识为中毒内存，这时候访问这段内存同样会抛出异常（Use-after-free）。 &lt;/p&gt;
+&lt;p&gt;Xcode 9 中， Address Sanitizer 可以检测到两种新的内存问题：use-after-scope 和 use-after-return。并且在日常的 Debug 过程中，也能直接查看对象对应的内存信息。顺带再提一下：&lt;/p&gt;
+&lt;h4 id=&quot;use-after-scope/return&quot;&gt;use-after-scope/return&lt;/h4&gt;&lt;blockquote&gt;
+&lt;p&gt;PS：&lt;br&gt;如果要检测 use-after-return，需要额外勾选 “Detect use of stack after return” 选项。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_18.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_19.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;出了 Scope 或者 Function 后，局部变量被删除，对应的内存区域被释放回收。如果没有改变相关指针的值，即该指针仍然指向原来的内存地址，那这指针就变成了野指针（迷途指针），它指向的内存地址是不确定的。这类问题，通过 Address Sanitizer 则可很容易发现。&lt;/p&gt;
+&lt;h4 id=&quot;Compatible_with_Malloc_Scribble&quot;&gt;Compatible with Malloc Scribble&lt;/h4&gt;&lt;p&gt;在日常的 Debug 过程中，也能直接查看对象对应的内存信息，并持续观察它的内存变化情况，如下一个简单的测试代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;NSObject *testObject = [NSObject new];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;testObject = nil;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;在执行 testObject = nil，之前，打个断点，右键左侧 Variables View 面板中的 testObject 对象，选中 View Memory of 添加内存观察。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_20.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;添加后，会看到这样的界面：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_22.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;左侧显示了对象创建和销毁的调用栈。右侧显示了对应内存地址具体的内容。其中，白色高亮的是为对象分配的实际内存。灰色则是之前提到的中毒内存（poisoned memory），Address Sanitizer 则会检测是否异常访问了这部分灰色内存。&lt;/p&gt;
+&lt;p&gt;点击左侧的调用栈，能准确定位到具体的代码，如下&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_21.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;断点继续执行，释放 testObject 对象。这时候，多了销毁的调用栈。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_23.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;另外，在看下原先内存地址对应的具体内容都已经置灰了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_24.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PS：&lt;/p&gt;
+&lt;p&gt;不知道有没有发现释放前后的内存地址不太一样.. （没发现就算了～）&lt;/p&gt;
+&lt;p&gt;其实是写 Demo 过程，稍微出了点差错，不小心把工程关掉了。导致截图前后不是同一次运行..&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Address Sanitizer 就先介绍到这里，更多的功能，需要大家在实际使用过程中去发掘。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;3-_Memory_Leak&quot;&gt;3. Memory Leak&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;建议查错方式：Instruments &amp;amp; Malloc Stack &amp;amp; Debug Memory Graph&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Memory Leak，内存泄漏，概括来说就是，你希望某个对象释放掉的时候，它没有按照预想被释放掉，导致不必要的内存占用。Leak 产生的方式很多，最经常遇到的应该就是 Retain Cycle，循环引用引起的。&lt;/p&gt;
+&lt;p&gt;至于为什么会产生泄漏，就不累述了，这里简单举两个例子，说明不同情况下的解决方案。&lt;/p&gt;
+&lt;h3 id=&quot;Retain_Cycle&quot;&gt;Retain Cycle&lt;/h3&gt;&lt;p&gt;新建 LeakViewController，在现有的 ViewController 中添加一个按钮，执行 Push 到 &lt;/p&gt;
+&lt;p&gt;LeakViewController 的操作。&lt;/p&gt;
+&lt;p&gt;YLZNetworkFetcher 是一个网络请求管理类，有个 block 返回请求结果。&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;48&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;49&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;50&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;51&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;52&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;53&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;54&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;55&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;56&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;57&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;58&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;59&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;60&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;61&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;62&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;63&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;64&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;65&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;66&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;// YLZNetworkFetcher.h&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#import &amp;lt;Foundation/Foundation.h&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;typedef void (^YLZNetworkFetcherCompletionHandler)(NSData *data);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@interface YLZNetworkFetcher : NSObject&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@property (nonatomic, strong, readonly) NSURL *url;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (id)initWithURL:(NSURL *)url;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (void)startWithCompletionHandler:(YLZNetworkFetcherCompletionHandler)completion;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@end;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;//  YLZNetworkFetcher.m&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#import &amp;quot;YLZNetworkFetcher.h&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@interface YLZNetworkFetcher ()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@property (nonatomic, copy) YLZNetworkFetcherCompletionHandler completionHandler;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@end&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@implementation YLZNetworkFetcher&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (instancetype)initWithURL:(NSURL *)url &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    if (self = [super init]) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _url = url;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    return self;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (void)startWithCompletionHandler:(YLZNetworkFetcherCompletionHandler)completion &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    self.completionHandler = completion;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@end&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;//  LeakViewController.m&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#import &amp;quot;LeakViewController.h&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#import &amp;quot;YLZNetworkFetcher.h&amp;quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@interface LeakViewController ()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@property (nonatomic, strong) YLZNetworkFetcher *networkFetcher;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@end&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@implementation LeakViewController&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (void)dealloc &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    NSLog(@&amp;quot;ylz -- dealloc&amp;quot;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (void)viewDidLoad &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [super viewDidLoad];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    NSURL *url = [[NSURL alloc] initWithString:@&amp;quot;&amp;quot;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _networkFetcher = [[YLZNetworkFetcher alloc] initWithURL:url];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [_networkFetcher startWithCompletionHandler:^(NSData *data) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        NSLog(@&amp;quot;%@&amp;quot;, _networkFetcher);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@end&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;运行后，来回 Push 几次，发现 LeakViewController 的 dealloc 始终没有调用，没有 Log 输出，很明显，这里发生了内存泄漏。&lt;/p&gt;
+&lt;p&gt;当程序复杂到一定程度的时候，很难从某个 .m 文件中，直接找到哪个地方发生泄漏了。这时候工具就要派上用场了。&lt;/p&gt;
+&lt;p&gt;Instruments 应该是之前大家用到最多的工具了。而这类的泄漏，Instruments 也能很好的帮我们定位到。运行 Instruments 后，效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_25.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;红色的 X，表示捕获到了内存泄漏。点击下面的 Leaks 面板，这类的循环引用问题。会有很详细的说明和对应的图表。我们可以很清楚的看到，LeakViewController 和  YLZNetworkFetcher 之间形成了闭环，相互持有，导致都释放不了。&lt;/p&gt;
+&lt;p&gt;那么，继续愉快的打破闭环吧～&lt;/p&gt;
+&lt;p&gt;不过 Leaks 里面，如果被判定是循环引用，就会在 Cycles &amp;amp; Roots 面板里面展示，反而 Call Tree 面板里面找不到相关的信息（也有可能是我姿势不对），没法直接跳到对应产生问题的代码处。&lt;/p&gt;
+&lt;p&gt;而 &lt;strong&gt;Debug Memory Graph&lt;/strong&gt;，则可以很方便的解决这个问题。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Debug Memory Graph 是 Xcode8 开始加入的一项功能，它把原先就支持的一些指令，比如 heap AppName、leaks AppName、malloc_history AppName Address 等整合起来，提供可视化界面，方便使用。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所以，使用它的时候，真的非常简单。&lt;/p&gt;
+&lt;p&gt;建议先开启 &lt;strong&gt;Malloc Stack，它会记录每个对象的内存分配历史，扩展 Debug Memory Graph 的能力。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;开启方式：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Target —&amp;gt; Edit Scheme —&amp;gt; Diagnostics —&amp;gt; Logging —&amp;gt; Malloc Stack。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;然后在 Xcode 中调试 App 的时候，随时点击 Debug Memory Graph 按钮即可。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_26.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;针对上面那个例子，会出现这样的界面：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_27.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;这里可以讲的内容比较多，我们按序说明下。&lt;/p&gt;
+&lt;p&gt;第一个，左下角的过滤面板：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;左侧输入框，输入对应类名，可以很方便过滤&lt;/li&gt;
+&lt;li&gt;右侧第一个按钮，&lt;strong&gt;show only leaked blocks&lt;/strong&gt;，只显示被判定为泄漏的对象&lt;/li&gt;
+&lt;li&gt;右侧第二个按钮，&lt;strong&gt;show only content from workspace&lt;/strong&gt;，只显示当前工程相关&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;筛选后，第二个面板，就列出了相关的泄漏点。&lt;/p&gt;
+&lt;p&gt;第三个面板，详细展示了对应的持有关系。 一般我们会关注 capture 这种类型，80% 的泄漏只要解决这块，就能修复。&lt;/p&gt;
+&lt;p&gt;第四个面板，就是 Debug Memory Graph + Malloc Stack 强大的地方。在第三个面板中，我们看到一个 block 持有了 LeakViewController，但是这个 block 是什么？什么时候持有的？点击后，右侧的 Backtrace 就会很清楚的展示这整个过程。点击后也是跳到具体的代码处，十分强大。&lt;/p&gt;
+&lt;p&gt;这个例子，比较简单，看起来没什么，但是实际项目中，遇到的一般是这样的：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_28.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;没有具体的变量名，没有具体的类名，这定位起来头就大了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_29.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;但是当你发现， Malloc Stack 能显示完整调用栈的时候，那感觉真的是没法形容…&lt;/p&gt;
+&lt;h3 id=&quot;Not_Release&quot;&gt;Not Release&lt;/h3&gt;&lt;p&gt;最后再提一种情况，单纯的没有释放，可能 VC 的 dealloc 走了，但是某块内存没有释放。&lt;/p&gt;
+&lt;p&gt;比如下面这段代码：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;int size = 1024 * 1024 * 30;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;char *pData = malloc(size);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;for (int index = 0; index &amp;lt; size; index++) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    pData[index] = &amp;apos;Y&amp;apos;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;反复进入，你会发现 dealloc 触发了，但是内存却是不断上升。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_30.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;这种泄漏，一般不容易发现，除非你有没次都对比内存占用的好习惯。&lt;/p&gt;
+&lt;p&gt;这时候，如果用 Instruments 查看，你会发现一个神奇的现象，没有泄漏报错，同时内存占用一直没有上升。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_31.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;这就很可怕了..  我们知道，malloc 出来的，是需要手动 free 的，否则就会引起不必要的内存占用。&lt;/p&gt;
+&lt;p&gt;那上述的表现是为什么呢？&lt;/p&gt;
+&lt;p&gt;区别在于，我们使用 Xcode 联调的时候，是在 Debug 模式，但是 Instruments Profile 的时候，是在 Release 环境下，而 Release 默认是开启编译优化的，这部分代码，实际会被优化掉，导致看起来没有问题。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_32.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;所以有时候，Debug 和 Release 环境下，表现会有差异，多半是因为这个原因。&lt;/p&gt;
+&lt;p&gt;但我们当然是不希望自己的代码，被默认优化，而屏蔽了可能存在的问题，所以，Debug Memory Graph 又要派上用场了。效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_33.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_34.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;自动发现了 30 * 4 = 120M 的内存泄漏，并且指出了对应的代码。很舒服有没有～&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;4-_Analyze&quot;&gt;4. Analyze&lt;/h2&gt;&lt;p&gt;最后介绍一个不太一样的工具，Analyze，它是编译时静态分析，通过分析代码，自动找出可能存在问题的地方。&lt;/p&gt;
+&lt;p&gt;使用方式：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Product —&amp;gt; Analyze（Shift + Command + B）&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;运行一下我们这个漏洞百出的 Demo，效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Memory/image_35.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;虽然没能把所有问题都找出来，但是还是有一定的参考价值。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;&lt;p&gt;写到这里，长舒一口气… &lt;/p&gt;
+&lt;p&gt;这篇三十多张配图的文章，内容虽然说不上多么高深，但针对内存调试这块，相信很难找到这么全面的了。&lt;/p&gt;
+&lt;p&gt;希望，能有所收获。&lt;/p&gt;
+&lt;p&gt;文中的示例程序，已经放到 &lt;a href=&quot;https://github.com/colin1994/iOS-Memory-Debug&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;iOS-Memory-Debug&lt;/a&gt; 上了，可以下载下来实际操作一番。方便的话，来个星星也是极好的。&lt;/p&gt;
+&lt;p&gt;再往后，如果可能的话，我们再聊聊降低内存占用，OOM 定位等问题～&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;延伸阅读&quot;&gt;延伸阅读&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2015/413/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Advanced Debugging and the Address Sanitizer&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/406&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Finding Bugs Using Xcode Runtime Tools&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://code.tutsplus.com/tutorials/what-is-exc_bad_access-and-how-to-debug-it--cms-24544&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What Is EXC_BAD_ACCESS and How to Debug It&lt;/a&gt;&lt;/p&gt;
+</content:encoded>
+      
+      <comments>http://http://colin1994.github.io/2019/12/27/iOS-Memory-Debug/#disqus_thread</comments>
+    </item>
     
     <item>
       <title>iOS App Thinning</title>
@@ -4092,96 +4363,6 @@
 </content:encoded>
       
       <comments>http://http://colin1994.github.io/2016/06/02/hexo-copyright-and-donate/#disqus_thread</comments>
-    </item>
-    
-    <item>
-      <title>Jazzhands, 交互动画就是这么简单</title>
-      <link>http://http://colin1994.github.io/2016/03/16/Interactive-animation-is-so-simple/</link>
-      <guid>http://http://colin1994.github.io/2016/03/16/Interactive-animation-is-so-simple/</guid>
-      <pubDate>Wed, 16 Mar 2016 09:11:00 GMT</pubDate>
-      <description>
-      
-        &lt;blockquote&gt;
-&lt;p&gt; &lt;a href=&quot;https://github.com/IFTTT/JazzHands&quot;&gt;Jazz Hands&lt;/a&gt;是IFTTT发布的一个基于关键帧的动画框架, 可以用于手势，滚动视图，KVO或者ReactiveCocoa, 十分方便。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;but, 到底有多方便呢 ?&lt;/p&gt;
-&lt;p&gt;看看官方给出的一个demo效果:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/Jazzhandsjazzhands-demo.gif&quot; alt=&quot;Jazzhandsjazzhands-demo&quot;&gt;&lt;/p&gt;
-      
-      </description>
-      
-      <content:encoded>&lt;blockquote&gt;
-&lt;p&gt; &lt;a href=&quot;https://github.com/IFTTT/JazzHands&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Jazz Hands&lt;/a&gt;是IFTTT发布的一个基于关键帧的动画框架, 可以用于手势，滚动视图，KVO或者ReactiveCocoa, 十分方便。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;but, 到底有多方便呢 ?&lt;/p&gt;
-&lt;p&gt;看看官方给出的一个demo效果:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/Jazzhandsjazzhands-demo.gif&quot; alt=&quot;Jazzhandsjazzhands-demo&quot;&gt;&lt;/p&gt;
-&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;p&gt;如果 &lt;code&gt;设计&lt;/code&gt; 要你做出这样一个效果的引导页, 有没有觉得头大 ?&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://wanzao2.b0.upaiyun.com/system/pictures/54/original/8.png&quot; alt=&quot;emoji&quot;&gt;&lt;/p&gt;
-&lt;p&gt;然而, 在 &lt;code&gt;Jazzhands&lt;/code&gt; 里, 我们需要做的, 就是规划好各个组件需要展示的时机以及对应的位置。中间的衔接动画, 完全交给 &lt;code&gt;Jazzhands&lt;/code&gt; 去处理。 这样的感觉很爽有没有~ &lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://wanzao2.b0.upaiyun.com/system/pictures/789/original/%E9%87%91%E5%A4%A7%E7%88%B79.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;然而, &lt;code&gt;Jazzhands&lt;/code&gt; 具体为我们做了什么, 它是怎么做的 ?  它适用于哪些场景 ? 下文我们一一分析~&lt;/p&gt;
-&lt;h2 id=&quot;Jazzhands原理分析&quot;&gt;Jazzhands原理分析&lt;/h2&gt;&lt;p&gt;先看一下源工程目录: &lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/Jazzhands_1.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;这一大串看下来, 貌似很复杂, 实则不然。&lt;/p&gt;
-&lt;p&gt;我们可以简单的归为 三大类 文件来看。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;IFTTTAnimation, IFTTTAnimatable, IFTTTBackgroundColorAnimation, IFTTTAlphaAnimation …&lt;/code&gt;  之类的动画类型。&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;IFTTTAnimator&lt;/code&gt; 动画执行者&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;IFTTTAnimatedPagingScrollViewController, IFTTTAnimatedScrollViewController&lt;/code&gt; 封装好的控制器类型。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&quot;动画类型&quot;&gt;动画类型&lt;/h3&gt;&lt;p&gt;动画类型, 我们拿最简单的  &lt;code&gt;alpha&lt;/code&gt; 变化动画来分析。 &lt;/p&gt;
-&lt;p&gt;&lt;code&gt;IFTTTAlphaAnimation.m&lt;/code&gt;&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//  IFTTTAlphaAnimation.m&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//  JazzHands&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//  Created by Devin Foley on 9/27/13.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//  Copyright (c) 2013 IFTTT Inc. All rights reserved.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;//&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#import &lt;span class=&quot;meta-string&quot;&gt;&quot;IFTTTAlphaAnimation.h&quot;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;@implementation&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;IFTTTAlphaAnimation&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)addKeyframeForTime:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time alpha:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)alpha&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (![&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; validAlpha:alpha]) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; addKeyframeForTime:time value:@(alpha)];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)addKeyframeForTime:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time alpha:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)alpha withEasingFunction:(IFTTTEasingFunction)easingFunction&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (![&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; validAlpha:alpha]) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; addKeyframeForTime:time value:@(alpha) withEasingFunction:easingFunction];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;built_in&quot;&gt;BOOL&lt;/span&gt;)validAlpha:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)alpha&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSAssert&lt;/span&gt;((alpha &amp;gt;= &lt;span class=&quot;number&quot;&gt;0.&lt;/span&gt;f) &amp;amp;&amp;amp; (alpha &amp;lt;= &lt;span class=&quot;number&quot;&gt;1.&lt;/span&gt;f), &lt;span class=&quot;string&quot;&gt;@&quot;Alpha values must be between zero and one.&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; ((alpha &amp;lt; &lt;span class=&quot;number&quot;&gt;0.&lt;/span&gt;f) || (alpha &amp;gt; &lt;span class=&quot;number&quot;&gt;1.&lt;/span&gt;f)) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;NO&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;YES&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)animate:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (!&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.hasKeyframes) &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.view.alpha = (&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)[(&lt;span class=&quot;built_in&quot;&gt;NSNumber&lt;/span&gt; *)[&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; valueAtTime:time] floatValue];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;@end&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;&lt;code&gt;IFTTTAlphaAnimation&lt;/code&gt; 基础自基类 &lt;code&gt;IFTTTAnimation&lt;/code&gt; , 重写了对应的 &lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)addKeyframeForTime:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time value:(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;&amp;lt;IFTTTInterpolatable&amp;gt;)value;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)addKeyframeForTime:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time value:(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;&amp;lt;IFTTTInterpolatable&amp;gt;)value withEasingFunction:(IFTTTEasingFunction)easingFunction;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;&amp;lt;IFTTTInterpolatable&amp;gt;)valueAtTime:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;这里所有的动画, 强调一个 &lt;code&gt;time - value&lt;/code&gt; 键值对。 这也是关键帧动画的重点。&lt;/p&gt;
-&lt;p&gt;我们需要做的, 就是维护这样一个 &lt;code&gt;keyframes (NSMutableArray)&lt;/code&gt; , 里面的元素代表一个个存储了位置的时刻。&lt;/p&gt;
-&lt;p&gt;以 &lt;code&gt;alpha&lt;/code&gt; 动画为例, 这里的 &lt;code&gt;time&lt;/code&gt; 就是对应的关键帧, &lt;code&gt;value&lt;/code&gt; 就是对应的alpha值。&lt;/p&gt;
-&lt;p&gt;比如: &lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;   IFTTTAlphaAnimation *alphaAnimation = [IFTTTAlphaAnimation animationWithView:aView];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   [alphaAnimation addKeyframeForTime:&lt;span class=&quot;number&quot;&gt;100&lt;/span&gt; alpha:&lt;span class=&quot;number&quot;&gt;0.5&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;.....&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;这里表示了在 100 帧处, 他对应的 alpha 值是 0.5。&lt;/p&gt;
-&lt;p&gt;所以, 对于动画的设定, 我们需要做的就是:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;选择动画类型。 &lt;code&gt;IFTTTBackgroundColorAnimation, IFTTTAlphaAnimation …&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;添加关键帧。 &lt;code&gt;[alphaAnimation addKeyframeForTime:100 alpha:0.5];&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;把动画添加到执行者上面。 &lt;code&gt;[self.animator addAnimation:alphaAnimation];  (这个后面再介绍, 放心, so eazy~)&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;抱歉, 没有了~&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;没错, 就是这么简单。 但是这里有个疑惑, 所谓的关键帧动画, 就是我们提供足够多的关键帧, 然后去逐帧执行。 这是否意味着, 我们需要提供足够多的帧数, 来保证动画的流畅性 ?&lt;/p&gt;
-&lt;p&gt;如果是这样, 那我们写出来的代码岂不是:&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;    [alphaAnimation addKeyframeForTime:&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt; alpha:&lt;span class=&quot;number&quot;&gt;0.1&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [alphaAnimation addKeyframeForTime:&lt;span class=&quot;number&quot;&gt;2&lt;/span&gt; alpha:&lt;span class=&quot;number&quot;&gt;0.15&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [alphaAnimation addKeyframeForTime:&lt;span class=&quot;number&quot;&gt;3&lt;/span&gt; alpha:&lt;span class=&quot;number&quot;&gt;0.2&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [alphaAnimation addKeyframeForTime:&lt;span class=&quot;number&quot;&gt;4&lt;/span&gt; alpha:&lt;span class=&quot;number&quot;&gt;0.25&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;........&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;&lt;img src=&quot;http://wanzao2.b0.upaiyun.com/system/pictures/599/original/%E6%82%B2%E5%82%AC8.png&quot; alt=&quot;EMOJI&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;NO, NO, NO&lt;/strong&gt;, 前面我们已经说过了, 这很简单~ 简单意味着, 你只需要提供几个关键点的位置 (起始点, 转折点, 终点), 再设置下它们之间的过渡类型 (Linear, EaseInQuad, EaseInOutQuad…) ，然后, 动画就做完了~ 至于中间各个关键帧的值, 是怎么确定的呢 ？ 放心, &lt;code&gt;Jazzhands&lt;/code&gt; 已经帮我们做好咯~&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;&amp;lt;IFTTTInterpolatable&amp;gt;)valueAtTime:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSAssert&lt;/span&gt;(!&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.isEmpty, &lt;span class=&quot;string&quot;&gt;@&quot;At least one KeyFrame must be set before animation begins.&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt; value;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;NSUInteger&lt;/span&gt; indexAfter = [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; indexOfKeyframeAfterTime:time];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (indexAfter == &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        value = ((IFTTTKeyframe *)&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.keyframes[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;]).value;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (indexAfter &amp;lt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.keyframes.count) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        IFTTTKeyframe *keyframeBefore = (IFTTTKeyframe *)&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.keyframes[indexAfter - &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        IFTTTKeyframe *keyframeAfter = (IFTTTKeyframe *)&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.keyframes[indexAfter];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt; progress = [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; progressFromTime:keyframeBefore.time toTime:keyframeAfter.time atTime:time withEasingFunction:keyframeBefore.easingFunction];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        value = [keyframeBefore.value interpolateTo:keyframeAfter.value withProgress:progress];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        value = ((IFTTTKeyframe *)&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.keyframes.lastObject).value;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; value;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;动画执行者&quot;&gt;动画执行者&lt;/h3&gt;&lt;p&gt;动画执行者, 看着就很牛x, 然而它的实现实际上非常简单， 就几行代码。 它负责 &lt;code&gt;管理动画对象&lt;/code&gt; 和 &lt;code&gt;在对应位置执行动画&lt;/code&gt; 。&lt;/p&gt;
-&lt;p&gt;简单来说, 就这两个方法:&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)addAnimation:(&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;&amp;lt;IFTTTAnimatable&amp;gt;)animation&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.animations addObject:animation];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)animate:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)time&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;id&lt;/span&gt;&amp;lt;IFTTTAnimatable&amp;gt; animation &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.animations) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        [animation animate:time];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;很简洁有没有。&lt;/p&gt;
-&lt;p&gt;上文提到了 把动画添加到执行者上面。 &lt;code&gt;[self.animator addAnimation:alphaAnimation];&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;这也就是 &lt;code&gt;IFTTTAnimator&lt;/code&gt; 的第一个作用, 管理动画对象。animations(NSMutableArray) 里面存储着所有设定的动画。&lt;/p&gt;
-&lt;p&gt;然后 &lt;code&gt;[self.animator animate:0];&lt;/code&gt; 就是执行对应的动画了。 这个方法就是在交互的时候, 调用。比如:&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 滚动视图&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)scrollViewDidScroll:(&lt;span class=&quot;built_in&quot;&gt;UIScrollView&lt;/span&gt; *)scrollView&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  [&lt;span class=&quot;keyword&quot;&gt;super&lt;/span&gt; scrollViewDidScroll:scrollView];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.animator animate:scrollView.contentOffset.x];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 手势&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;IBAction&lt;/span&gt;)handlePan:(&lt;span class=&quot;built_in&quot;&gt;UIPanGestureRecognizer&lt;/span&gt; *)recognizer&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.animator animate:[recognizer locationOfTouch:&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt; inView:&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt;.view].x];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;控制器类型&quot;&gt;控制器类型&lt;/h3&gt;&lt;p&gt;&lt;code&gt;Jazzhands&lt;/code&gt; 帮我们封装好了两种控制器类型 (IFTTTAnimatedPagingScrollViewController, IFTTTAnimatedScrollViewController)。 我们可以直接基于此, 做相应的动画。 这是十分方便的。比如官方的demo就是基于 &lt;code&gt;IFTTTAnimatedPagingScrollViewController&lt;/code&gt; 来实现的。&lt;/p&gt;
-&lt;p&gt;它实现了 &lt;code&gt;scrollViewDidScroll&lt;/code&gt; 等方法。&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)scrollViewDidScroll:(&lt;span class=&quot;built_in&quot;&gt;UIScrollView&lt;/span&gt; *)scrollView&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; updatePageOffset];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; animateCurrentFrame];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt; 并且把 &lt;code&gt;time&lt;/code&gt; 关键帧的概念, 进一步转化为 &lt;code&gt;page&lt;/code&gt; 的概念。 也就是说, 你只要指定某个动画, 它在第几个page, 第几个page存在, 各自存在什么位置即可。十分方便~&lt;/p&gt;
-&lt;figure class=&quot;highlight objc&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;- (&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;)keepView:(&lt;span class=&quot;built_in&quot;&gt;UIView&lt;/span&gt; *)view onPage:(&lt;span class=&quot;built_in&quot;&gt;CGFloat&lt;/span&gt;)page withAttribute:(IFTTTHorizontalPositionAttribute)attribute&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [&lt;span class=&quot;keyword&quot;&gt;self&lt;/span&gt; keepView:view onPage:page withAttribute:attribute offset:&lt;span class=&quot;number&quot;&gt;0.&lt;/span&gt;f];&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h2 id=&quot;使用场景_(Demo)&quot;&gt;使用场景 (Demo)&lt;/h2&gt;&lt;p&gt;说了这么多, 想必大家对 &lt;code&gt;Jazzhands&lt;/code&gt; 的实现原理都有一定了解。 那什么时候该用到它呢 ?&lt;/p&gt;
-&lt;p&gt;我觉得 &lt;code&gt;引导页&lt;/code&gt; 是不二选择 ~ 毕竟类似的视差动画, 在引导页的应用是最广的。&lt;/p&gt;
-&lt;p&gt;至于是否需要基于封装好的控制器来实现, 这就要根据具体的需求来定了。&lt;/p&gt;
-&lt;p&gt;比如官方Demo这样, 所有动画, 在相同的关键帧位置, 有重叠部分。(两个page 可以同时存在), 那基于 &lt;code&gt;IFTTTAnimatedPagingScrollViewController&lt;/code&gt; 再合适不过了。&lt;/p&gt;
-&lt;p&gt;不过如果动画有阻尼效果, 也就是当前界面只能存在一个page, 那就建议直接用 &lt;code&gt;UIViewController&lt;/code&gt; 撸, 然后借助 &lt;code&gt;手势&lt;/code&gt; , 来实现对应的效果。&lt;/p&gt;
-&lt;p&gt;比如可以仿照下美图秀秀的引导页, 写个简单demo, 效果如下:&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/iOS/Jazzhands/JazzhandsunityResult2.gif&quot; alt=&quot;MTXX_DEMO&quot;&gt;&lt;/p&gt;
-&lt;p&gt;具体 源码 就不上传了。 相信大家利用 Jazzhands 不难做出类似的效果。(有需要的可以私下交流~)&lt;/p&gt;
-&lt;h2 id=&quot;总结&quot;&gt;总结&lt;/h2&gt;&lt;p&gt;总体来说, 这个开源库还是非常精简，而且思路非常清晰，依然基于Core Animation之上，因为它只是针对于UIKit上去做帧的配置，对帧的封装上更加灵活，但是缺点是实现复杂的动画时，代码量比较大。另外布局约束呢, 都得手撸,,&lt;/p&gt;
-&lt;p&gt;还是很赞的~ &lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://wanzao2.b0.upaiyun.com/system/pictures/801/original/%E9%87%91%E5%A4%A7%E7%88%B721.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-</content:encoded>
-      
-      <comments>http://http://colin1994.github.io/2016/03/16/Interactive-animation-is-so-simple/#disqus_thread</comments>
     </item>
     
   </channel>
