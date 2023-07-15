@@ -1,0 +1,277 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenGL ES， 初学者的自我总结 | Menco&#39;s Space</title>
+<link rel="shortcut icon" href="https://colin1994.github.io/favicon.ico?v=1689393277588">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://colin1994.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGL ES， 初学者的自我总结 | Menco&#39;s Space - Atom Feed" href="https://colin1994.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="前言：
+
+学习 OpenGL ES 一段时间了，深知这个过程的不容易。
+尤其是入门，OpenGL 到底好在哪里？什么是渲染管线？什么是状态机？纹理是不是就是图片？深度测试，模版测试又是什么鬼？...
+OpenGL 有太多太多的东西需要学习。..." />
+    <meta name="keywords" content="OpenGL,图像处理,iOS" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://colin1994.github.io">
+  <img class="avatar" src="https://colin1994.github.io/images/avatar.png?v=1689393277588" alt="">
+  </a>
+  <h1 class="site-title">
+    Menco&#39;s Space
+  </h1>
+  <p class="site-description">
+    花开如火，也如寂寞
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/colin1994" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenGL ES， 初学者的自我总结
+            </h2>
+            <div class="post-info">
+              <span>
+                2017-04-01
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://colin1994.github.io/tag/ZTXTOnB5t/" class="post-tag">
+                  # OpenGL
+                </a>
+              
+                <a href="https://colin1994.github.io/tag/H8Abw3S15m/" class="post-tag">
+                  # 图像处理
+                </a>
+              
+                <a href="https://colin1994.github.io/tag/MzdMzxo8o/" class="post-tag">
+                  # iOS
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305250007577.jpeg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="前言">前言：</h2>
+<blockquote>
+<p>学习 OpenGL ES 一段时间了，<strong>深知这个过程的不容易</strong>。</p>
+<p>尤其是入门，OpenGL 到底好在哪里？什么是渲染管线？什么是状态机？纹理是不是就是图片？深度测试，模版测试又是什么鬼？...</p>
+<p>OpenGL <strong>有太多太多的东西需要学习</strong>。我最初接触 OpenGL，就是想借助它，实现美图秀秀里的一些功能。然而，不知道看了多少教程，实现了多少个旋转立方体，困惑了多少次，放弃了多少回...</p>
+<p>慢慢地，似乎找到了一些门路...</p>
+<ul>
+<li>可以导入照片处理并保存了</li>
+<li>可以实现简单的滤镜了</li>
+<li>可以实现画笔功能了</li>
+<li>可以实现马赛克功能了</li>
+<li>...</li>
+</ul>
+<p>于是，这系列的文章应运而生。</p>
+</blockquote>
+<h2 id="目标">目标</h2>
+<p>这系列文章主要是个人学习过程中的一些总结，因为本人也是初学者，所以会从初学者角度，介绍 OpenGL ES 图像处理最直接的一些知识。</p>
+<p><strong>利用 OpenGL ES，学习如何在 iOS 平台上进行图像处理，实现各种效果。</strong></p>
+<p>这，就是我想学到的，也是想分享给大家的。</p>
+<blockquote>
+<p>PS：时间允许的话，希望能保证一个星期输出一篇文章，鞭策自己～</p>
+</blockquote>
+<h2 id="目录">目录</h2>
+<h3 id="基础扫盲">基础扫盲：</h3>
+<ol>
+<li><a href="https://colin1994.github.io/post/OpenGLES-Lesson-00/">OpenGL ES 开篇</a> : 以 Q&amp;A 的形式，列举出在学习 OpenGL ES 之前会存在的一些疑惑。权衡是否该继续学习 OpenGL ES。</li>
+<li><a href="https://colin1994.github.io/post/OpenGLES-Lesson-01/">OpenGL ES 基础概念</a>：扫盲篇，先介绍一些必须了解的知识，便于之后能直接进入实战阶段。</li>
+<li><a href="https://colin1994.github.io/post/OpenGLES-Lesson-02/">OpenGL ES 环境搭建</a>：详解 OpenGL ES 接入方式，以最基础效果（设置背景色）来阐述。</li>
+<li><a href="https://colin1994.github.io/post/OpenGLES-Lesson-03/">OpenGL ES 渲染基本图元</a>：详细介绍可编程图形渲染管线是如何工作的。</li>
+<li><a href="https://colin1994.github.io/post/OpenGLES-Lesson-04/">GLSL 详解（基础篇）</a>：详细介绍 OpenGL ES 2.0 着色器语言 GLSL 基础语法。</li>
+<li><a href="https://colin1994.github.io/post/OpenGLES-Lesson-05/">GLSL 详解（高级篇）</a>：详细介绍 OpenGL ES 2.0 着色器语言高级特性。</li>
+</ol>
+<h3 id="demo-讲解">Demo 讲解：</h3>
+<ol>
+<li>显示图片</li>
+<li>视图封装</li>
+<li>滤镜：色温（简单全局应用）</li>
+<li>滤镜：Vignette，晕映（根据距离，区分处理）</li>
+<li>形变：马赛克（简单形变，几点汇聚成一点）</li>
+<li>形变：素描效果（根据边缘点，动态计算取样点色值）</li>
+<li>基于 Lookup Table（Lut）的滤镜实现（用查找表替代浮点计算，提高效率）</li>
+<li>多重滤镜叠加（实现及优化）</li>
+</ol>
+<h3 id="实战训练">实战训练：</h3>
+<blockquote>
+<p>敬请期待</p>
+</blockquote>
+<h2 id="学习资料">学习资料</h2>
+<blockquote>
+<p>PS：这里将罗列个人学习过程中，认为好的一些书籍，教程，Demo等。</p>
+<p>该系列的文章中，一些阐述，配图，可能是从其它文章或者书籍中摘录整理的。为保证阅读以及书写方便，这部分出处说明统一放到学习资料里。</p>
+<p>本人也处于学习阶段，精力有限，难免引用前人优秀教程。如果对您造成不必要的麻烦，请及时告知。</p>
+</blockquote>
+<h3 id="书籍">书籍</h3>
+<p><a href="https://www.khronos.org/opengles/sdk/docs/reference_cards/OpenGL-ES-2_0-Reference-card.pdf">OpenGL ES 2.0 API 快速参考卡片</a></p>
+<p><a href="https://www.amazon.com/OpenGL-Programming-Guide-Official-Learning/dp/0134495497">红宝书：OpenGL Programming Guide</a></p>
+<p><a href="https://www.amazon.com/OpenGL-Superbible-Comprehensive-Tutorial-Reference/dp/0672337479">蓝宝书：OpenGL Superbible</a></p>
+<h3 id="教程">教程</h3>
+<p><a href="https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008793-CH1-SW1">OpenGL ES Programming Guide for iOS</a></p>
+<p><a href="http://learnopengl.com/">Learn OpenGL</a></p>
+<p><a href="http://www.edwinho.org/lessons/2015-08/opengl-es.html">OpenGL ES_Max</a></p>
+<p><a href="http://blog.csdn.net/kesalin/article/details/8221393">OpenGL ES 01 OpenGL ES之初体验</a></p>
+<p><a href="https://www.khronos.org/files/opengles_shading_language.pdf">Opengles Shading Language</a></p>
+<p><a href="http://aillieo.cn/post/2017-01-15-opengl-es-glsl-01/">OpenGL ES 2.0 着色器语言GLSL</a></p>
+<h3 id="demo">Demo</h3>
+<p><a href="https://github.com/twenty3/GLImageProcessing">GLImageProcessing</a></p>
+<p><a href="https://github.com/BradLarson/GPUImage">GPUImage</a></p>
+<p><a href="https://github.com/Ciechan/BCMeshTransformView">BCMeshTransformView</a></p>
+<h3 id="idea">Idea</h3>
+<p><a href="https://www.shadertoy.com/">Shadertoy</a></p>
+<p><a href="https://photofunia.com/">PhotoFunia</a></p>
+<blockquote>
+<p>PS：本人也处于 OpenGL ES 学习阶段，所以文章中<strong>难免存在问题</strong>，或者待优化地方。如果有任何不对，<strong>欢迎指出交流</strong>～</p>
+</blockquote>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%89%8D%E8%A8%80">前言：</a></li>
+<li><a href="#%E7%9B%AE%E6%A0%87">目标</a></li>
+<li><a href="#%E7%9B%AE%E5%BD%95">目录</a>
+<ul>
+<li><a href="#%E5%9F%BA%E7%A1%80%E6%89%AB%E7%9B%B2">基础扫盲：</a></li>
+<li><a href="#demo-%E8%AE%B2%E8%A7%A3">Demo 讲解：</a></li>
+<li><a href="#%E5%AE%9E%E6%88%98%E8%AE%AD%E7%BB%83">实战训练：</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99">学习资料</a>
+<ul>
+<li><a href="#%E4%B9%A6%E7%B1%8D">书籍</a></li>
+<li><a href="#%E6%95%99%E7%A8%8B">教程</a></li>
+<li><a href="#demo">Demo</a></li>
+<li><a href="#idea">Idea</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://colin1994.github.io/post/TDD/">
+              <h3 class="post-title">
+                TDD 学习总结
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by Gridea
+  <a class="rss" href="https://colin1994.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

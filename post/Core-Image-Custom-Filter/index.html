@@ -1,0 +1,1075 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Core Image 之自定义 Filter~ | Menco&#39;s Space</title>
+<link rel="shortcut icon" href="https://colin1994.github.io/favicon.ico?v=1689393277588">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://colin1994.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Core Image 之自定义 Filter~ | Menco&#39;s Space - Atom Feed" href="https://colin1994.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Core Image 系列，目前的文章如下：
+
+Core Image 你需要了解的那些事~
+Core Image 之自定义 Filter~
+Core Image【3】—— 2017 新特性
+Core Image【4】—— 2018 新特性
+..." />
+    <meta name="keywords" content="Core Image,图像处理,iOS" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://colin1994.github.io">
+  <img class="avatar" src="https://colin1994.github.io/images/avatar.png?v=1689393277588" alt="">
+  </a>
+  <h1 class="site-title">
+    Menco&#39;s Space
+  </h1>
+  <p class="site-description">
+    花开如火，也如寂寞
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/colin1994" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Core Image 之自定义 Filter~
+            </h2>
+            <div class="post-info">
+              <span>
+                2017-10-23
+              </span>
+              <span>
+                37 min read
+              </span>
+              
+                <a href="https://colin1994.github.io/tag/R5xqGhbOH/" class="post-tag">
+                  # Core Image
+                </a>
+              
+                <a href="https://colin1994.github.io/tag/H8Abw3S15m/" class="post-tag">
+                  # 图像处理
+                </a>
+              
+                <a href="https://colin1994.github.io/tag/MzdMzxo8o/" class="post-tag">
+                  # iOS
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305242332932.jpeg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Core Image 系列，目前的文章如下：</p>
+<ul>
+<li><a href="https://colin1994.github.io/post/Core-Image-OverView/">Core Image 你需要了解的那些事~</a></li>
+<li><a href="https://colin1994.github.io/post/Core-Image-Custom-Filter/">Core Image 之自定义 Filter~</a></li>
+<li><a href="https://colin1994.github.io/post/Core-Image-2017/">Core Image【3】—— 2017 新特性</a></li>
+<li><a href="https://colin1994.github.io/post/Core-Image-2018/">Core Image【4】—— 2018 新特性</a></li>
+</ul>
+<hr>
+<h2 id="前言">前言</h2>
+<p>最近在研究 Core Image 自定义 Filter 相关内容，重新学习了 Core Image，对 Core Image 的一些优化点也有了一定的了解。故此记录，与君交流~</p>
+<p>本文主要讲解 Core Image 自定义滤镜部分的内容，包括如何使用自定义 Filter，如何编写 kernel，QC 工具介绍，注意点以及一些开发技巧。</p>
+<p>在这之前，我默认你了解 Core Image 的基本原理以及使用方式。如果没有，我建议你花点时间看看我的上一篇文章：<a href="https://colin1994.github.io/post/Core-Image-OverView/">Core Image 你需要了解的那些事~</a>，它介绍 Core Image 相关基础概念、使用方式、注意点以及和其他图像处理方案的对比，想必会有所收获。</p>
+<p>现在，开始吧～</p>
+<h2 id="自定义-filter-流程">自定义 Filter 流程</h2>
+<p>自定义的 Filter 和系统内置的各种 CIFilter，使用起来方式是一样的。我们唯一要做的，就是实现一个符合规范的 CIFilter 的子类，然后该怎么用怎么用。</p>
+<p>这里总结起来就3步：</p>
+<ul>
+<li>编写 CIKernel：使用 CIKL，自定义滤镜效果。</li>
+<li>加载 CIKernel：CIFilter 读取编写好的 CIKernel。</li>
+<li>设置参数：设置 CIKernel 需要的输入参数以及 DOD 和 ROI。</li>
+</ul>
+<p>不难看出，这些操作都是围绕 <strong>CIKernel</strong> 展开的，那么，它是什么？ CIKL，DOD，ROI 又是什么鬼？</p>
+<p>先撇开这些麻烦的东西，我们先这样简单的认为：</p>
+<ul>
+<li>CIKernel 是我们 Filter 对应的脚本，它描述 Filter 的具体工作原理。</li>
+<li>CIKL （Core Image Kernel Language）是编写 CIKernel 的语言。</li>
+<li>DOD，ROI 当做普通的参数处理。</li>
+</ul>
+<p>弄清了这些，我们再来看具体操作过程。</p>
+<p>拿一个图片翻转效果举例，效果如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211033075.png" alt="" loading="lazy"></figure>
+<h3 id="1-编写-cikernel">1. 编写 CIKernel</h3>
+<p><strong>File —&gt; New —&gt; File —&gt; Empty</strong>， 创建一个名为 <strong>MirrorX.cikernel</strong> 的文件。</p>
+<p>编辑 .cikernel 文件，比如：</p>
+<pre><code class="language-objc">kernel vec2 mirrorX ( float imageWidth ) 
+{
+  	// 获取待处理点的位置
+  	vec2 currentVec = destCoord();
+    // 返回最终显示位置
+  	return vec2 ( imageWidth - currentVec.x , currentVec.y ); 
+}
+</code></pre>
+<blockquote>
+<p>PS：这个 kernel 如果有不懂的，可以先跳过。下文会重点说明。</p>
+</blockquote>
+<h3 id="2-加载-cikernel">2. 加载 CIKernel</h3>
+<p><strong>File —&gt; New —&gt; File —&gt; Cocoa Touch Clas</strong>，新建一个继承自 CIFilter 的类，比如 <strong>MirrorXFilter</strong>。</p>
+<p>在 <strong>MirrorXFilter.m</strong> 中，添加如下代码：</p>
+<pre><code class="language-objc">static CIKernel *customKernel = nil;
+
+- (instancetype)init {
+    
+    self = [super init];
+    if (self) {
+        if (customKernel == nil)
+        {
+            NSBundle *bundle = [NSBundle bundleForClass: [self class]];
+            NSURL *kernelURL = [bundle URLForResource:@&quot;MirrorX&quot; withExtension:@&quot;cikernel&quot;];
+            
+            NSError *error;
+            NSString *kernelCode = [NSString stringWithContentsOfURL:kernelURL
+                                                            encoding:NSUTF8StringEncoding error:&amp;error];
+            if (kernelCode == nil) {
+                NSLog(@&quot;Error loading kernel code string in %@\n%@&quot;,
+                      NSStringFromSelector(_cmd),
+                      [error localizedDescription]);
+                abort();
+            }
+            
+            NSArray *kernels = [CIKernel kernelsWithString:kernelCode];
+            customKernel = [kernels objectAtIndex:0];
+        }
+    }
+    return self;
+}
+</code></pre>
+<p>这段代码很简单，重写 <strong>init</strong> 方法，主要就是读取 .cikernel 文件中代表 CIKernel 的字符串（当然， CIKernel 也可以直接写在 NSString 里头，免去文件读取这步），然后使用 <strong>kernelsWithString</strong></p>
+<p>方法获取到真正的 CIKernel 对象。</p>
+<pre><code class="language-objc">+ (nullable NSArray&lt;CIKernel *&gt; *)kernelsWithString:(NSString *)string  NS_AVAILABLE(10_4, 8_0);
+</code></pre>
+<p>至此，CIKernel 加载完毕。</p>
+<h3 id="3-设置参数">3. 设置参数</h3>
+<p>在 <strong>MirrorXFilter.m</strong> 中，添加需要的成员变量。</p>
+<pre><code class="language-objc">@interface MirrorXFilter () {
+    CIImage  *inputImage;
+}
+</code></pre>
+<p>这里只需要一个成员变量，<strong>inputImage</strong> 表示我们的输入图片。</p>
+<p>之后，就是设置参数，传入 kernel 中。</p>
+<pre><code class="language-objc">// 使用
+- (CIImage *)outputImage
+{
+    CGFloat inputWidth = inputImage.extent.size.width;
+    CIImage *result = [customKernel applyWithExtent: inputImage.extent roiCallback: ^( int index, CGRect rect ) {
+        return rect;
+    } inputImage: inputImage arguments: @[@(inputWidth)]];
+    return result;
+}
+</code></pre>
+<p>这里只需要重写 outputImage 方法即可。</p>
+<p><strong>extent</strong> 用于返回 CIImage 对象对应的 bounds，通过它可以拿到图片的宽度。</p>
+<pre><code class="language-objc">/* Return a rect the defines the bounds of non-(0,0,0,0) pixels */
+@property (NS_NONATOMIC_IOSONLY, readonly) CGRect extent;
+</code></pre>
+<p>然后通过  applyWithExtent 来设置对应的参数。</p>
+<pre><code class="language-objc">- (nullable CIImage *)applyWithExtent:(CGRect)extent
+                          roiCallback:(CIKernelROICallback)callback
+                           inputImage:(CIImage*)image
+                            arguments:(nullable NSArray&lt;id&gt; *)args;
+</code></pre>
+<p>这里有4个参数。</p>
+<ul>
+<li>extent，也就是之前提到的 DOD，暂且略过。</li>
+<li>callback，也就是之前提到的 ROI，暂且略过。</li>
+<li>image，缺省的 inputImage，传入我们的成员变量 inputImage 即可。</li>
+<li>args，输入参数数组，与 CIKernel 中定义的一一对应。这里只有一个 inputWidth。</li>
+</ul>
+<blockquote>
+<p>PS：这里可能有同学会有疑惑，为什么 inputImage 可以缺省，inputWidth 就需要传入呢。这里暂且不纠结，下面会详细说明~</p>
+</blockquote>
+<p>如此，一个自定义 Filter 就完成了。简单吧~</p>
+<h3 id="4-使用">4. 使用</h3>
+<p>至于使用上，则和普通的 CIFilter 基本一致。</p>
+<pre><code class="language-objc">#import &quot;MirrorXFilter.h&quot;
+
+// 1. 将UIImage转换成CIImage
+CIImage *ciImage = [[CIImage alloc] initWithImage:self.imageView.image];
+
+// 2. 创建滤镜
+self.filter = [[MirrorXFilter alloc] init];
+// 设置相关参数
+[self.filter setValue:ciImage forKey:@&quot;inputImage&quot;];
+
+// 3. 渲染并输出CIImage
+CIImage *outputImage = [self.filter outputImage];
+
+// 4. 获取绘制上下文
+self.context = [CIContext contextWithOptions:nil];
+
+// 5. 创建输出CGImage
+CGImageRef cgImage = [self.context createCGImage:outputImage fromRect:[outputImage extent]];
+UIImage *image = [UIImage imageWithCGImage:cgImage];
+// 6. 释放CGImage
+CGImageRelease(cgImage);
+</code></pre>
+<p>如此，我们便可得到翻转后的图片。</p>
+<h3 id="5-更多">5. 更多</h3>
+<p>当然，如果你是一个完美主义者，我觉得你还还可以做更多~</p>
+<pre><code class="language-objc">- (NSDictionary *)customAttributes
+{
+    return @{
+        @&quot;inputDistance&quot; :  @{
+            kCIAttributeMin       : @0.0,
+            kCIAttributeMax       : @1.0,
+            kCIAttributeSliderMin : @0.0,
+            kCIAttributeSliderMax : @0.7,
+            kCIAttributeDefault   : @0.2,
+            kCIAttributeIdentity  : @0.0,
+            kCIAttributeType      : kCIAttributeTypeScalar
+            },
+        @&quot;inputSlope&quot; : @{
+            kCIAttributeSliderMin : @-0.01,
+            kCIAttributeSliderMax : @0.01,
+            kCIAttributeDefault   : @0.00,
+            kCIAttributeIdentity  : @0.00,
+            kCIAttributeType      : kCIAttributeTypeScalar
+            },
+         kCIInputColorKey : @{
+         kCIAttributeDefault : [CIColor colorWithRed:1.0
+                                               green:1.0
+                                                blue:1.0
+                                               alpha:1.0]
+           },
+   };
+}
+</code></pre>
+<p>可以为自定义的 Filter 添加对应的参数描述，以及默认值，范围限制等。</p>
+<p>这不是必须的，但却是可取的。至于如何设置，可以参考 CIFilter 对应的 <strong>attributes</strong> 属性，或者参照上面这个例子。</p>
+<p>另外，iOS 9之后，引入了 <strong>registerFilterName</strong> , 你可以通过重写 <code>+ (CIFilter *)filterWithName: (NSString *)name;</code> ，然后外部使用的时候，跟 CIFilter 一模一样。</p>
+<pre><code class="language-objc">/** Publishes a new filter called 'name'.
+
+ The constructor object 'anObject' should implement the filterWithName: method.
+ That method will be invoked with the name of the filter to create.
+ The class attributes must have a kCIAttributeFilterCategories key associated with a set of categories.
+ @param   attributes    Dictionary of the registration attributes of the filter. See below for attribute keys.
+*/
++ (void)registerFilterName:(NSString *)name
+               constructor:(id&lt;CIFilterConstructor&gt;)anObject
+           classAttributes:(NSDictionary&lt;NSString *,id&gt; *)attributes NS_AVAILABLE(10_4, 9_0);
+</code></pre>
+<p>不过需要 iOS 9以上才支持，另外一般用于打包成 Image Units 给他人使用。</p>
+<p>正常情况下应该是用不到。如果真有这个需求，可以参考这篇文章： <a href="https://developer.apple.com/library/prerelease/content/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_image_units/ci_image_units.html#//apple_ref/doc/uid/TP30001185-CH7-SW12">Packaging and Loading Image Units</a>。</p>
+<p>至此，自定义 Filter 的流程就算走完了，我们很容易就可以配置好需要的环境。</p>
+<p>然而，真正的自定义部分，才刚刚开始！</p>
+<h2 id="dod-roi">DOD &amp; ROI</h2>
+<h3 id="1-dod">1. DOD</h3>
+<p>DOD ( domain of definition ) ，简单来说就是 Filter 处理后，输入的图片区域。</p>
+<p>一般来说，Filter 操作都是基于原图，添加上效果，但是并不会改变图片的大小，显示区域。所以一般与原图的一致即可。</p>
+<pre><code class="language-objc">CGRect dod = inputImage.extent; 
+</code></pre>
+<p>但是针对形变类的 Filter，则需要根据输出图片大小，设置正确的 DOD。</p>
+<h3 id="2-roi">2. ROI</h3>
+<p>ROI ( region of interest )，在一定的时间内特别感兴趣的区域，即当前处理区域。</p>
+<p>可以简单的理解为：当前处理区域对应于原图中的哪个区域。</p>
+<p>ROI 的定义如下：</p>
+<pre><code class="language-objc">/* Block callback used by Core Image to ask what rectangles of a kernel's input images
+ * are needed to produce a desired rectangle of the kernel's output image.
+ *
+ * 'index' is the 0-based index specifying which of the kernel's input images is being queried.
+ * 'destRect' is the extent rectangle of kernel's output image being queried.
+ *
+ * Returns the rectangle of the index'th input image that is needed to produce destRect.
+ * Returning CGRectNull indicates that the index'th input image is not needed to produce destRect.
+ * The returned rectangle need not be contained by the extent of the index'th input image.
+ */
+typedef CGRect (^CIKernelROICallback)(int index, CGRect destRect);
+</code></pre>
+<p>CIKernelROICallback 在 Core Image 内部进行处理的时候，会多次调用。</p>
+<p><strong>index</strong> 表示输入图片的下标，顺序和 kernel 中的入参顺序一致，从0开始。</p>
+<p><strong>destRect</strong> 表示输出图片的区域。 也就是我们先前设置的 DOD。</p>
+<p>那，我们为什么要显示设置 ROI 呢 ？</p>
+<p>因为输入图片中，参与处理的实际区域，Core Image 是无法知道的，我们需要显式的告诉 CI 这个区域。</p>
+<p>这么讲可能有点难以理解，下面我们看两个具体的例子。</p>
+<p>先看一个旋转的例子。</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211034451.png" alt="" loading="lazy"></figure>
+<p>这里就是进行了 x，y 互换操作。很容易得到我们的 DOD：</p>
+<pre><code class="language-objc">CGRect dod = CGRectMake(inputImage.extent.origin.y, inputImage.extent.origin.x, inputImage.extent.size.height, inputImage.extent.size.width);
+
+// e.g.
+// 原图片extent (0, 0, 200, 300)
+// 旋转后的输出图片 (0, 0, 300, 200)，也就是 DOD
+</code></pre>
+<p>那 ROI 应该怎么设置呢 ？我们之前说过，ROI 计算就是计算当前处理区域对应于原图中的哪个区域。</p>
+<p>也就是一个逆向过程。</p>
+<p>假如，A：输入图片中的某点   B：输出图片中的某点。那么 ROI 计算可以理解成  ROI（B）= A。</p>
+<p>理解好这点，我们不难写出这个操作对应的 ROI：</p>
+<pre><code class="language-objc">CIKernelROICallback callback = ^(int index, CGRect rect) {
+    return CGRectMake(rect.origin.y, rect.origin.x, rect.size.height, rect.size.width);
+};
+</code></pre>
+<p>另外，当输入图片不止一个的时候，则需要根据 <strong>index</strong> 来做区别。因为这里的 <strong>rect</strong> 每次都是返回 <strong>DOD</strong>，而不是当前图片的 extent。</p>
+<h2 id="cikernel-介绍">CIKernel 介绍</h2>
+<p>终于到了本文最重要的部分了，CIKernel 介绍！</p>
+<p>在此之前，我们先了解下它的一些背景知识。</p>
+<p>CIKernel 需要使用 Core Image Kernel Language (CIKL) 来编写，CIKL 是 OpenGL Shading Language (GLSL) 的子集，如果你之前有过 OpenGL 着色器编写的经验，这部分你会感觉格外亲切。CIKL 集成了 GLSL 绝大部分的参数类型和内置函数，另外它还添加了一些适应 Core Image 的参数类似和函数。</p>
+<p>一个 kernel 的处理过程，可以用下面伪代码表示：</p>
+<pre><code class="language-objc">for i in 1 ... image.width
+    for j in 1 ... image.height
+        New_Image[i][j] = CustomKernel(Current_Image[i][j])
+    end
+end
+</code></pre>
+<p>也就是说，每个需要处理的 fragment 都会调用一次 kernel 相关操作，每次操作的目的就是返回当前 fragment 对应的结果 fragment，这里 fragment 可以理解为像素点。</p>
+<p>所以我们的 kernel，应该是针对一个点，而不是一张图片。</p>
+<p>Core Image 内置了3种适用于不同场景的 Kernel，可以根据实际需求来选择。</p>
+<ul>
+<li>CIColorKernel：用于处理色值变化的 Filter。</li>
+<li>CIWarpKernel：用于处理形变的 Filter。</li>
+<li>CIKernel：通用。</li>
+</ul>
+<p>CIColorKernel，CIWarpKernel 是官方推荐使用的。某个 Filter，在使用它们能实现的情况下，应该使用它们，即使是一个 CIKernel 拆分成多个 CIColorKernel 以及 CIWarpKernel，也应该用这种方式。因为 Core Image 内部对这两张 Kernel 做了优化。</p>
+<p>当然，它们的使用时有限制的。目的一定要很纯粹，比如 CIColorKernel 只能处理色值上的变化。否则就算定义为 CIColorKernel，如果实现上涉及了其他 CIColorKernel 不允许的操作，Core Image 也会当做普通的 CIFilter 处理。</p>
+<p>另外，kernel 的入参只支持下面这么几种：</p>
+<table>
+<thead>
+<tr>
+<th>Kernel routine input parameter</th>
+<th>Object</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sampler</td>
+<td>CISampler</td>
+</tr>
+<tr>
+<td>__table sampler</td>
+<td>CISampler</td>
+</tr>
+<tr>
+<td>__color</td>
+<td><code>CIColor</code></td>
+</tr>
+<tr>
+<td>float</td>
+<td>NSNumber</td>
+</tr>
+<tr>
+<td>vec2, vec3, or vec4</td>
+<td>CIVector</td>
+</tr>
+</tbody>
+</table>
+<p>简单说明一下：</p>
+<ul>
+<li>sampler：可以理解成纹理，或者图片。外部以 CIImage 形式传入。</li>
+<li>__table sampler：表示颜色查找表（lookup table），虽然它也是图片，但是添加该声明可以避免被修改。外部以 CIImage 形式传入。</li>
+<li>__color：表示颜色。外部以 CIColor 形式传入。</li>
+<li>float：kernel 内部处理都是 float 类型。外部以 NSNumber 形式传入。</li>
+<li>vecN：表示一个多元向量。比如 vec2 可以表示一个点，vec4 可以表示一个色值。外部以 CIVector 形式传入。</li>
+</ul>
+<p>至于 kernel 中可以使用的函数，那就太多了。这里不一一枚举，在下面的具体讲解中，会说明几个常用的。如果想了解更多，可以参考  <a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CIKernelLangRef/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004397">Core Image Kernel Language Reference</a>，以及 <a href="http://www.shaderific.com/glsl/">OpenGL ES Shading Language Reference</a>。</p>
+<p>下面我会通过一个 Demo，讲解这三种 Kernel 的具体用法。</p>
+<blockquote>
+<p>PS：建议阅读之前，下载 <a href="https://github.com/colin1994/CoreImageDemo">源码</a> 配合着看。</p>
+</blockquote>
+<h3 id="1-cicolorkernel">1. CIColorKernel</h3>
+<p>首先看下官方的定义：</p>
+<pre><code class="language-objc">/*
+ * CIColorKernel is an object that encapsulates a Core Image Kernel Language
+ * routine that processes only the color information in images.
+ *
+ * Color kernels functions are declared akin to this example:
+ *   kernel vec4 myColorKernel (__sample fore, __sample back, vec4 params)
+ *
+ * The function must take a __sample argument for each input image.
+ * Additional arguments can be of type float, vec2, vec3, vec4, or __color.
+ * The destination pixel location is obtained by calling destCoord().
+ * The kernel should not call sample(), sampleCoord(), or samplerTransform().
+ * The function must return a vec4 pixel color.
+ */
+NS_CLASS_AVAILABLE(10_11, 8_0)
+@interface CIColorKernel : CIKernel
+</code></pre>
+<p>很重要的一点：<strong>processes only the color information in images</strong>，它只处理图片的颜色信息。</p>
+<p>所以在使用它之前，一定要确保该 Filter 只涉及颜色处理。</p>
+<p>CIKL 的语法和大多数 C 阵营一样，变量，运算符，控制结构，函数等都大同小异，所以它的学习成本是很低的。</p>
+<p>真正的核心应该是：<strong>如果用这样的语言来实现这个滤镜，也就是我们经常说的算法。</strong></p>
+<p>下面我们以一个 <strong>Vignette</strong> 来实际讲解一下。</p>
+<p>它的效果如下所示：</p>
+<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211036118.gif" alt="" loading="lazy"></figure>
+<p>不难看出，Vignette 滤镜，它实际上就是一个FOV（Field of View） 的效果，即视野中央看的最清楚，清晰程度与到中心距离呈反比，与人类的视觉是类似的。</p>
+<figure data-type="image" tabindex="4"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211036335.png" alt="" loading="lazy"></figure>
+<p>所以针对图片上的每个像素点 A，经过 Vignette 滤镜处理后得到的 B，应该满足：</p>
+<p>Vignette（A）＝ A * Darken ＝ B； 而 Darken 的计算依赖 A 与中心点的距离。</p>
+<p>如此，我们可以很容易的写出对应的 kernel：</p>
+<pre><code class="language-objc">kernel vec4 vignetteKernel(__sample image, vec2 center, float radius, float alpha)
+{
+    // 计算出当前点与中心的距离
+    float distance = distance(destCoord(), center) ;
+    // 根据距离计算出暗淡程度
+    float darken = 1.0 - (distance / radius * alpha);
+    // 返回该像素点最终的色值
+    image.rgb *= darken;
+
+    return image.rgba;
+}
+</code></pre>
+<p>和 C 语言的一样，函数需要具备：</p>
+<ul>
+<li>返回类型：vec4</li>
+<li>函数名：vignetteKernel</li>
+<li>参数列表：__sample image, vec2 center, float radius, float alpha）</li>
+<li>函数体：｛｝中的具体实现</li>
+</ul>
+<p>有所不同的，kernel 函数需要带上 kernel 关键字，与其它普通函数做区分。一个 .cikernel 文件中，允许包括多个函数，甚至是多个 kernel 函数，不过<strong>函数调用要出现在函数定义之后</strong>！</p>
+<p>另外，这里有个特别的参数类型，<strong>__sample</strong> ，和之前讲的 <strong>sampler</strong> 有所不同。因为这里我们使用的是 <strong>CIColorKernel</strong>，在得到高效性能的同时，也有一定的局限性。因为只是处理图片当前位置的颜色信息，所以 <strong>__sample</strong> 提供的 <strong>rgba</strong> 变量足够了，无法获取一些其它的信息。</p>
+<blockquote>
+<p>比如在 CIKernel 中，可以通过 sample() 等函数获取其它位置的色值，而在 CIColorKernel 中，无法使用 sample()， sampleCoord() 以及 samplerTransform() 。</p>
+</blockquote>
+<p>下面逐行解释这个 kernel。</p>
+<pre><code class="language-objc">// 计算出当前点与中心的距离
+float distance = distance(destCoord(), center) ;
+</code></pre>
+<p><strong>destCoord</strong></p>
+<ul>
+<li>
+<p><code>varying vec2 destCoord ()</code></p>
+<p>返回当前正在处理的像素点所处坐标。(working space coordinates)</p>
+</li>
+</ul>
+<p>这里使用的 CIKL 内置的函数 destCoord，它返回的坐标是基于 <strong>working space</strong> 的。所谓 working space，即工作空间，它的取值范围对应图片实际大小。比如 inputImage 的大小为 300 * 200，那么 destCoord() 返回坐标的取值范围在 (0, 0) - (300, 200)。</p>
+<p><strong>distance</strong></p>
+<ul>
+<li>
+<p><code>float distance (vec2 p0, vec2 p1)</code></p>
+<p>计算向量p0，p1之间的距离</p>
+</li>
+</ul>
+<p>如此便能很容易得到当前点与中心的距离。</p>
+<pre><code class="language-objc">// 根据距离计算出暗淡程度
+float darken = 1.0 - (distance / radius * alpha);
+</code></pre>
+<p>之后根据清晰程度与到中心距离呈反比这一原理，结合外部控制的 <strong>alpha</strong> 变量，计算出暗淡程度。</p>
+<pre><code class="language-objc">// 返回该像素点最终的色值
+image.rgb *= darken;
+return image.rgba;
+</code></pre>
+<p>这里之前提到，<strong>__sample</strong> 有个 rgba 变量，通过它可以获取到当前处理点的色值。</p>
+<p>在 CIKL 中，vec4 的任何一个分量都可以单独获取，也可以组合获取，例如 <strong>image.a</strong>，<strong>image.rrgg</strong> 等，都是可行的。</p>
+<p>CIColorKernel 是针对色值的处理，所以它的返回值必须是一个代表色值的 vec4 类型变量。</p>
+<p>至此，这个 vignetteKernel 就分析完毕了。很简单吧～</p>
+<h3 id="2-ciwarpkernel">2. CIWarpKernel</h3>
+<p>同样，先看下文档定义：</p>
+<pre><code class="language-objc">/*
+ * CIWarpKernel is an object that encapsulates a Core Image Kernel Language
+ * function that processes only the geometry of an image.
+ *
+ * Warp kernels functions are declared akin to this example:
+ *   kernel vec2 myWarpKernel (vec4 params)
+ *
+ * Additional arguments can be of type float, vec2, vec3, vec4.
+ * The destination pixel location is obtained by calling destCoord().
+ * The kernel should not call sample(), sampleCoord(), or samplerTransform().
+ * The function must return a vec2 source location.
+ */
+NS_CLASS_AVAILABLE(10_11, 8_0)
+@interface CIWarpKernel : CIKernel
+</code></pre>
+<p>同样，它也有很重要一点：<strong>processes only the geometry of an image</strong>。它只处理图片的几何形状。</p>
+<p>所谓的改变几何形状，也就是形变，把原本放置在 A 处的点，用 B 处的点去填充，或者反过来，把原本 B 处的点，挪到 A 处去，也是一样的。</p>
+<p>它可以用这个表达式表示：<strong>Warp（A）＝ B；</strong></p>
+<p>所以它和之前的 CIColorKernel 不同，它的返回值是 vec2，代表点的坐标。另外它只允许传入一张图片，所以这里的 inputImage 缺省了。</p>
+<blockquote>
+<p>同样的，在 CIWarpKernel 中，无法使用 sample()， sampleCoord() 以及 samplerTransform() 。</p>
+</blockquote>
+<p>下面以一个马赛克，像素化（Pixellate）的例子来讲解。它的效果如下：</p>
+<figure data-type="image" tabindex="5"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211036717.gif" alt="" loading="lazy"></figure>
+<p>马赛克，比较简单的一种算法是按照固定的间隔取像素点，将图片分割成一些小块，然后每个小块内选择一个像素点，然后把这个区域全部用这个像素点填充即可。这里的每个小块，称作晶格，晶格越大，马赛克效果越好。</p>
+<p>依照这个简单算法，我们可以很容易的写出对应的 kernel：</p>
+<pre><code class="language-objc">kernel vec2 pixellateKernel(float radius)
+{
+    vec2 positionOfDestPixel, centerPoint;
+    // 获取当前点坐标
+    positionOfDestPixel = destCoord();
+    // 获取对应晶格内的中心像素点
+    centerPoint.x = positionOfDestPixel.x - mod(positionOfDestPixel.x, radius * 2.0) + radius;
+    centerPoint.y = positionOfDestPixel.y - mod(positionOfDestPixel.y, radius * 2.0) + radius;
+
+    return centerPoint;
+}
+</code></pre>
+<p>同样的，先是获取到当前处理点的坐标，positionOfDestPixel。</p>
+<pre><code class="language-objc">// 获取对应晶格内的中心像素点
+centerPoint.x = positionOfDestPixel.x - mod(positionOfDestPixel.x, radius * 2.0) + radius;
+centerPoint.y = positionOfDestPixel.y - mod(positionOfDestPixel.y, radius * 2.0) + radius;
+</code></pre>
+<p>然后这里的 <strong>mod (x, y)</strong> 和平时使用的一样，计算 <strong>x / y 的余数</strong>。</p>
+<p>至于为什么这个式子能获得<strong>中心像素点坐标</strong>，想必一看就懂了吧～（不懂的可以拿张纸画画）</p>
+<p>最后返回中心点坐标，替换当前点。</p>
+<p>如此，一个简单的马赛克就完成了～</p>
+<h3 id="3-cikernel">3. CIKernel</h3>
+<p>我们之前说过，CIColorKernel 和 CIWarpKernel 内部做了优化，要尽可能的使用它们。除非真的有特殊需求，是它们无法实现的。下面罗列了 CIColorKernel 和 CIWarpKernel 的一些局限：</p>
+<p><strong>CIColorKernel ：</strong></p>
+<ul>
+<li>只处理当前处理点色值，无法获取到其它点的状态。</li>
+</ul>
+<p><strong>CIWarpKernel：</strong></p>
+<ul>
+<li>只处理当前处理点位置，无法获取到其它点的状态。</li>
+<li>只能传入一张图片。</li>
+</ul>
+<p>比如说，美图秀秀里面的一些简单马赛克，效果如下：</p>
+<figure data-type="image" tabindex="6"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211037648.gif" alt="" loading="lazy"></figure>
+<p>它的实现方式，我们可以简单的这么理解：</p>
+<ol>
+<li>判断当前点是否在传入点的处理范围内。</li>
+<li>如果在，返回马赛克贴图中对应的像素点色值。</li>
+<li>如果不在，返回当前点色值。</li>
+</ol>
+<p>很明显，它需要两张图片，一张我们的待处理图片，一张马赛克贴图。所以 CIWarpKernel 不适用。</p>
+<p>另外，待处理图片与马赛克贴图之前不是一一对应关系，在第二步，返回马赛克贴图中对应的像素点色值中，需要一个映射计算，即当前点对应马赛克贴图中的某点。所以 CIColorKernel 也不适用。</p>
+<p>这种情况下，就要使用通用的 CIKernel 了。</p>
+<p>下面是对应的 kernel：</p>
+<pre><code class="language-objc">kernel vec4 mosaicKernel(sampler image, sampler maskImage, float radius, vec2 point, float maskWidth, float maskHeight)
+{
+    // 获取当前点坐标
+    vec2 textureCoordinate = destCoord();
+    // 计算当前点与传入点的距离
+    float distance = distance(textureCoordinate, point);
+    if (distance &lt; radius) {
+        // 在处理范围内, 计算对应马赛克贴图中的位置
+        float resultX = mod(textureCoordinate.x, maskWidth);
+        float resultY = mod(textureCoordinate.y, maskHeight);
+        return sample(maskImage, samplerTransform(maskImage, vec2(resultX, resultY)));
+    }
+    else {
+        // 返回原图对应像素点色值
+        return sample(image, samplerTransform(image, textureCoordinate));
+    }
+}
+</code></pre>
+<p>这里参数比较多，分别对应：</p>
+<ul>
+<li>image：待处理图片</li>
+<li>maskImage：马赛克贴图</li>
+<li>radius：处理范围，半径</li>
+<li>point：传入点，即当前触摸的点</li>
+<li>maskWidth：马赛克贴图宽度</li>
+<li>maskHeight：马赛克贴图高度</li>
+</ul>
+<p>上面的 kernel，使用了两个新的函数，sample 和 samplerTransform。</p>
+<blockquote>
+<p><code>vec4 sample (uniform sampler src, vec2 point)</code> <br>
+Returns the pixel value produced from sampler src at the position point, where point is specified in sampler space.</p>
+<p>返回图片 src 指定点 point 处的色值。point 是基于 sampler space。</p>
+<p><code>vec2 samplerTransform (uniform sampler src, vec2 point)</code> <br>
+Returns the position in the coordinate space of the source (the first argument) that is associated with the position defined in working-space coordinates (the second argument). (Keep in mind that the working space coordinates reflect any transformations that you applied to the working space.) For example, if you are modifying a pixel in the working space, and you need to retrieve the pixels that surround this pixel in the original image, you would make calls similar to the following, where d is the location of the pixel you are modifying in the working space, and image is the image source for the pixels.</p>
+<p>返回图片 src 指定点 point 处坐标对应的基于 sampler space 的坐标。point 是基于working space。</p>
+<p>sampler space 的取值是 0.0 - 1.0，左下角为原点，向右，向上递增。</p>
+</blockquote>
+<p>了解了这两个函数的用法，想必这段代码就没什么需要特别说明的地方了，注释已经很清楚，不再累述。</p>
+<h2 id="注意点">注意点</h2>
+<h3 id="1-premultiply">1. premultiply</h3>
+<blockquote>
+<p><code>vec4 premultiply (vec4 color)</code> <br>
+Multiplies the red, green, and blue components of the color parameter by its alpha component.</p>
+</blockquote>
+<p>将颜色变量的r、g、b元素值分别于 alpha 相乘，返回一个新的四维颜色向量。</p>
+<blockquote>
+<p><code>vec4 unpremultiply (vec4 color)</code> <br>
+If the alpha component of the color parameter is greater than 0, divides the red, green and blue components by alpha. If alpha is 0, this function returns color.</p>
+</blockquote>
+<p>将颜色变量的r、g、b元素值分别除以 alpha ，返回一个新的四维颜色向量。</p>
+<p>pixel（R, G, B, A） —— (premultiply) ——&gt; (R＊A, G＊A, B＊A, A)</p>
+<p>—— (unpremultiply) ——&gt; （R, G, B, A）。</p>
+<p>在 Core Image 中，默认颜色空间是 sRGB，在 kernel 中得到的色值，都经过了 Premultiplied Alpha 处理。</p>
+<p>至于为什么要执行 Premultiplied Alpha 操作，具体的可以参考这篇文章：<a href="https://boundary.cc/2015/07/why-premultiplied-alpha/">为什么要PREMULTIPLIED ALPHA呢？</a></p>
+<p>所以如果 kernel 涉及 alpha 相关操作，则需要先执行 unpremultiply，返回正确的 rgba。处理完之后，再执行 premultiply 操作。</p>
+<p>比如一个反相滤镜，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211037332.gif" alt="" loading="lazy"><br>
+<img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211038139.gif" alt="" loading="lazy"></p>
+<p>它对应的 kernel 应该是这样的：</p>
+<pre><code class="language-objc">kernel vec4 _invertColor(sampler source_image)
+{
+    vec4 pixValue;
+    // samplerCoord 返回当前像素点在 sampler space 中的位置
+    // kernel 无法知道该图片是否进行了某些变换操作，所以确保转换为 sampler space 中的位置 是有必要的
+    pixValue = sample(source_image, samplerCoord(source_image));
+    // 执行 unpremultiply 操作, 得到真正的 RGB 值
+    // (R＊A, G＊A, B＊A, A) ——(unpremultiply)——&gt; (R, G, B, A)
+    // Core Image is always RGB based.
+    unpremultiply(pixValue); 
+    // invertColor
+    pixValue.r = 1.0 - pixValue.r; 
+    pixValue.g = 1.0 - pixValue.g;
+    pixValue.b = 1.0 - pixValue.b;
+    // premultiply. (R, G, B, A) —&gt; (R＊A, G＊A, B＊A, A)
+    return premultiply(pixValue); 
+}
+
+
+// 优化：
+// 避免了 unpremultiply 和 premultiply 操作，能更高效执行。
+// pixValue 是 (R＊A, G＊A, B＊A, A)， pixValue.a - pixValue.r = (1-r)*a. 和最终 premultiply 得到的结果一样.
+kernel vec4 _invertColor(sampler source_image)
+{
+    vec4 pixValue;
+    pixValue = sample(source_image, samplerCoord(source_image));
+    pixValue.rgb = pixValue.aaa - pixValue.rgb;
+    return pixValue;
+}
+</code></pre>
+<h3 id="2-关键字">2. 关键字</h3>
+<p>和 C 语言等一样，CIKL 中变量的命名不能和关键字相同。</p>
+<p>官方 Session 中翻转对应的 kernel 脚本，这里用到了 input 关键字，导致整个 kernel 错误。</p>
+<figure data-type="image" tabindex="7"><img src="https://raw.githubusercontent.com/colin1994/colin1994.github.io/feature/hexo/BlogResources/CoreImage/session_error.png" alt="2016101638470session_error.png" loading="lazy"></figure>
+<h3 id="3-glsl">3. GLSL</h3>
+<p>CIKL 是 GLSL 的子集，所以<strong>不是 GLSL 中定义的任何东西在 CIKL 中都适用</strong>。但是 glsl 中大多数关键字都是可以用的。另外，CIKL 还提供了 glsl 不支持的，额外的数据类型，关键字，方法，来完善 CIKernel。</p>
+<h3 id="4-array-mat">4. Array, Mat</h3>
+<p>In addition, the following are not implemented:</p>
+<ul>
+<li>Data types: <code>mat2</code>, <code>mat3</code>, <code>mat4</code>, <code>struct</code>, <code>arrays</code></li>
+</ul>
+<p>这些数据类型 Core Image 不支持。但是在 kernel 内部却可以使用 …</p>
+<p>如果当做参数传入，则会报错：</p>
+<p><strong>invalid kernel parameter type; valid types are:  'float', 'vec2', 'vec3', 'vec4', 'sampler’, ‘sample’, ‘color’</strong></p>
+<p>这也导致了一些依赖关键点的算法无法实现。</p>
+<h3 id="5-坐标系">5. 坐标系</h3>
+<p>UIKit 坐标系，原点在屏幕左上，x轴向右，y轴向下。</p>
+<p>Core Image 和 OpenGL 坐标系原点在屏幕的左下，x轴向右，y轴向上。</p>
+<p>所以位置的处理上要注意。</p>
+<h3 id="6-局限">6. 局限</h3>
+<p>kernel 的输入和输出像素可以相互映射。大多数像素处理都可以用这种方式表达，但是有的图像处理操作很困难，甚至不可能。</p>
+<p>kernel 的使用上还是有一定的局限性。比如说通过输入图像映射计算直方图是很困难的。也不可以执行种子填充算法或者其他需要复杂条件语句的图像分析操作。</p>
+<h3 id="7-性能优化">7. 性能优化</h3>
+<p>kernel 中的内容要尽可能简单，高效。</p>
+<ul>
+<li>展开循环操作会更快。</li>
+<li>外部能传入的变量，尽量不要在 kernel 中计算获取。</li>
+</ul>
+<h2 id="开发技巧">开发技巧</h2>
+<h3 id="1-log">1. Log</h3>
+<p><strong>+(id)kernelsWithString:(id)arg1 messageLog:(id)arg2 ;</strong></p>
+<p>这是  <a href="https://github.com/CPDigitalDarkroom/iOS9-SpringBoard-Headers/blob/a11be523d5644a178614585ff57f9638300c2cc0/System/Library/Frameworks/CoreImage.framework/CIKernel.h">CIKernel.h</a> 里面的私有方法，在调试阶段可以利用它来打印 kernel 中的错误。</p>
+<p>比如：</p>
+<pre><code class="language-objc">NSMutableArray *messageLog = [NSMutableArray array];
+NSArray *kernels = [[CIKernel class] 		 performSelector:@selector(kernelsWithString:messageLog:) withObject:kernelCode withObject:messageLog];
+if ( messageLog.count &gt; 0) 
+  	NSLog(@&quot;Error: %@&quot;, messageLog.description);
+customKernel = [kernels objectAtIndex:0];
+
+// 错误 log
+Error: (
+        {
+        CIKernelMessageLineNumber = 5;
+        CIKernelMessageType = CIKernelMessageTypeError;
+        kCIKernelMessageDescription = &quot;unkown type or function name 'destCoordE'; did you mean 'destCoord'?&quot;;
+        kCIKernelMessageOffset = 142;
+    },
+        {
+        CIKernelMessageLineNumber = 7;
+        CIKernelMessageType = CIKernelMessageTypeError;
+        kCIKernelMessageDescription = &quot;invalid operands to binary expression ('float' and 'int')&quot;;
+        kCIKernelMessageOffset = 281;
+    }
+)
+</code></pre>
+<h3 id="2-ci_print_tree">2. CI_PRINT_TREE</h3>
+<p>这里 Core Image 中非常实用的一个环境变量，通过设置它，可以很方便的查看 Core Image 工作过程中到底做了什么。比如：</p>
+<ul>
+<li>工作在 GPU 还是 CPU 上？</li>
+<li>各个 kernel 的参数值？</li>
+<li>Core Image 是如何链接 kernel？</li>
+<li>DOD，ROI 如何设置的？</li>
+<li>对于大图如何拆分处理？</li>
+<li>...</li>
+</ul>
+<blockquote>
+<p>PS ： 至于 CI_PRINT_TREE 具体应该如何使用，没有找到相关资料，只是在 Session 中提到过。</p>
+<p>包括 ObjC 中国 上的翻译：你可以通过在 Xcode 中设置计划配置（scheme configuration）里的 CI_PRINT_TREE 环境变量为 1 来决定用 CPU 还是 GPU 来渲染，也是很不准确的。</p>
+<p>这里的结论都是自己摸索后的总结，所以可能存在错误或者遗漏，欢迎补充交流～</p>
+</blockquote>
+<p>CI_PRINT_TREE 的设置大致是这样的：分成 A B 两部分，它们可以结合使用。</p>
+<p>其中 A 是主要分类，B 是辅助功能。</p>
+<p>A 包括：</p>
+<ul>
+<li>1  initial graph</li>
+<li>2  optimized graph</li>
+<li>4  tile graph</li>
+<li>8  programs graph</li>
+<li>16  timing graph</li>
+</ul>
+<p>B 包括：</p>
+<ul>
+<li>graphviz</li>
+<li>dump-inputs</li>
+<li>dump-intermediates</li>
+<li>skip-cpu</li>
+<li>skip-gpu</li>
+<li>skip-small</li>
+<li>frame-<number></li>
+</ul>
+<p>使用上，比如简单的查看 initial graph 做了什么，即我们添加这个 Filter 的时候，初始化过程执行了什么，传入了哪些参数。当然，这个过程它并没有真正得到渲染，只是一个操作流程列表。设置 CI_PRINT_TREE ＝ 1，如下：</p>
+<figure data-type="image" tabindex="8"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211043952.png" alt="" loading="lazy"></figure>
+<p>它的结果如下：</p>
+<pre><code class="language-objc">initial graph render_to_display (opengles2 context 1 frame 1) format=RGBA8 roi=[0 156 750 748] = 
+  clamptoalpha roi=[0 156 750 748] extent=[0 156 750 748] opaque
+    colormatch workingspace-to-devicergb roi=[0 156 750 748] extent=[0 156 750 748] opaque
+      affine [2 0 0 2 0 156] roi=[0 156 750 748] extent=[0 156 750 748] opaque
+        colorkernel 
+  roi=[0 0 375 374] extent=[0 0 375 374] opaque
+          affine [1 0 0 -1 0 374] roi=[0 0 375 374] extent=[0 0 375 374] opaque
+            colormatch &quot;sRGB IEC61966-2.1&quot;-to-workingspace roi=[0 0 375 374] extent=[0 0 375 374] opaque
+              CGImageRef 0x1701c4380 RGBX8 375x374  alpha_one roi=[0 0 375 374] extent=[0 0 375 374] opaque
+</code></pre>
+<p>这里有很多关键信息，十分详细。它的阅读顺序是从下往上，我们简单分析下：</p>
+<ul>
+<li><strong>CGImageRef</strong>： 指代我们传入的图片。</li>
+<li>每个阶段的 <strong>ROI，DOD</strong>。</li>
+<li><strong>colormatch &quot;sRGB IEC61966-2.1&quot;-to-workingspace</strong> ：传入的颜色空间</li>
+<li><strong>vignetteKernel(image,center=[187.5 187],radius=187.5,alpha=0.0537634)</strong> ：kernel 的每个参数</li>
+<li><strong>colormatch workingspace-to-devicergb</strong>：  输出的颜色空间</li>
+<li><strong>opengles2</strong> ：工作在 GPU 上</li>
+<li><strong>context 1 frame 1</strong> ：分别指代当前 context 以及第几帧。每次渲染 frame + 1</li>
+</ul>
+<p>当然，这只是 CI_PRINT_TREE 的一部分功能，如果你设置 CI_PRINT_TREE = 8 (programs graph )，你又会得到这样的信息：</p>
+<pre><code class="language-objc">programs graph render_to_display (opengles2 context 1 frame 4 tile 1) format=RGBA8 roi=[0 111 640 640] = 
+  program affine(clamp_to_alpha(linear_to_srgb(vignetteKernel(affine(srgb_to_linear(swizzle_bgr1())))))) rois=[0 111 640 640] extent=[0 111 640 640]
+    IOSurface 0x60000019ddc0 RGBA8 375x374 alpha_one edge_clamp rois=[0 0 375 374] extent=[infinite][0 0 375 374] opaque
+</code></pre>
+<p>这里描述了程序图表，即真正涉及到的操作。</p>
+<p>如果觉得这样看比较杂乱，可以试试添加 B 类辅助功能。 比如：<strong>CI_PRINT_TREE = 8 graphviz</strong> ，这样就可以导出 DOT 语言脚本。然后使用 <a href="http://www.graphviz.org/">Graphviz</a> 工具，即可绘制这个 DOT 语言脚本描述的图形。</p>
+<p>比如上面 Log 对应绘制得到的图形如下：</p>
+<figure data-type="image" tabindex="9"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211044062.png" alt="" loading="lazy"></figure>
+<p>同样是从下往上看，各个操作的层级关系就很明显了。除了我们提供的 vignetteKernel，Core Image 内部还做了其他的操作，比如 <strong>linear_to_srgb，clamp_to_alpha</strong> 等。它们的具体实现如下：</p>
+<pre><code class="language-objc">Filter DAG:
+Node: 0
+  original source: vec4 _ci_clamp_to_alpha(vec4 s) { return clamp(s, 0.0, s.a); }
+  printed AST: vec4 _ci_clamp_to_alpha(vec4 s) {
+  return clamp(s, 0.000000e+00, s.a);
+}
+  children: 1
+End Filter Node
+
+Node: 1
+  original source: vec4 _ci_premultiply(vec4 s) { return vec4(s.rgb*s.a, s.a); }
+  printed AST: vec4 _ci_premultiply(vec4 s) {
+  return vec4(s.rgb * s.a, s.a);
+}
+  children: 2
+End Filter Node
+
+Node: 2
+  original source: vec4 _ci_linear_to_srgb(vec4 s)
+{
+  s.rgb = sign(s.rgb)*mix(s.rgb*12.92, pow(abs(s.rgb), vec3(0.4166667)) * 1.055 - 0.055, step(0.0031308, abs(s.rgb)));
+  return s;
+}
+  printed AST: vec4 _ci_linear_to_srgb(vec4 s) {
+  s.rgb = sign(s.rgb) * mix(s.rgb * 1.292000e+01, (pow(abs(s.rgb), vec3(4.166667e-01)) * 1.055000e+00) - 5.500000e-02, step(3.130800e-03, abs(s.rgb)));
+  return s;
+}
+  children: 3
+End Filter Node
+
+Node: 3
+  original source: vec4 _ci_unpremultiply(vec4 s) { return vec4(s.rgb/max(s.a,0.00001), s.a); }
+  printed AST: vec4 _ci_unpremultiply(vec4 s) {
+  return vec4(s.rgb / max(s.a, 1.000000e-05), s.a);
+}
+  children: 6
+End Filter Node
+
+Node: 6
+  &lt;sample with transform&gt;
+  original source: vec4 read_pixel(sampler2D image, vec2 c, mat3 m){ return texture2D(image, (vec3(c, 1.0) * m).xy);}
+  printed AST: vec4 read_pixel_6(sampler2D image, vec2 c, mat3 m) {
+  return texture2D(image, (vec3(c, 1.000000e+00) * m).xy);
+}
+  children: 4 7 5
+End Filter Node
+
+Node: 4
+  image: 6
+  printed: uniform lowp sampler2D image6_0
+End Filter Node
+
+Node: 7
+  position use &lt;_dc&gt;
+End Filter Node
+
+Node: 5
+  &lt;transform&gt;
+  uniform: 6
+End Filter Node
+</code></pre>
+<p>这个 DAG（有向无环图），具体描述了相关操作的实现过程，比较简单，可以自己看看，这里不累述。</p>
+<h2 id="工具介绍">工具介绍</h2>
+<p>Quartz Composer 是一款图形化的编程工具，专门用来生成各种动态视觉效果，包括可交互的界面原型。当然，它也支持 Core Image 滤镜图表的原型。</p>
+<figure data-type="image" tabindex="10"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211045045.png" alt="" loading="lazy"></figure>
+<p>另外，在 QC 上编写 Kernel，除了代码高亮，实时调整效果也很棒。</p>
+<figure data-type="image" tabindex="11"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211046799.png" alt="" loading="lazy"></figure>
+<blockquote>
+<p>PS ：<a href="https://developer.apple.com/downloads/">Quartz Composer 下载地址</a></p>
+<p>有精力的话建议把 QC 内自带的所有 example 找出来仔细研究，苹果自己的例子是最好的。它们藏在 /Applications/Quartz Composer.app/Contents/Resources/Examples/Patches（找到 Quartz Composer.app 点右键，选择「Show Package Content」）</p>
+<p>简单了解 Quartz Composer。QCDesigners 上有比较简要的介绍：<a href="https://link.zhihu.com/?target=http%3A//qcdesigners.com/index.php/forums/topic/2/new-to-quartz-composer-start-he">QC Designers</a></p>
+</blockquote>
+<figure data-type="image" tabindex="12"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211046005.png" alt="" loading="lazy"></figure>
+<p>QC 已经内置了适合 Core Image 的模板，并且实现了动态模糊滤镜效果。不过这里为了了解 QC 的使用方式，不使用内置的模板，从头开始。<strong>File —&gt; New Blank</strong>，创建一个空白的 QC 工程。</p>
+<blockquote>
+<p>PS： QC 的功能很强大，这里只介绍 Core Image Filter 编辑过程中会用到的，以及我所掌握的...</p>
+</blockquote>
+<h3 id="0-概念介绍">0. 概念介绍</h3>
+<p>在讲解使用方式之前，介绍几个基本概念。</p>
+<p>一次滤镜操作，可以简单理解成： <strong>输入—&gt;(Patch)—&gt;输出</strong>。</p>
+<p>Patch 可以理解成 Kernel。</p>
+<p>输入则与 Kernel 的参数相对应，可以是 image，color，float...</p>
+<p>输入这里一般就是处理后的图像。</p>
+<p>还有一个比较特殊的 Patch，Layer。相当于画布，可以把结果图显示在上面，它也有层的概念。</p>
+<h3 id="1-工作区介绍">1.  工作区介绍</h3>
+<p><strong>编辑区：</strong> 这是主面板，主要衔接各个 Patch，以及它们的输入，输出。</p>
+<figure data-type="image" tabindex="13"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211046891.png" alt="" loading="lazy"></figure>
+<p><strong>Library：</strong> 这里陈列了 QC 内置的所有 Patch（也可以添加自定义的 Patch 进来），以及它们的详细使用介绍。(通过点击主面板左上角的 Patch Library 打开)</p>
+<figure data-type="image" tabindex="14"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211046652.png" alt="" loading="lazy"></figure>
+<p><strong>参数区：</strong> 这里设置各个 Patch 需要的输入参数。(通过点击主面板工具栏上的 Parameters 打开)</p>
+<figure data-type="image" tabindex="15"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211047002.png" alt="" loading="lazy"></figure>
+<p><strong>Viewer：</strong> 显示窗口，这里可以对 Layer 做处理，也可以响应用户操作。比如鼠标点击，移动，滑动等。</p>
+<figure data-type="image" tabindex="16"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211047938.png" alt="" loading="lazy"></figure>
+<h3 id="2-filter-编辑-放大眼睛实战">2. Filter 编辑 &amp; 放大眼睛实战</h3>
+<p>首先，点击 Patch Library，添加一个 Core Image Filter。</p>
+<figure data-type="image" tabindex="17"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211047290.png" alt="" loading="lazy"></figure>
+<p>选中这个 Filter，点击 Patch Inspector，选择 Settings，进入编辑页面。</p>
+<p>改成如下放大眼睛核心代码：</p>
+<pre><code class="language-objc">kernel vec4 coreImageKernel(sampler image, vec2 centerPostion, float radius, float scaleRatio, float aspectRatio)
+{
+	vec2 currentPosition = destCoord();
+	vec2 positionToUse = currentPosition;
+
+     vec2 currentPositionToUse = vec2(currentPosition.x, currentPosition.y * aspectRatio + 0.5 - 0.5 * aspectRatio);
+     vec2 centerPostionToUse = vec2(centerPostion.x, centerPostion.y * aspectRatio + 0.5 - 0.5 * aspectRatio);
+     
+     float r = distance(currentPositionToUse, centerPostionToUse);
+     
+     if(r &lt; radius)
+     {
+         float alpha = 1.0 - scaleRatio * (r / radius - 1.0)*( r / radius - 1.0);
+         positionToUse = centerPostion + alpha * (currentPosition - centerPostion);
+         return sample(image, samplerTransform(image, positionToUse));
+     }
+     else
+     {
+     	return sample(image, samplerTransform(image, positionToUse));
+     }
+}
+</code></pre>
+<figure data-type="image" tabindex="18"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211047905.png" alt="" loading="lazy"></figure>
+<blockquote>
+<p>PS：这里不再讲解这个眼睛放大 kernel 的实现原理。</p>
+<p>我强烈建议你在了解了前面的内容后，自己试着解读这个 kernel。</p>
+</blockquote>
+<p>另外，这里还有几个需要说明的地方。</p>
+<ul>
+<li>Define Outp Image Domain of Definition as Union of Input Sampler DODs：输入输出图片的 DOD 一致。</li>
+<li>Show Advanced Input Sampler Options：显示更多选项。</li>
+<li>Edit Filter Function：编辑 Filter 函数。</li>
+</ul>
+<p>一般选中第一项就好。 如果有特殊需求，需要自定义 DOD，ROI，则选择 <strong>Edit Filter Function</strong>，进入编辑模式。</p>
+<pre><code class="language-objc">function __image main(__image image, __vec2 centerPostion, __number radius, __number scaleRatio, __number aspectRatio) {
+      return coreImageKernel.apply(image.definition, null, image, centerPostion, radius, scaleRatio, aspectRatio);
+}
+</code></pre>
+<p>这样就可以对默认的 function 进行编辑。在这个 Demo 里面我们不需要，感兴趣可以自己实践下，很简单。</p>
+<p>这个时候，主面板应该长这样：</p>
+<figure data-type="image" tabindex="19"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211048826.png" alt="" loading="lazy"></figure>
+<p>然后拖拽一张图片到主面板中，把图片的 Output Image 与 Filter 的 Input Image 想连接。</p>
+<p>再从 Patch Library 中选择 Billboard。把 Filter 的 Output Image 与 Billboard 的 Input Image 相连接。</p>
+<figure data-type="image" tabindex="20"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211048376.png" alt="" loading="lazy"></figure>
+<p>然后选中 Filter，打开 Parameters 面板，输入参数值，即可。</p>
+<p>当然，放大眼睛这里需要定位到眼睛的位置，是否可以通过鼠标操作来获取点呢？再或者，眼睛放大效果不够直观，有没有办法鼠标按下显示效果图，松开显示原图呢？在 QC 里头，这些都不是问题~不过工具类的使用，更多的还是得靠自己去摸索，这里不再累述。可以参考 EnlargeEyes.qtz 文件，了解更多的操作。</p>
+<p>最终的效果应该是这样的：</p>
+<figure data-type="image" tabindex="21"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211048530.gif" alt="" loading="lazy"></figure>
+<h2 id="总结">总结</h2>
+<p>至此，关于 Core Image 自定义 Filter 相关的内容，就已经都讲完了。这篇近万字的文章，花了很多功夫总结出来，希望，对你有所帮助！</p>
+<p>那么，打开脑洞，创造更有趣的 Filter 吧~</p>
+<p>Have fun~</p>
+<p><strong>PS：源码下载地址：</strong> <a href="https://github.com/colin1994/CoreImageDemo">CoreImageDemo</a></p>
+<h2 id="延伸阅读">延伸阅读</h2>
+<p><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CIKernelLangRef/Introduction/Introduction.html#//apple_ref/doc/uid/TP40004397-CH1-SW1">Core Image Kernel Language Reference</a></p>
+<p>Core Image Kernel Language 官方概述。</p>
+<p><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Conceptual/ImageUnitTutorial/WritingKernels/WritingKernels.html">Writing Kernels</a></p>
+<p>官方教程。</p>
+<p><a href="http://developer.apple.com/library/mac/documentation/GraphicsImaging/Conceptual/ImageUnitTutorial/Overview/Overview.html#//apple_ref/doc/uid/TP40004531-CH6-SW4">Kernel Routine Rules</a></p>
+<p>官方准则。</p>
+<p><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Conceptual/ImageUnitTutorial/Overview/Overview.html#//apple_ref/doc/uid/TP40004531-CH6-SW2">Region-of-Interest Methods</a></p>
+<p>ROI 教程。</p>
+<p><a href="https://developer.apple.com/library/content/documentation/GraphicsImaging/Conceptual/QuartzComposerUserGuide/qc_intro/qc_intro.html#//apple_ref/doc/uid/TP40005381-CH201-TPXREF101">Quartz Composer User Guide</a></p>
+<p>QC 官方指南。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89-filter-%E6%B5%81%E7%A8%8B">自定义 Filter 流程</a>
+<ul>
+<li><a href="#1-%E7%BC%96%E5%86%99-cikernel">1. 编写 CIKernel</a></li>
+<li><a href="#2-%E5%8A%A0%E8%BD%BD-cikernel">2. 加载 CIKernel</a></li>
+<li><a href="#3-%E8%AE%BE%E7%BD%AE%E5%8F%82%E6%95%B0">3. 设置参数</a></li>
+<li><a href="#4-%E4%BD%BF%E7%94%A8">4. 使用</a></li>
+<li><a href="#5-%E6%9B%B4%E5%A4%9A">5. 更多</a></li>
+</ul>
+</li>
+<li><a href="#dod-roi">DOD &amp; ROI</a>
+<ul>
+<li><a href="#1-dod">1. DOD</a></li>
+<li><a href="#2-roi">2. ROI</a></li>
+</ul>
+</li>
+<li><a href="#cikernel-%E4%BB%8B%E7%BB%8D">CIKernel 介绍</a>
+<ul>
+<li><a href="#1-cicolorkernel">1. CIColorKernel</a></li>
+<li><a href="#2-ciwarpkernel">2. CIWarpKernel</a></li>
+<li><a href="#3-cikernel">3. CIKernel</a></li>
+</ul>
+</li>
+<li><a href="#%E6%B3%A8%E6%84%8F%E7%82%B9">注意点</a>
+<ul>
+<li><a href="#1-premultiply">1. premultiply</a></li>
+<li><a href="#2-%E5%85%B3%E9%94%AE%E5%AD%97">2. 关键字</a></li>
+<li><a href="#3-glsl">3. GLSL</a></li>
+<li><a href="#4-array-mat">4. Array, Mat</a></li>
+<li><a href="#5-%E5%9D%90%E6%A0%87%E7%B3%BB">5. 坐标系</a></li>
+<li><a href="#6-%E5%B1%80%E9%99%90">6. 局限</a></li>
+<li><a href="#7-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96">7. 性能优化</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7">开发技巧</a>
+<ul>
+<li><a href="#1-log">1. Log</a></li>
+<li><a href="#2-ci_print_tree">2. CI_PRINT_TREE</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D">工具介绍</a>
+<ul>
+<li><a href="#0-%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D">0. 概念介绍</a></li>
+<li><a href="#1-%E5%B7%A5%E4%BD%9C%E5%8C%BA%E4%BB%8B%E7%BB%8D">1.  工作区介绍</a></li>
+<li><a href="#2-filter-%E7%BC%96%E8%BE%91-%E6%94%BE%E5%A4%A7%E7%9C%BC%E7%9D%9B%E5%AE%9E%E6%88%98">2. Filter 编辑 &amp; 放大眼睛实战</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB">延伸阅读</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://colin1994.github.io/post/Core-Image-OverView/">
+              <h3 class="post-title">
+                Core Image 你需要了解的那些事~
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by Gridea
+  <a class="rss" href="https://colin1994.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

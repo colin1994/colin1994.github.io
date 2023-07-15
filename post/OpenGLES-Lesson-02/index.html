@@ -1,0 +1,440 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenGL ES 环境搭建 | Menco&#39;s Space</title>
+<link rel="shortcut icon" href="https://colin1994.github.io/favicon.ico?v=1689393277588">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://colin1994.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="OpenGL ES 环境搭建 | Menco&#39;s Space - Atom Feed" href="https://colin1994.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在上篇文章中，已经介绍了 OpenGL ES 的一些基础概念以及大致工作流程。
+在本文中，我们将会介绍在 iOS 平台上如何接入 OpenGL ES，并搭建好基础环境，实现设置背景色功能。它是之后任何实战的基础模版。在搭建过程中，会针对之前..." />
+    <meta name="keywords" content="OpenGL,图像处理,iOS" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://colin1994.github.io">
+  <img class="avatar" src="https://colin1994.github.io/images/avatar.png?v=1689393277588" alt="">
+  </a>
+  <h1 class="site-title">
+    Menco&#39;s Space
+  </h1>
+  <p class="site-description">
+    花开如火，也如寂寞
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/colin1994" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              OpenGL ES 环境搭建
+            </h2>
+            <div class="post-info">
+              <span>
+                2017-04-04
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://colin1994.github.io/tag/ZTXTOnB5t/" class="post-tag">
+                  # OpenGL
+                </a>
+              
+                <a href="https://colin1994.github.io/tag/H8Abw3S15m/" class="post-tag">
+                  # 图像处理
+                </a>
+              
+                <a href="https://colin1994.github.io/tag/MzdMzxo8o/" class="post-tag">
+                  # iOS
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305242348892.jpeg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>在<a href="http://colin1994.github.io/2017/04/01/OpenGLES-Lesson01/">上篇文章</a>中，已经介绍了 OpenGL ES 的一些基础概念以及大致工作流程。</p>
+<p>在本文中，我们将会介绍在 iOS 平台上如何接入 OpenGL ES，并搭建好基础环境，实现设置背景色功能。它是之后任何实战的基础模版。在搭建过程中，会针对之前介绍的一些概念，再结合代码讲解。</p>
+<blockquote>
+<p>PS：这一节是 OpenGL ES 的入门，也是最重要的一部分。再绚丽的特性，都是在此基础上完成的。所以理解它是很有必要的～</p>
+</blockquote>
+<p>设置蓝色背景后，效果如下：</p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211009612.png" alt="" loading="lazy"></figure>
+<h2 id="0-初始工程">0. 初始工程</h2>
+<p>你可以从<a href="https://github.com/colin1994/OpenGLES/blob/master/Lesson02/OpenGLESDemo_1.zip">这里</a>下载到初始工程，避免重复实现一些和本节内容不相干的事情。</p>
+<p>在这个初始工程里面，已经实现了新建一个继承自 <strong>UIView</strong> 的 <strong>GLView</strong>，这个自定义的视图将用来显示 OpenGL ES 的渲染内容。然后在 Main.storyboard 中，将 ViewController 的 view 改成 <strong>GLView</strong> 类型，即可。</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/colin1994/Images/202305211009087.png" alt="" loading="lazy"></figure>
+<p>至此，我们的工作都将在 <strong>GLView</strong> 中展开。</p>
+<p>在 <strong>GLView.h</strong> 中，先声明一些将要用到的成员变量：</p>
+<pre><code class="language-objc">@interface GLView : UIView
+{
+    CAEAGLLayer *_eaglLayer;
+    EAGLContext *_context;
+    GLuint       _framebuffer;
+    GLuint       _renderbuffer;
+}
+</code></pre>
+<p>另外，在 <strong>GLView.m</strong> 中，需要导入对应的 OpenGLES 框架（framework），如下：</p>
+<pre><code class="language-objc">@import OpenGLES;
+</code></pre>
+<blockquote>
+<p>PS：</p>
+<p><code>@import </code>是 iOS 7 之后的新特性语法，这种方式叫 Modules（模块导入） 或者 Semantic import（语义导入）。用这种方式，不用手动添加 framework，系统会自动帮我们 link，是一种更好的头部预处理的执行方式（相比之前的 #import）。</p>
+<ul>
+<li>Imports complete semantic description of a framework</li>
+<li>Doesn't need to parse the headers</li>
+<li>Better way to import a framework’s interface</li>
+<li>Loads binary representation</li>
+<li>More flexible than precompiled headers</li>
+<li>Immune to effects of local macro definitions (e.g. <code>#define readonly 0x01</code>)</li>
+<li>Enabled for new projects by default</li>
+</ul>
+</blockquote>
+<h2 id="1-caeagllayer">1. CAEAGLLayer</h2>
+<p>CAEAGLLayer 实现了 <strong>EAGLDrawable</strong> 协议，它是 Apple 专门为 OpenGL ES 准备的一个图层类。</p>
+<p>所以想要显示 OpenGL ES 的内容，需要把它默认的 layer 设置为一个特殊的 layer（<strong>CAEAGLLayer</strong>），我们简单的重写 <code>layerClass</code> 即可：</p>
+<pre><code class="language-objc">+ (Class)layerClass {
+    return [CAEAGLLayer class];
+}
+</code></pre>
+<p>另外，为了方便起见，我们使 <strong>_eaglLayer</strong> 这个成员变量指代 <strong>self.layer</strong>，这样除了调用上方便外，可读性也更好。</p>
+<pre><code class="language-objc">- (void)setupLayer {
+    // 用于显示的layer
+    _eaglLayer = (CAEAGLLayer *)self.layer;
+    
+    // CALayer 默认是透明的（opaque = NO），而透明的层对性能负荷很大。所以将其关闭。
+    _eaglLayer.opaque = YES;
+}
+</code></pre>
+<blockquote>
+<p>PS：</p>
+<p>By default, CALayers are set to non-opaque (i.e. transparent). However, this is bad for performance reasons (especially with OpenGL), so it’s best to set this as opaque when possible.</p>
+<p>CAEAGLLayer: the default value of the `opaque' property in this class is true, not false as in CALayer.</p>
+<p>透明对性能影响较大，CAEAGLLayer 中的 <strong>opaque</strong> 默认值已经是 YES 了。</p>
+</blockquote>
+<p>至此 layer 的配置已经就绪，下面创建并设置与 OpenGL ES 相关的东西。</p>
+<h2 id="2-eaglcontext">2. EAGLContext</h2>
+<p>上篇已经提到了<strong>上下文</strong>概念，即 <strong>EAGLContext</strong> 对象，这个 context 管理所有使用 OpenGL ES 进行渲染的状态，命令以及资源信息。</p>
+<p>通过 <code>initWithAPI</code> 创建完 context，然后需要使用 <code>setCurrentContext</code> 将它设置为当前 context，因为我们之前提过，context 可以同时存在多个，需要指定当前环境对应的 context。</p>
+<pre><code class="language-objc">- (void)setupContext {
+    if (!_context) {
+        // 创建GL环境上下文
+        // EAGLContext 管理所有通过 OpenGL ES 进行渲染的信息.
+        _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    }
+    
+    NSAssert(_context &amp;&amp; [EAGLContext setCurrentContext:_context], @&quot;初始化GL环境失败&quot;);
+}
+</code></pre>
+<p>这里的 <strong>kEAGLRenderingAPIOpenGLES2</strong> 即对应的 OpenGL ES 版本，它的定义如下：</p>
+<pre><code class="language-objc">/* EAGL rendering API */
+typedef NS_ENUM(NSUInteger, EAGLRenderingAPI)
+{
+	kEAGLRenderingAPIOpenGLES1 = 1,
+	kEAGLRenderingAPIOpenGLES2 = 2,
+	kEAGLRenderingAPIOpenGLES3 = 3,
+};
+</code></pre>
+<h2 id="3-renderbuffer">3. Renderbuffer</h2>
+<p>有了上下文，OpenGL ES 还需要在一块 buffer 上进行渲染，这块 buffer 就是 <strong>Renderbuffer</strong>（OpenGL ES 总共有三大不同用途的 buffer，分别是 <strong>color buffer，depth buffer 和 stencil buffer</strong>，这里是最基本的 color buffer）。可以简单的把 renderbuffer 理解成用于展示的窗口。</p>
+<p>它的创建过程如下：</p>
+<pre><code class="language-objc">- (void)setupRenderBuffer {
+    // 生成 renderbuffer ( renderbuffer = 用于展示的窗口 )
+    glGenRenderbuffers(1, &amp;_renderbuffer);
+    // 绑定 renderbuffer
+    glBindRenderbuffer(GL_RENDERBUFFER, _renderbuffer);
+    // GL_RENDERBUFFER 的内容存储到实现 EAGLDrawable 协议的 CAEAGLLayer
+    [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];
+}
+</code></pre>
+<p><code>glGenRenderbuffers</code> 用于生成 renderbuffer，并分配 id。它的原型为：</p>
+<pre><code class="language-c">void glGenRenderbuffers (GLsizei n, GLuint* renderbuffers)
+</code></pre>
+<ul>
+<li>n：表示申请生成 renderbuffer 的个数。</li>
+<li>renderbuffers：返回分配给 renderbuffer 的 id。</li>
+</ul>
+<blockquote>
+<p>PS：返回的 id 不会为 0，0 是OpenGL ES 保留的，0 则表示这个 buffer 这个不存在或者创建失败。</p>
+</blockquote>
+<p>所以，一般会通过 id 来判断某个 buffer 是否存在，执行对应的操作。比如在 gen 之前，释放旧的 renderbuffer，确保之后的操作无误。</p>
+<pre><code class="language-objc">// 释放旧的 renderbuffer
+if (_renderbuffer) {
+    glDeleteRenderbuffers(1, &amp;_renderbuffer);
+    _renderbuffer = 0;
+}
+</code></pre>
+<p><code>glBindRenderbuffer</code> 用于绑定 renderbuffer，将指定 id 的 renderbuffer 设置为当前 renderbuffer。它的原型为：</p>
+<pre><code class="language-c">void glBindRenderbuffer (GLenum target, GLuint renderbuffer) 
+</code></pre>
+<ul>
+<li>target：表示当前 renderbuffer，必须是 <strong>GL_RENDERBUFFER</strong>。</li>
+<li>renderbuffer：某个 renderbuffer 对应的 id（比如使用 glGenRenderbuffers 生成的 id）。</li>
+</ul>
+<p><code>renderbufferStorage</code> 用于将 GL_RENDERBUFFER 的内容存储到实现 <strong>EAGLDrawable</strong> 协议的 CAEAGLLayer。它的原型为：</p>
+<pre><code class="language-objc">/* Attaches an EAGLDrawable as storage for the OpenGL ES renderbuffer object bound to &lt;target&gt; */
+- (BOOL)renderbufferStorage:(NSUInteger)target fromDrawable:(id&lt;EAGLDrawable&gt;)drawable;
+</code></pre>
+<blockquote>
+<p>PS：</p>
+<p>这个函数内部，会使用 drawable（_eaglLayer）的相关信息（设置存储在 drawableProperties 属性中）作为参数，调用 glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);</p>
+<p><code>glRenderbufferStorage</code> 指定存储在 renderbuffer 中图像的宽高以及颜色格式，并按照此规格为之分配存储空间。</p>
+</blockquote>
+<p>至此，我们的第一个 buffer 创建完毕了。注意理解 <strong>gen</strong> 和 <strong>bind</strong> 这两个概念，它将会贯穿我们 OpenGL ES 的整个学习过程。</p>
+<h2 id="4-framebuffer">4. Framebuffer</h2>
+<p>接下去我们将会创建 framebuffer object，它通常也被称之为 <strong>FBO</strong>。</p>
+<p>我们之前提到过了，它相当于 buffer（color, depth, stencil）的管理者，三大 buffer 可以附加到一个  FBO 上。</p>
+<p>它的创建过程如下：</p>
+<pre><code class="language-objc">- (void)setupFrameBuffer {
+    // 释放旧的 framebuffer
+    if (_framebuffer) {
+        glDeleteFramebuffers(1, &amp;_framebuffer);
+        _framebuffer = 0;
+    }
+    
+    // 生成 framebuffer ( framebuffer = 画布 )
+    glGenFramebuffers(1, &amp;_framebuffer);
+    // 绑定 fraembuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    
+    // framebuffer 不对渲染的内容做存储, 所以这一步是将 framebuffer 绑定到 renderbuffer ( 渲染的结果就存在 renderbuffer )
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                              GL_RENDERBUFFER, _renderbuffer);
+}
+</code></pre>
+<p>之前的 gen，bin 操作和 renderbuffer 中对应的都是一致的，只是做相应的替换，比如 renderbuffer 改成 framebuffer 即可，这里就不细说，重点看一下 <code>glFramebufferRenderbuffer</code>。</p>
+<p>之前说过，framebuffer 不对渲染的内容做存储，而 <code>glFramebufferRenderbuffer</code> 的作用正是将相关的 buffer（三大 buffer 之一）装配到 framebuffer 上，使得 framebuffer 能索引到对应的渲染内容。它的原型为：</p>
+<pre><code class="language-c">void glFramebufferRenderbuffer (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
+</code></pre>
+<ul>
+<li>target：表示当前 framebuffer，必须是 GL_FRAMEBUFFER。</li>
+<li>attachment：指定 renderbuffer 被装配到那个装配点上，其值是 GL_COLOR_ATTACHMENT0，GL_DEPTH_ATTACHMENT，GL_STENCIL_ATTACHMENT 中的一个，分别对应 color，depth 和  stencil 三大 buffer。</li>
+<li>renderbuffertarget：表示当前 renderbuffer，必须是 <strong>GL_RENDERBUFFER</strong>。</li>
+<li>renderbuffer：某个 renderbuffer 对应的 id，表示需要装配的 renderbuffer。</li>
+</ul>
+<blockquote>
+<p>PS：</p>
+<p>为了安全起见，可以通过 <code>glCheckFramebufferStatus</code> 来检查 framebuffer 的创建情况，并根据对应的 log，来排查错误。</p>
+</blockquote>
+<pre><code class="language-objc">- (BOOL)checkFramebuffer:(NSError *__autoreleasing *)error {
+    // 检查 framebuffer 是否创建成功
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    NSString *errorMessage = nil;
+    BOOL result = NO;
+    
+    switch (status)
+    {
+        case GL_FRAMEBUFFER_UNSUPPORTED:
+            errorMessage = @&quot;framebuffer不支持该格式&quot;;
+            result = NO;
+            break;
+        case GL_FRAMEBUFFER_COMPLETE:
+            NSLog(@&quot;framebuffer 创建成功&quot;);
+            result = YES;
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+            errorMessage = @&quot;Framebuffer不完整 缺失组件&quot;;
+            result = NO;
+            break;
+        case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+            errorMessage = @&quot;Framebuffer 不完整, 附加图片必须要指定大小&quot;;
+            result = NO;
+            break;
+        default:
+            // 一般是超出GL纹理的最大限制
+            errorMessage = @&quot;未知错误 error !!!!&quot;;
+            result = NO;
+            break;
+    }
+    
+    NSLog(@&quot;%@&quot;,errorMessage ? errorMessage : @&quot;&quot;);
+    *error = errorMessage ? [NSError errorWithDomain:@&quot;com.colin.error&quot;
+                                                code:status
+                                            userInfo:@{@&quot;ErrorMessage&quot; : errorMessage}] : nil;
+    
+    return result;
+}
+</code></pre>
+<p>至此，我们需要的环境配置以及相关 buffer 资源都已经准备好了，接下去就是渲染部分了。</p>
+<h2 id="5-最简单的渲染设置背景色">5. 最简单的渲染，设置背景色</h2>
+<pre><code class="language-objc">- (void)render {
+    glClearColor(0, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    // 做完所有绘制操作后，最终呈现到屏幕上
+    [_context presentRenderbuffer:GL_RENDERBUFFER];
+}
+</code></pre>
+<p><code>glClearColor</code> 用来设置清屏颜色，它的原型为：</p>
+<pre><code class="language-c">void glClearColor (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+</code></pre>
+<p><code>glClear (GLbitfield mask)</code> 用来指定要用清屏颜色来清除由 mask 指定的 buffer，mask 可以是 GL_COLOR_BUFFER_BIT，GL_DEPTH_BUFFER_BIT 和 GL_STENCIL_BUFFER_BIT 的自由组合。</p>
+<p>在这里我们只使用到 color buffer，所以清除的就是 clolor buffer。</p>
+<p><code>presentRenderbuffer</code> 是将指定 renderbuffer 呈现在屏幕上。</p>
+<blockquote>
+<p>PS：</p>
+<p>在此之前，建议使用 <code>glBindFramebuffer</code>，<code>glBindRenderbuffer</code> 来重新绑定当前 buffer 对象。因为 GL 的所有 API 都是基于最后一次绑定的对象作为作用对象。所以每次在修改 GL 对象时，先绑定一次要修改的对象。有很多错误是因为没有绑定或者绑定了错误的对象导致得到了错误的结果。</p>
+</blockquote>
+<h2 id="6-收工检验">6. 收工，检验</h2>
+<p>至此，关于 OpenGL ES 环境搭建的相关准备东西都已就绪，接下去只要按需调用相关方法，即可。</p>
+<pre><code class="language-objc">- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if ((self = [super initWithCoder:aDecoder])) {
+        [self setup];
+    }
+    return self;
+}
+
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    [self render];
+}
+
+#pragma mark - Setup
+- (void)setup {
+    [self setupLayer];
+    [self setupContext];
+    [self setupRenderBuffer];
+    [self setupFrameBuffer];
+    
+    NSError *error;
+    NSAssert1([self checkFramebuffer:&amp;error], @&quot;%@&quot;,error.userInfo[@&quot;ErrorMessage&quot;]);
+}
+</code></pre>
+<p>这里不出意外的话，你将会看到开头的那个纯色背景。</p>
+<p>你可能注意到了，这个过程我们并没有涉及到所谓的图形渲染管线，如果你试着使用 kEAGLRenderingAPIOpenGLES1 来创建 context，会发现这是完成可以的。</p>
+<p>最终的工程可以从<a href="https://github.com/colin1994/OpenGLES/blob/master/Lesson02/OpenGLESDemo_1.zip">这里</a>下载。有了这个基础，模版，接下去，我们将会围绕渲染管线，实现一系列的炫酷效果，一起期待吧～</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#0-%E5%88%9D%E5%A7%8B%E5%B7%A5%E7%A8%8B">0. 初始工程</a></li>
+<li><a href="#1-caeagllayer">1. CAEAGLLayer</a></li>
+<li><a href="#2-eaglcontext">2. EAGLContext</a></li>
+<li><a href="#3-renderbuffer">3. Renderbuffer</a></li>
+<li><a href="#4-framebuffer">4. Framebuffer</a></li>
+<li><a href="#5-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E6%B8%B2%E6%9F%93%E8%AE%BE%E7%BD%AE%E8%83%8C%E6%99%AF%E8%89%B2">5. 最简单的渲染，设置背景色</a></li>
+<li><a href="#6-%E6%94%B6%E5%B7%A5%E6%A3%80%E9%AA%8C">6. 收工，检验</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://colin1994.github.io/post/OpenGLES-Lesson-01/">
+              <h3 class="post-title">
+                OpenGL ES 基础概念
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by Gridea
+  <a class="rss" href="https://colin1994.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
